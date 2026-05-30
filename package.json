@@ -1,0 +1,118 @@
+{
+  "name": "@candlekit/charts",
+  "version": "0.1.0",
+  "description": "Tree-shakeable financial charting toolkit: candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Built on lightweight-charts. Framework-agnostic core + optional React bindings.",
+  "license": "MIT",
+  "author": "candlekit contributors",
+  "homepage": "https://github.com/candlekit/charts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/candlekit/charts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/candlekit/charts/issues"
+  },
+  "keywords": [
+    "charts",
+    "candlestick",
+    "ohlc",
+    "trading",
+    "financial-charts",
+    "lightweight-charts",
+    "technical-analysis",
+    "indicators",
+    "drawing-tools",
+    "replay",
+    "react"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "styles.css",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.cjs"
+    },
+    "./drawing-linetools": {
+      "types": "./dist/drawing-linetools.d.ts",
+      "import": "./dist/drawing-linetools.js",
+      "require": "./dist/drawing-linetools.cjs"
+    },
+    "./indicators-oakscript": {
+      "types": "./dist/indicators-oakscript.d.ts",
+      "import": "./dist/indicators-oakscript.js",
+      "require": "./dist/indicators-oakscript.cjs"
+    },
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "lightweight-charts": "^5.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "optionalDependencies": {
+    "lightweight-charts-indicators": "^0.4.1",
+    "lightweight-charts-line-tools-circle": "github:difurious/lightweight-charts-line-tools-circle",
+    "lightweight-charts-line-tools-core": "github:difurious/lightweight-charts-line-tools-core",
+    "lightweight-charts-line-tools-fib-retracement": "github:difurious/lightweight-charts-line-tools-fib-retracement",
+    "lightweight-charts-line-tools-lines": "github:difurious/lightweight-charts-line-tools-lines",
+    "lightweight-charts-line-tools-rectangle": "github:difurious/lightweight-charts-line-tools-rectangle",
+    "oakscriptjs": "^0.2.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.0.0",
+    "lightweight-charts": "^5.0.0",
+    "prettier": "^3.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

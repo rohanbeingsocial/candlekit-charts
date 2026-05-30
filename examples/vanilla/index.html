@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" class="dark" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@candlekit/charts — Vanilla JS</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { margin: 0; font-family: ui-monospace, monospace; background: #0e1117; color: #e5e7eb; }
+      header { display: flex; gap: 8px; align-items: center; padding: 10px 14px; }
+      button { background: #1f2937; color: #e5e7eb; border: 1px solid #374151; border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+      #chart { height: 70vh; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Vanilla JS</strong>
+      <button data-type="candlestick">Candles</button>
+      <button data-type="ohlc">OHLC</button>
+      <button data-type="line">Line</button>
+      <button data-type="area">Area</button>
+      <button id="theme">Toggle theme</button>
+    </header>
+    <div id="chart"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

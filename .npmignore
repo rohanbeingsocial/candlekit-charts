@@ -1,0 +1,19 @@
+# Source + tooling are not shipped — only dist/ and the legal/readme files
+# listed in package.json "files". This .npmignore is a backstop.
+src/
+tests/
+examples/
+docs/
+reports/
+.github/
+*.config.ts
+*.config.js
+tsconfig*.json
+.prettierrc
+.eslintrc*
+eslint.config.js
+coverage/
+AGENTS.md
+CONTRIBUTING.md
+CODEBASE_MAP.md
+CHANGELOG.md
