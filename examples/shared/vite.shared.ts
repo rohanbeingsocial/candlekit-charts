@@ -8,6 +8,8 @@ import { resolve } from "node:path";
 const root = resolve(__dirname, "../..");
 
 export const candlekitAlias = {
+  // Most-specific first — Vite matches aliases in declaration order.
+  "@candlekit/charts/styles.css": resolve(root, "styles.css"),
   "@candlekit/charts/react": resolve(root, "src/react/index.ts"),
   "@candlekit/charts/drawing-linetools": resolve(root, "src/drawing/lineToolsAdapter.ts"),
   "@candlekit/charts/indicators-oakscript": resolve(root, "src/indicators/oakscript.ts"),

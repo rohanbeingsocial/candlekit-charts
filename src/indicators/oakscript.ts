@@ -11,17 +11,16 @@
 
 import { IndicatorRegistry, defFromRaw } from "./registry";
 
-function dynImport(name: string): Promise<Record<string, unknown>> {
-  return import(/* @vite-ignore */ name) as Promise<Record<string, unknown>>;
-}
-
 /**
  * Create a registry populated with every compatible indicator exported by
  * `lightweight-charts-indicators`. Pass an existing registry to extend it.
+ *
+ * Uses a literal dynamic import so consumer bundlers code-split the optional
+ * dependency; ambient fallback declarations keep `tsc` happy without it.
  */
 export async function createOakscriptRegistry(into?: IndicatorRegistry): Promise<IndicatorRegistry> {
   const registry = into ?? new IndicatorRegistry();
-  const all = await dynImport("lightweight-charts-indicators");
+  const all = (await import("lightweight-charts-indicators")) as unknown as Record<string, unknown>;
   for (const [name, raw] of Object.entries(all)) {
     const def = defFromRaw(name, raw);
     if (def) registry.register(def);

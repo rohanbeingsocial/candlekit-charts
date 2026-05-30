@@ -4,13 +4,13 @@
   "description": "Tree-shakeable financial charting toolkit: candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Built on lightweight-charts. Framework-agnostic core + optional React bindings.",
   "license": "MIT",
   "author": "candlekit contributors",
-  "homepage": "https://github.com/candlekit/charts#readme",
+  "homepage": "https://github.com/rohanbeingsocial/candlekit-charts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/candlekit/charts.git"
+    "url": "git+https://github.com/rohanbeingsocial/candlekit-charts.git"
   },
   "bugs": {
-    "url": "https://github.com/candlekit/charts/issues"
+    "url": "https://github.com/rohanbeingsocial/candlekit-charts/issues"
   },
   "keywords": [
     "charts",
@@ -71,6 +71,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:smoke": "vitest run --config vitest.smoke.config.ts",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "peerDependencies": {

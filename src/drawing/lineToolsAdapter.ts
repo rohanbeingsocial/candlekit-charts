@@ -46,28 +46,28 @@ export interface LineToolsDrawingOptions {
   tools?: DrawingToolId[];
 }
 
-// Non-literal specifier defeats static module resolution: TS types the result
-// as `any` (no "cannot find module" without the optional dep installed) and
-// bundlers leave it as a runtime import.
-function dynImport(name: string): Promise<Record<string, unknown>> {
-  return import(/* @vite-ignore */ name) as Promise<Record<string, unknown>>;
-}
+type Mod = Record<string, unknown>;
 
 /**
  * Build a {@link DrawingPlugin} backed by the line-tools runtime. Async because
  * it lazy-loads the optional packages. `await` it, then pass the result to
  * `controller.use(plugin)`.
+ *
+ * The dynamic imports use **literal specifiers** so consumer bundlers
+ * (Vite/webpack/rollup) resolve and code-split the optional packages into an
+ * async chunk. Ambient fallback declarations (`src/optional-deps.d.ts`) keep
+ * `tsc` happy when the packages are not installed.
  */
 export async function createLineToolsDrawingPlugin(
   opts: LineToolsDrawingOptions = {},
 ): Promise<DrawingPlugin> {
-  const [core, lines, rect, circle, fib] = await Promise.all([
-    dynImport("lightweight-charts-line-tools-core"),
-    dynImport("lightweight-charts-line-tools-lines"),
-    dynImport("lightweight-charts-line-tools-rectangle"),
-    dynImport("lightweight-charts-line-tools-circle"),
-    dynImport("lightweight-charts-line-tools-fib-retracement"),
-  ]);
+  const [core, lines, rect, circle, fib] = (await Promise.all([
+    import("lightweight-charts-line-tools-core"),
+    import("lightweight-charts-line-tools-lines"),
+    import("lightweight-charts-line-tools-rectangle"),
+    import("lightweight-charts-line-tools-circle"),
+    import("lightweight-charts-line-tools-fib-retracement"),
+  ])) as unknown as [Mod, Mod, Mod, Mod, Mod];
 
   const createLineToolsPlugin = core.createLineToolsPlugin as (
     chart: IChartApi,
