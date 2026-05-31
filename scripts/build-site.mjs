@@ -48,8 +48,8 @@ for (const name of EXAMPLES) {
   run(`npm run build -- --base "${base}" --outDir "${outDir}" --emptyOutDir`, exampleDir);
 }
 
-// Landing page + any static assets (preview.gif, social images) live in
-// scripts/site-assets/ and are copied verbatim to the site root.
+// Landing page + any static assets (the showcase .gif files, social images)
+// live in scripts/site-assets/ and are copied verbatim to the site root.
 const assetsDir = resolve(__dirname, "site-assets");
 if (existsSync(assetsDir)) {
   for (const file of readdirSync(assetsDir)) {

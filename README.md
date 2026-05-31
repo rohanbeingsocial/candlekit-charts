@@ -10,11 +10,19 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/preview.gif" alt="Deterministic replay streaming candlesticks with transport controls" width="820" />
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/drawing.gif" alt="Drawing a trendline, rectangle and Fibonacci retracement on a candlestick chart" width="820" />
+  <br />
+  <em>Drawing tools — trendline, rectangle, Fibonacci, measurement ruler</em>
 </p>
 
 <p align="center">
-  <strong><a href="https://rohanbeingsocial.github.io/candlekit-charts/">▶ Live demos</a></strong>
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/indicators.gif" alt="Toggling Bollinger Bands, MACD, SMA and Stochastic indicators" width="820" />
+  <br />
+  <em>Built-in indicators — Bollinger, EMA/SMA, RSI, MACD, Stochastic — toggled live</em>
+</p>
+
+<p align="center">
+  <strong><a href="https://rohanbeingsocial.github.io/candlekit-charts/">▶ Live, interactive demos</a></strong>
   — vanilla · react · indicators · drawing · replay
 </p>
 

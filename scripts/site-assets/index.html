@@ -48,13 +48,17 @@
       }
       .badge.cta { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
       .badge.cta:hover { text-decoration: none; filter: brightness(1.08); }
-      .preview {
-        margin: 8px 0 30px; border: 1px solid var(--border); border-radius: 12px;
-        overflow: hidden; background: var(--panel); aspect-ratio: 16 / 9;
-        display: flex; align-items: center; justify-content: center;
+      .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 8px 0 30px; }
+      @media (max-width: 720px) { .gallery { grid-template-columns: 1fr; } }
+      .shot {
+        display: block; border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+        background: var(--panel); transition: border-color .15s, transform .15s;
       }
-      .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
-      .preview .placeholder { color: var(--muted); font-size: 0.85rem; padding: 24px; text-align: center; }
+      .shot:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+      .shot img { width: 100%; display: block; aspect-ratio: 25 / 16; object-fit: cover; }
+      .shot .cap { padding: 8px 10px; font-size: 0.82rem; color: var(--text); }
+      .shot .cap .arrow { color: var(--accent); }
+      .shot .cap small { color: var(--muted); }
       h2 { font-size: 1.05rem; margin: 34px 0 14px; color: var(--text); }
       .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
       .card {
@@ -92,15 +96,19 @@
         </div>
       </header>
 
-      <div class="preview">
-        <img
-          src="./preview.gif"
-          alt="Drawing a trendline and scrubbing a replay on a candlestick chart"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-        />
-        <div class="placeholder" style="display:none">
-          Live demos below — click any card to open it.
-        </div>
+      <div class="gallery">
+        <a class="shot" href="./drawing/">
+          <img src="./drawing.gif" alt="Drawing a trendline, rectangle and Fibonacci retracement on a candlestick chart" loading="lazy" />
+          <div class="cap"><span class="arrow">▸</span> Drawing tools <small>— trendline · rectangle · fib · ruler</small></div>
+        </a>
+        <a class="shot" href="./indicators/">
+          <img src="./indicators.gif" alt="Toggling Bollinger Bands, MACD, SMA and Stochastic indicators" loading="lazy" />
+          <div class="cap"><span class="arrow">▸</span> Indicators <small>— Bollinger · MACD · SMA · RSI</small></div>
+        </a>
+        <a class="shot" href="./replay/">
+          <img src="./replay.gif" alt="Deterministic bar-by-bar replay streaming candlesticks" loading="lazy" />
+          <div class="cap"><span class="arrow">▸</span> Replay <small>— deterministic bar-by-bar scrub</small></div>
+        </a>
       </div>
 
       <h2>Live demos</h2>
