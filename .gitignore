@@ -10,3 +10,4 @@ coverage/
 .vscode/
 examples/**/node_modules/
 examples/**/dist/
+site/

@@ -1,0 +1,47 @@
+name: Deploy demo site
+
+# Builds the combined examples site and publishes it to GitHub Pages.
+# Enable once in repo Settings → Pages → "Build and deployment" → Source =
+# "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow the deploy job to push to Pages; one in-flight deploy at a time.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+      # build-site.mjs installs each example's deps and builds it into site/
+      # with the correct /<repo>/<name>/ base path, then drops the landing page.
+      - run: node scripts/build-site.mjs
+        env:
+          SITE_BASE: /candlekit-charts/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

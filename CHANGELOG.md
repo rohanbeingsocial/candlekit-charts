@@ -37,4 +37,4 @@ dashboard into a standalone, framework-agnostic charting toolkit.
 - ESM + CJS builds with type declarations for both entries (`.` core and
   `./react`); tree-shakeable. `lightweight-charts` is the only external runtime.
 
-[0.1.0]: https://github.com/candlekit/charts/releases/tag/v0.1.0
+[0.1.0]: https://github.com/rohanbeingsocial/candlekit-charts/releases/tag/v0.1.0

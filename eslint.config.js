@@ -3,7 +3,13 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist/**", "node_modules/**", "examples/**/dist/**", "coverage/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "examples/**/dist/**",
+      "site/**",
+      "coverage/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -22,6 +28,22 @@ export default tseslint.config(
         "error",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
+    },
+  },
+  {
+    // Node build scripts run outside the browser/library sandbox.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        Buffer: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        URL: "readonly",
+        // referenced inside a Playwright page.waitForFunction (browser context)
+        document: "readonly",
+      },
     },
   },
 );

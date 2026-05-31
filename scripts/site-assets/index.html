@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" class="dark" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>candlekit/charts — live demos</title>
+    <meta
+      name="description"
+      content="Framework-agnostic financial charting toolkit on top of lightweight-charts: drawing tools, pluggable indicators, measurement, deterministic replay, multi-chart sync."
+    />
+    <meta property="og:title" content="candlekit/charts" />
+    <meta
+      property="og:description"
+      content="The batteries-included layer over lightweight-charts: drawing tools, indicators, measurement, replay."
+    />
+    <meta property="og:type" content="website" />
+    <style>
+      :root {
+        --bg: #0e1117;
+        --panel: #161b22;
+        --panel-2: #1b222c;
+        --border: #2a313c;
+        --text: #e5e7eb;
+        --muted: #97a0ad;
+        --accent: #4f9cff;
+        --green: #3fb950;
+        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--mono);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 960px; margin: 0 auto; padding: 56px 20px 80px; }
+      header h1 { font-size: 2.1rem; margin: 0 0 6px; letter-spacing: -0.02em; }
+      header h1 .slash { color: var(--muted); }
+      .tagline { color: var(--muted); font-size: 1.02rem; margin: 0 0 18px; max-width: 70ch; }
+      .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+      .badge {
+        font-size: 0.78rem; padding: 4px 10px; border: 1px solid var(--border);
+        border-radius: 999px; color: var(--muted); background: var(--panel);
+      }
+      .badge.cta { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+      .badge.cta:hover { text-decoration: none; filter: brightness(1.08); }
+      .preview {
+        margin: 8px 0 30px; border: 1px solid var(--border); border-radius: 12px;
+        overflow: hidden; background: var(--panel); aspect-ratio: 16 / 9;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .preview .placeholder { color: var(--muted); font-size: 0.85rem; padding: 24px; text-align: center; }
+      h2 { font-size: 1.05rem; margin: 34px 0 14px; color: var(--text); }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+      .card {
+        display: block; border: 1px solid var(--border); border-radius: 10px;
+        padding: 16px 16px 14px; background: var(--panel); transition: border-color .15s, transform .15s;
+      }
+      .card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+      .card .name { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+      .card .name .arrow { color: var(--accent); }
+      .card .desc { color: var(--muted); font-size: 0.86rem; }
+      pre {
+        background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+        padding: 16px; overflow-x: auto; font-size: 0.85rem; color: var(--text);
+      }
+      pre .tok-comment { color: var(--muted); }
+      footer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+      footer p { margin: 6px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>candlekit<span class="slash">/</span>charts</h1>
+        <p class="tagline">
+          The orchestration layer <a href="https://github.com/tradingview/lightweight-charts">lightweight-charts</a>
+          leaves out — drawing tools, indicators, measurement, and deterministic replay — in one tree-shakeable,
+          framework-agnostic package.
+        </p>
+        <div class="badges">
+          <a class="badge cta" href="https://github.com/rohanbeingsocial/candlekit-charts">GitHub →</a>
+          <a class="badge" href="https://www.npmjs.com/package/@candlekit/charts">npm</a>
+          <span class="badge">MIT</span>
+          <span class="badge">TypeScript</span>
+          <span class="badge">React-optional</span>
+        </div>
+      </header>
+
+      <div class="preview">
+        <img
+          src="./preview.gif"
+          alt="Drawing a trendline and scrubbing a replay on a candlestick chart"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+        />
+        <div class="placeholder" style="display:none">
+          Live demos below — click any card to open it.
+        </div>
+      </div>
+
+      <h2>Live demos</h2>
+      <div class="grid">
+        <a class="card" href="./vanilla/">
+          <div class="name"><span class="arrow">▸</span> Vanilla&nbsp;JS</div>
+          <div class="desc">ChartController, series types (candles / line / area / volume), theme toggle. No framework.</div>
+        </a>
+        <a class="card" href="./react/">
+          <div class="name"><span class="arrow">▸</span> React</div>
+          <div class="desc">&lt;ChartView&gt; with series + timeframe + theme controls via the optional React bindings.</div>
+        </a>
+        <a class="card" href="./indicators/">
+          <div class="name"><span class="arrow">▸</span> Indicators</div>
+          <div class="desc">Built-in catalog — SMA, EMA, Bollinger, RSI, MACD, ATR, Stochastic — with a picker.</div>
+        </a>
+        <a class="card" href="./drawing/">
+          <div class="name"><span class="arrow">▸</span> Drawing tools</div>
+          <div class="desc">Trendlines, rays, rectangles, fib + the measurement ruler. Drag, select, persist.</div>
+        </a>
+        <a class="card" href="./replay/">
+          <div class="name"><span class="arrow">▸</span> Replay</div>
+          <div class="desc">Deterministic bar-by-bar replay with play / pause / speed / scrub controls.</div>
+        </a>
+      </div>
+
+      <h2>Quick start</h2>
+      <pre><span class="tok-comment"># one peer dependency — no git URLs, no copyleft</span>
+npm install @candlekit/charts lightweight-charts</pre>
+
+      <footer>
+        <p>
+          Rendering by <a href="https://github.com/tradingview/lightweight-charts">Lightweight Charts™</a>
+          (Apache-2.0), © TradingView, Inc. candlekit/charts is an independent project and is
+          <strong>not affiliated with or endorsed by TradingView</strong>.
+        </p>
+        <p>Drawing tools and indicators are candlekit's own code. Library MIT-licensed. Demo data is synthetic.</p>
+      </footer>
+    </div>
+  </body>
+</html>

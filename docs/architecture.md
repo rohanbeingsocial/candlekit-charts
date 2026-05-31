@@ -6,8 +6,8 @@
    layer is a thin, optional wrapper.
 2. **Plugin-first.** Drawing, indicators, and measurement are plugins; you add
    your own the same way.
-3. **Tree-shakeable.** Vanilla users never pull React; consumers who skip drawing
-   or indicators never pull those runtimes. Optional runtimes lazy-load.
+3. **Tree-shakeable.** Vanilla users never pull React; side-effect-free modules
+   let consumers who skip drawing or indicators drop that code at bundle time.
 4. **One time domain.** Public API is epoch-ms; the only conversion to
    lightweight-charts' epoch-seconds happens inside `ChartController`.
 5. **Deterministic replay.** The cursor — not wall-clock — drives replayed state.

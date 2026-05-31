@@ -6,8 +6,17 @@
   <em>A clean, extensible layer over lightweight-charts — the orchestration you keep rewriting, packaged once.</em>
 </p>
 
-[![CI](https://github.com/candlekit/charts/actions/workflows/ci.yml/badge.svg)](https://github.com/candlekit/charts/actions)
+[![CI](https://github.com/rohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/preview.gif" alt="Deterministic replay streaming candlesticks with transport controls" width="820" />
+</p>
+
+<p align="center">
+  <strong><a href="https://rohanbeingsocial.github.io/candlekit-charts/">▶ Live demos</a></strong>
+  — vanilla · react · indicators · drawing · replay
+</p>
 
 ---
 
@@ -20,9 +29,11 @@ measurement ruler, multi-chart sync, and a deterministic historical replay
 engine. The **core is framework-agnostic** (no React, no DOM framework); the
 optional **`/react` entry** adds components and hooks.
 
-It is **plugin-first**: drawing, indicators, and measurement are all `ChartPlugin`s,
-and the optional third-party runtimes (drawing tools, indicator catalog) are
-**lazy-loaded** so the core bundle never pays for what you don't use.
+It is **plugin-first**: drawing, indicators, and measurement are all `ChartPlugin`s
+you can swap, extend, or omit. Drawing tools and indicators are **original code**
+built on lightweight-charts canvas primitives — no third-party drawing or indicator
+runtime — and the side-effect-free modules let tree-shaking drop whatever you don't
+import.
 
 ## Features
 

@@ -7,8 +7,8 @@ and PR expectations. For architecture and extension points, read
 ## Setup
 
 ```bash
-git clone https://github.com/candlekit/charts.git
-cd charts
+git clone https://github.com/rohanbeingsocial/candlekit-charts.git
+cd candlekit-charts
 npm install
 ```
 
