@@ -8,11 +8,6 @@
   },
   "dependencies": {
     "lightweight-charts": "^5.0.0",
-    "lightweight-charts-line-tools-core": "github:difurious/lightweight-charts-line-tools-core",
-    "lightweight-charts-line-tools-lines": "github:difurious/lightweight-charts-line-tools-lines",
-    "lightweight-charts-line-tools-rectangle": "github:difurious/lightweight-charts-line-tools-rectangle",
-    "lightweight-charts-line-tools-circle": "github:difurious/lightweight-charts-line-tools-circle",
-    "lightweight-charts-line-tools-fib-retracement": "github:difurious/lightweight-charts-line-tools-fib-retracement",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

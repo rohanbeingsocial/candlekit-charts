@@ -27,12 +27,12 @@ All four must be green before a PR merges.
 4. Document it (`docs/`, `README.md`) and add a `CHANGELOG.md` line.
 5. Add a test if it's logic in `core`/`replay`/`sync`/`events`.
 
-## Optional third-party runtimes
+## Runtime dependencies
 
-Never import the MPL drawing packages or `lightweight-charts-indicators` from the
-core. They are reached only from their adapter files via dynamic `import()` with a
-non-literal specifier, and declared as `optionalDependencies`. See
-[architecture.md](./architecture.md#optional-runtimes--tree-shaking).
+`lightweight-charts` is the only external runtime (a peer). Drawing tools and
+indicators are original, self-contained implementations — do not add new runtime
+dependencies for them. See
+[architecture.md](./architecture.md#self-contained-drawing--indicators).
 
 ## Reporting
 

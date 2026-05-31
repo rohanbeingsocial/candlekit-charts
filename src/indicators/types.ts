@@ -1,8 +1,8 @@
 /**
- * Indicator framework contracts. Declared locally so the core never imports the
- * optional `oakscriptjs` / `lightweight-charts-indicators` runtime; the shapes
- * are structurally compatible with those packages, so their indicator
- * definitions drop straight into this registry (see `oakscript.ts`).
+ * Indicator framework contracts. The built-in catalog (`builtin.ts`) implements
+ * these shapes directly. They are also kept structurally generic so an
+ * externally-shaped indicator definition can be adapted in via `defFromRaw`
+ * (see `registry.ts`) without the core depending on any third-party runtime.
  */
 
 export type IndicatorCategory = "overlay" | "oscillator" | "pattern";

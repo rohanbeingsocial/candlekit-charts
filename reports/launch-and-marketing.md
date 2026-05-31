@@ -22,8 +22,9 @@ but is deliberately low-level. There is no well-maintained, typed, plugin-based
 people struggle to build.
 
 **Honest framing (avoid backlash):** never imply TradingView affiliation; always
-credit lightweight-charts (Apache-2.0) and the MPL drawing runtime. The
-plugin/extensibility story is the differentiator vs. just forking.
+credit lightweight-charts (Apache-2.0) as the rendering engine. Drawing tools and
+indicators are our own code; the plugin/extensibility story is the differentiator
+vs. just forking.
 
 ---
 
@@ -96,9 +97,10 @@ referral sources. Optimize for **downloads + returning demo visitors**, not star
 
 ## 6. Risks / watch-outs
 
-- **Drawing runtime is git-only (MPL).** Friction for installers and a smell for
-  evaluators. Mitigations: document clearly (done), consider publishing a mirror
-  or vendoring with attribution, or shipping a lighter built-in drawing fallback.
+- **Single peer dependency.** lightweight-charts is the only external runtime;
+  drawing and indicators are built in, so install is just `npm i @candlekit/charts
+  lightweight-charts` with no git URLs or copyleft to explain. This is a selling
+  point — lead with "no extra runtimes" rather than burying it.
 - **Trademark.** Keep "Lightweight Charts™" attribution + non-affiliation
   prominent; never use TradingView marks in branding.
 - **"Why not just use X?"** Pre-empt with the comparison page.

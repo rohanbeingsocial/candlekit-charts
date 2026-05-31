@@ -12,10 +12,9 @@ cd charts
 npm install
 ```
 
-`npm install` resolves the peer (`lightweight-charts`, `react`) and optional
-runtimes. The optional **drawing** packages are git-hosted (MPL-2.0) — if they
-fail to fetch, install continues (they are `optionalDependencies`) and the core
-still builds and tests.
+`npm install` pulls the peer deps (`lightweight-charts`, `react`) plus the dev
+toolchain. There are no other runtime dependencies — drawing and indicators are
+built in.
 
 > **Windows note:** if `npm run build` fails with
 > `Cannot find module @rollup/rollup-win32-x64-msvc`, that is the known
@@ -26,12 +25,11 @@ still builds and tests.
 ## Build
 
 ```bash
-npm run build        # tsup: ESM + CJS + .d.ts for all 4 entries → dist/
+npm run build        # tsup: ESM + CJS + .d.ts for both entries → dist/
 npm run dev          # watch mode
 ```
 
-Entries: `index` (core), `react/index`, `drawing-linetools`,
-`indicators-oakscript`. Each is independently tree-shakeable.
+Entries: `index` (core) and `react/index`. Both are tree-shakeable.
 
 ## Test
 
@@ -63,8 +61,8 @@ A PR is ready to merge when:
 3. **Public API discipline** — new exports go through the barrels; breaking
    changes are called out and bump the major. See AGENTS.md "Public API rules".
 4. **No core→react or core→engine imports** — dependency direction stays downward.
-5. **No optional runtime in core** — drawing/indicator third-party deps stay in
-   their subpath entries, loaded via dynamic `import()`.
+5. **No new runtime deps** — `lightweight-charts` is the only one; keep drawing
+   and indicators self-contained.
 6. **Docs updated** — if you change the public surface, update `README.md`,
    `docs/`, and `CHANGELOG.md`.
 7. **Conventional commits** preferred (`feat:`, `fix:`, `docs:`, `refactor:`…).

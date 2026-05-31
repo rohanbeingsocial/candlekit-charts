@@ -1,11 +1,10 @@
 /**
  * @candlekit/charts — framework-agnostic entry.
  *
- * Everything here is free of React and of the optional drawing/indicator
- * runtimes. Subpath entries layer those on:
- *   @candlekit/charts/react                React bindings
- *   @candlekit/charts/drawing-linetools    MPL line-tools drawing adapter
- *   @candlekit/charts/indicators-oakscript bundled indicator set
+ * Everything here is free of React. The only external runtime dependency is
+ * `lightweight-charts` (peer). Drawing tools and indicators are original,
+ * self-contained implementations — no third-party drawing/indicator runtimes.
+ * The React bindings live at `@candlekit/charts/react`.
  */
 
 // ── Core ───────────────────────────────────────────────────────────────────────
@@ -24,10 +23,12 @@ export * from "./chart/ChartController";
 // ── Data source contracts ───────────────────────────────────────────────────────
 export * from "./data-source/types";
 
-// ── Drawing (engine + plugin; the line-tools runtime is injected) ───────────────
+// ── Drawing (original engine rendered on lightweight-charts primitives) ─────────
 export * from "./drawing/types";
+export * from "./drawing/geometry";
 export * from "./drawing/DrawingEngine";
-export * from "./drawing/DrawingPlugin";
+export * from "./drawing/DrawingPrimitive";
+export * from "./drawing/DrawingController";
 export * from "./drawing/persistence";
 
 // ── Measurement ─────────────────────────────────────────────────────────────────
@@ -36,9 +37,10 @@ export * from "./measurement/RulerPrimitive";
 export * from "./measurement/ChartCoordinateUtils";
 export * from "./measurement/MeasurementController";
 
-// ── Indicators (registry + controller; definitions are pluggable) ───────────────
+// ── Indicators (registry + controller + built-in catalog; pluggable) ────────────
 export * from "./indicators/types";
 export * from "./indicators/registry";
+export * from "./indicators/builtin";
 export * from "./indicators/IndicatorController";
 
 // ── Replay ──────────────────────────────────────────────────────────────────────

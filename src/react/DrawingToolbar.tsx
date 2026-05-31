@@ -32,9 +32,14 @@ export function DrawingToolbar({ tools = DEFAULT_TOOLS, className, style }: Draw
   const [locked, setLocked] = useState(false);
   const engine = drawing?.engine ?? null;
 
+  // Reflect the engine's active tool + lock state (cleared automatically after a
+  // drawing is committed).
   useEffect(() => {
     if (!engine) return;
-    return engine.onAfterEdit(() => setActive(null));
+    return engine.onChange(() => {
+      setActive(engine.getActiveTool());
+      setLocked(engine.isLocked());
+    });
   }, [engine]);
 
   if (!engine) return null;

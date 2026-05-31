@@ -5,8 +5,6 @@ shipped `.d.ts`; this is the prose companion. Import paths:
 
 - `@candlekit/charts` — core (everything below except React components)
 - `@candlekit/charts/react` — React components/hooks (+ re-exports of core)
-- `@candlekit/charts/drawing-linetools` — `createLineToolsDrawingPlugin`
-- `@candlekit/charts/indicators-oakscript` — `createOakscriptRegistry`
 
 ---
 
@@ -81,15 +79,17 @@ interface PluginContext { chart; series; bus; theme; getBars(): readonly Bar[]; 
 
 ## Drawing
 
-- `DrawingEngine` — facade over a `LineToolsRuntime`: `startTool(id)`, `stopTool()`,
-  `removeSelected()`, `removeAll()`, `getSelected()`, `getSelectedParsed()`,
-  `applyOptions()`, `setLocked()`, `isLocked()`, `export()`, `import()`,
-  `onAfterEdit/onSingleClick/onDoubleClick`, `setMagnetThreshold()`,
-  `setCrosshairXY()`.
-- `DrawingPlugin` — `ChartPlugin` wrapping an engine; `.engine` getter after init.
+- `DrawingController(opts?)` — `ChartPlugin`. `opts`: `{ engine?, storageKey?, kv?, hitTolerance? }`.
+  Exposes `.engine`.
+- `DrawingEngine` — model + state + events: `startTool(id)`, `stopTool()`,
+  `getActiveTool()`, `getDrawings()`, `getById()`, `setPoints()`, `setStyle()`,
+  `setDefaultStyle()`, `select()`, `getSelectedId()`, `removeSelected()`,
+  `remove(id)`, `removeAll()`, `setLocked()`, `isLocked()`, `export()`,
+  `import()`, `onChange(cb)`.
+- `DrawingPrimitive` — the `ISeriesPrimitive` that renders the model.
+- `Drawing`, `DrawingPoint`, `DrawingStyle`, `DrawingToolId`, `TOOL_POINTS`, `FIB_LEVELS`, `DEFAULT_STYLE`.
+- geometry: `distToSegment`, `distToLine`, `distToRay`, `distToRectEdges`, `distToEllipse`, `pointInRect`.
 - `saveDrawings/loadDrawings`, `localStorageKV`, `KVStore`.
-- `createLineToolsDrawingPlugin(opts)` *(/drawing-linetools)* — `async`, returns a
-  configured `DrawingPlugin`. `opts`: `{ tools?, magnetThreshold?, storageKey?, kv? }`.
 
 ## Indicators
 
@@ -97,8 +97,9 @@ interface PluginContext { chart; series; bus; theme; getBars(): readonly Bar[]; 
   `byCategory()`.
 - `IndicatorController(registry, { onChange? })` — `ChartPlugin`. `add(name, params?)`,
   `remove(name)`, `toggle(name)`, `activeNames()`, `available()`.
-- `defFromRaw(name, raw)` — adapt a `lightweight-charts-indicators`-shaped def.
-- `createOakscriptRegistry(into?)` *(/indicators-oakscript)* — `async`, populated registry.
+- `createBuiltinRegistry(into?)` — registry pre-loaded with `BUILTIN_INDICATORS`
+  (SMA, EMA, WMA, VWAP, Bollinger, RSI, MACD, ATR, Stochastic).
+- `defFromRaw(name, raw)` — adapt an externally-shaped indicator def.
 - `IndicatorDef` — `{ name, title, shortTitle, category, calculate, defaultInputs, inputConfig, plotConfig, hlineConfig }`.
 
 ## Measurement

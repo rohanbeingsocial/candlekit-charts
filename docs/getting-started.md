@@ -80,28 +80,27 @@ For exchanges with a session open other than midnight UTC, pass
 ## 6. Add an indicator
 
 ```ts
-import { IndicatorController } from "@candlekit/charts";
-import { createOakscriptRegistry } from "@candlekit/charts/indicators-oakscript";
+import { IndicatorController, createBuiltinRegistry } from "@candlekit/charts";
 
-const registry = await createOakscriptRegistry();
-const indicators = new IndicatorController(registry);
+const indicators = new IndicatorController(createBuiltinRegistry());
 chart.use(indicators);
 indicators.add("EMA", { length: 21 });
 ```
 
-See [indicators.md](./indicators.md).
+Built-in catalog: SMA, EMA, WMA, VWAP, Bollinger, RSI, MACD, ATR, Stochastic —
+plus your own. See [indicators.md](./indicators.md).
 
 ## 7. Add drawing tools
 
 ```ts
-import { createLineToolsDrawingPlugin } from "@candlekit/charts/drawing-linetools";
+import { DrawingController } from "@candlekit/charts";
 
-const drawing = await createLineToolsDrawingPlugin({ storageKey: "drawings:demo" });
+const drawing = new DrawingController({ storageKey: "drawings:demo" });
 chart.use(drawing);
-drawing.engine?.startTool("TrendLine");
+drawing.engine.startTool("TrendLine");
 ```
 
-Requires the optional MPL packages — see [drawing-tools.md](./drawing-tools.md).
+Built in — nothing extra to install. See [drawing-tools.md](./drawing-tools.md).
 
 ## 8. Replay
 

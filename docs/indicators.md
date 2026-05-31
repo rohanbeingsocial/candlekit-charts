@@ -2,7 +2,8 @@
 
 Indicators are a registry of pure `calculate` functions plus render metadata. The
 `IndicatorController` is a `ChartPlugin` that reconciles active indicators into
-lightweight-charts series, panes, price lines, and markers.
+lightweight-charts series, panes, price lines, and markers. The built-in catalog
+is original MIT code — no third-party indicator runtime.
 
 ## The model
 
@@ -20,21 +21,22 @@ interface IndicatorDef {
 }
 ```
 
-- **overlay** → drawn on the price pane (e.g. SMA, EMA, VWAP, Bollinger).
-- **oscillator** → drawn in a new sub-pane (e.g. RSI, MACD, Stochastic).
+- **overlay** → drawn on the price pane (SMA, EMA, WMA, VWAP, Bollinger).
+- **oscillator** → drawn in a new sub-pane (RSI, MACD, ATR, Stochastic).
 - **pattern** → emits markers, no plotted line.
 
 `IndicatorBar.time` is epoch **seconds** (lightweight-charts unit); the controller
 converts your ms bars automatically.
 
-## Using the bundled set
+## Built-in catalog
+
+`createBuiltinRegistry()` returns a registry pre-loaded with: **SMA, EMA, WMA,
+VWAP, Bollinger Bands, RSI, MACD, ATR, Stochastic** (`BUILTIN_INDICATORS`).
 
 ```ts
-import { IndicatorController } from "@candlekit/charts";
-import { createOakscriptRegistry } from "@candlekit/charts/indicators-oakscript";
+import { IndicatorController, createBuiltinRegistry } from "@candlekit/charts";
 
-const registry = await createOakscriptRegistry(); // SMA, EMA, WMA, VWAP, RSI,
-                                                  // MACD, Bollinger, ATR, Stoch, …
+const registry = createBuiltinRegistry();
 const indicators = new IndicatorController(registry);
 chart.use(indicators);
 
@@ -43,10 +45,6 @@ indicators.add("EMA", { length: 21 });
 indicators.toggle("MACD");
 console.log(indicators.activeNames());
 ```
-
-> Requires `npm i lightweight-charts-indicators oakscriptjs`. These are MIT and
-> on npm. The exact catalog is whatever that package version exports — the
-> registry auto-discovers every compatible definition.
 
 ## React
 
@@ -66,7 +64,7 @@ controller.
 Any object matching `IndicatorDef` registers — this is the extension point:
 
 ```ts
-import { IndicatorRegistry } from "@candlekit/charts";
+import { createBuiltinRegistry } from "@candlekit/charts";
 
 const donchian: IndicatorDef = {
   name: "Donchian",
@@ -93,23 +91,21 @@ const donchian: IndicatorDef = {
   },
 };
 
-const registry = new IndicatorRegistry().register(donchian);
+// Mix built-in + custom:
+const registry = createBuiltinRegistry().register(donchian);
 ```
 
-Mix custom + bundled:
-
-```ts
-const registry = await createOakscriptRegistry();
-registry.register(donchian);
-```
+Adapting definitions shaped like other libraries' indicators? `defFromRaw(name,
+raw)` converts a `{ calculate, metadata, plotConfig, ... }` object into an
+`IndicatorDef`.
 
 ## Histograms, price lines, markers
 
 - A `plotConfig` entry with `style: "histogram"` (or `"columns"`) renders as a
-  histogram; per-point `color` is honored.
-- `hlineConfig` entries become price lines on the first plot (e.g. RSI 30/70).
-- For `category: "pattern"`, return `markers: MarkerDef[]` from `calculate`; the
-  controller renders them via the series-markers plugin.
+  histogram; per-point `color` is honored (MACD does this).
+- `hlineConfig` entries become price lines on the first plot (RSI 30/70,
+  Stochastic 20/80, MACD 0).
+- For `category: "pattern"`, return `markers: MarkerDef[]` from `calculate`.
 
 ## Lifecycle notes
 
@@ -117,5 +113,5 @@ registry.register(donchian);
   and adds/removes only what changed.
 - On `setSeriesType` the controller's plugins are re-initialized, so indicators
   survive a candlestick→line switch.
-- `calculate` runs on the current bars (already at the active interval); throwing
-  is caught and that indicator is skipped, never crashing the chart.
+- `calculate` runs on the current bars (already at the active interval); if it
+  throws, that indicator is skipped — the chart never crashes.

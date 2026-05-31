@@ -3,15 +3,18 @@ Copyright (c) 2026 candlekit contributors
 
 This product is licensed under the MIT License (see LICENSE).
 
+The drawing tools and indicators in this package are original implementations
+written for @candlekit/charts; they do not incorporate third-party drawing or
+indicator source.
+
 ================================================================================
 Third-party software
 ================================================================================
 
-@candlekit/charts builds on the following packages. None of their source is
-vendored into this repository — they are declared as peer / optional
-dependencies and resolved at the consumer. Their license terms govern their own
-code; the attributions below are provided for convenience and to satisfy notice
-requirements.
+@candlekit/charts renders on the following package, declared as a peer
+dependency and resolved at the consumer (its source is not vendored here). Its
+license governs its own code; the attribution below is provided to satisfy that
+license's notice requirement.
 
 --------------------------------------------------------------------------------
 lightweight-charts            (peer dependency)
@@ -26,33 +29,7 @@ lightweight-charts            (peer dependency)
 fancy-canvas                  (transitive of lightweight-charts)
   License: MIT
   https://github.com/tradingview/fancy-canvas
---------------------------------------------------------------------------------
-lightweight-charts-indicators (optional dependency)
-  Copyright (c) deepentropy
-  License: MIT
-  https://github.com/deepentropy/lightweight-charts-indicators
 
-  Source of the bundled indicator catalog exposed via
-  @candlekit/charts/indicators-oakscript.
---------------------------------------------------------------------------------
-oakscriptjs                   (optional dependency)
-  Copyright (c) deepentropy
-  License: MIT
-  https://github.com/deepentropy/oakscriptJS
-
-  Indicator runtime underlying lightweight-charts-indicators.
---------------------------------------------------------------------------------
-lightweight-charts-line-tools-core
-lightweight-charts-line-tools-lines
-lightweight-charts-line-tools-rectangle
-lightweight-charts-line-tools-circle
-lightweight-charts-line-tools-fib-retracement   (optional dependencies)
-  Copyright (c) 2025 difurious
-  License: Mozilla Public License 2.0 (MPL-2.0)
-  https://github.com/difurious
-
-  Drawing-tool runtime wired by @candlekit/charts/drawing-linetools. MPL-2.0 is
-  file-level weak copyleft: these packages are used unmodified as dependencies,
-  so no source-disclosure obligation extends to @candlekit/charts. If you fork
-  and modify their files, those modified files remain under MPL-2.0.
+  Canvas rendering target used by lightweight-charts and by this package's
+  series primitives.
 --------------------------------------------------------------------------------

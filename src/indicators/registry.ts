@@ -1,7 +1,8 @@
 /**
  * Indicator registry. Holds {@link IndicatorDef}s by name and groups them by
- * category. Empty by default — register the bundled set (`oakscript.ts`) and/or
- * your own custom indicators. This is the extensible indicator framework.
+ * category. Empty by default — register the built-in set
+ * (`createBuiltinRegistry` from `builtin.ts`) and/or your own custom
+ * indicators. This is the extensible indicator framework.
  */
 
 import type { IndicatorCategory, IndicatorDef } from "./types";
@@ -47,9 +48,9 @@ export class IndicatorRegistry {
 }
 
 /**
- * Build an {@link IndicatorDef} from a raw definition shaped like those exported
- * by `lightweight-charts-indicators` (a `calculate` fn + `metadata` + configs).
- * Used by `oakscript.ts`, exported for adapting any compatible source.
+ * Build an {@link IndicatorDef} from a raw definition shaped as a `calculate`
+ * fn + `metadata` + configs. Exported for adapting any externally-shaped
+ * indicator source into the registry without coupling the core to it.
  */
 export function defFromRaw(name: string, raw: unknown): IndicatorDef | null {
   if (!isIndicatorLike(raw)) return null;

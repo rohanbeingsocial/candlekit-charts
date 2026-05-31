@@ -1,13 +1,13 @@
 import { createContext, useContext } from "react";
 import type { ChartController } from "../chart/ChartController";
-import type { DrawingPlugin } from "../drawing/DrawingPlugin";
+import type { DrawingController } from "../drawing/DrawingController";
 import type { IndicatorController } from "../indicators/IndicatorController";
 import type { MeasurementController } from "../measurement/MeasurementController";
 
 /** Handles surfaced by {@link ChartView} to its descendants + `onReady`. */
 export interface ChartViewApi {
   controller: ChartController;
-  drawing: DrawingPlugin | null;
+  drawing: DrawingController | null;
   indicators: IndicatorController | null;
   measurement: MeasurementController | null;
 }

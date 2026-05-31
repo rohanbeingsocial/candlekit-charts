@@ -9,8 +9,8 @@ instead of the in-tree chart code, and a record of what changed during extractio
 | --- | --- |
 | `components/chart/ChartCanvas.tsx` | `ChartController` + `<ChartView>` (`@candlekit/charts` / `/react`) |
 | `components/chart/chartData.ts` | `toBars`, `resample`, `floorToBucket`, `applyFixedOffset`, `dateOf`, `timeOf` |
-| `components/chart/engine/DrawingEngine.ts` | `DrawingEngine` + `DrawingPlugin` + `createLineToolsDrawingPlugin` (`/drawing-linetools`) |
-| `components/chart/indicators/*` | `IndicatorRegistry`, `IndicatorController`, `createOakscriptRegistry` (`/indicators-oakscript`), `<IndicatorPicker>` |
+| `components/chart/engine/DrawingEngine.ts` | `DrawingController` + `DrawingEngine` (original engine; no third-party runtime) |
+| `components/chart/indicators/*` | `IndicatorController` + `createBuiltinRegistry` (original catalog) + `<IndicatorPicker>` |
 | `components/chart/measurement/*` | `MeasurementController`, `RulerPrimitive`, `computeMeasurement`, `computeRiskReward` |
 | `packages/replay-engine` | `createReplayController`, `ReplayController*` types |
 | `packages/sync-engine` | `createSyncEngine`, `SyncEngine*` types |
@@ -28,12 +28,13 @@ instead of the in-tree chart code, and a record of what changed during extractio
    midnight). Weekly/monthly are **not** produced by client resampling — supply
    them pre-aggregated from your CAGGs/source (same constraint as before, now
    explicit).
-3. **Drawing runtime injected.** `ChartCanvas` imported the difurious classes
-   directly. Now you either use `createLineToolsDrawingPlugin()` (which lazy-loads
-   them) or implement `LineToolsRuntime`. The engine no longer hard-depends on the
-   MPL packages.
-4. **Indicators decoupled from `oakscriptjs`.** The registry takes any
-   `IndicatorDef`. Use `createOakscriptRegistry()` for the old bundled catalog.
+3. **Drawing is built in.** `ChartCanvas` imported third-party line-tool classes.
+   The library now ships its own `DrawingController` + `DrawingEngine` —
+   `chart.use(new DrawingController({ storageKey }))`, no extra install. Tool ids
+   are the same names (`TrendLine`, `Rectangle`, `FibRetracement`, …).
+4. **Indicators are built in.** Use `createBuiltinRegistry()` (SMA/EMA/WMA/VWAP/
+   Bollinger/RSI/MACD/ATR/Stochastic). The registry still takes any custom
+   `IndicatorDef`; `defFromRaw()` adapts externally-shaped defs.
 5. **No shadcn/Radix/lucide.** Toolbar/picker/controls are dependency-light and
    styled via `.ck-*` CSS. Wire your own UI if you prefer (the controllers are the
    real API).
@@ -54,10 +55,9 @@ Old (app):
 
 New:
 ```tsx
-const drawing = await createLineToolsDrawingPlugin({ storageKey: "drawings.x" });
 <ChartView data={rows} resampleMinutes={iv.minutes}
            resampleOptions={{ sessionOpenMinutes: 9*60 + 15 }}
-           drawing={drawing}>
+           drawing={{ storageKey: "drawings.x" }}>
   <DrawingToolbar />
 </ChartView>
 ```

@@ -16,13 +16,15 @@ dashboard into a standalone, framework-agnostic charting toolkit.
   override; responsive auto-sizing; live `updateBar`.
 - **Data utilities** — pure `toBars`, `resample`, `floorToBucket` with
   session-aware bucket alignment (`sessionOpenMinutes`); fixed-offset time helpers.
-- **Drawing framework** — runtime-agnostic `DrawingEngine` + `DrawingPlugin`;
-  optional MPL line-tools adapter (`/drawing-linetools`) with trend line, ray,
-  extended line, horizontal/vertical line, arrow, cross-line, rectangle, circle,
-  Fibonacci retracement; selection, lock, magnet-snap, persistence.
-- **Indicator framework** — `IndicatorRegistry` + `IndicatorController`; optional
-  bundled catalog (`/indicators-oakscript`: SMA, EMA, WMA, VWAP, RSI, MACD,
-  Bollinger Bands, ATR, Stochastic, …); custom indicators via `register`.
+- **Drawing tools** — original, built-in `DrawingEngine` + `DrawingPrimitive` +
+  `DrawingController` (a `ChartPlugin`) on lightweight-charts canvas primitives:
+  trend line, ray, extended line, horizontal/vertical line, arrow, rectangle,
+  circle, Fibonacci retracement; selection, drag, lock, persistence. No
+  third-party drawing runtime.
+- **Indicators** — `IndicatorRegistry` + `IndicatorController` with an original
+  built-in catalog (`createBuiltinRegistry`: SMA, EMA, WMA, VWAP, RSI, MACD,
+  Bollinger Bands, ATR, Stochastic); custom indicators via `register`. No
+  third-party indicator runtime.
 - **Measurement** — Shift-drag `MeasurementController` + `RulerPrimitive` (price,
   percentage, bar-distance, time-delta, risk/reward helper).
 - **Replay** — deterministic `ReplayController` with per-day LRU cache,
@@ -32,6 +34,7 @@ dashboard into a standalone, framework-agnostic charting toolkit.
 - **Plugin + event system** — `ChartPlugin` / `PluginContext` / typed `EventBus`.
 - **React bindings** (`/react`) — `ChartView`, `DrawingToolbar`,
   `IndicatorPicker`, `ReplayControls`, `useChartController`, `useChartApi`.
-- ESM + CJS builds with type declarations; tree-shakeable subpath entries.
+- ESM + CJS builds with type declarations for both entries (`.` core and
+  `./react`); tree-shakeable. `lightweight-charts` is the only external runtime.
 
 [0.1.0]: https://github.com/candlekit/charts/releases/tag/v0.1.0

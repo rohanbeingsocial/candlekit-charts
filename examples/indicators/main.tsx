@@ -1,40 +1,26 @@
-import { StrictMode, useEffect, useMemo, useState } from "react";
+import { StrictMode, useMemo } from "react";
 import { createRoot } from "react-dom/client";
-import { ChartView, IndicatorPicker } from "@candlekit/charts/react";
-import { IndicatorController } from "@candlekit/charts";
-import { createOakscriptRegistry } from "@candlekit/charts/indicators-oakscript";
+import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@candlekit/charts/react";
 import "@candlekit/charts/styles.css";
 import { generateBars } from "../shared/sampleData";
 
 function App() {
   const data = useMemo(() => generateBars(600), []);
-  const [indicators, setIndicators] = useState<IndicatorController | null>(null);
-
-  useEffect(() => {
-    let live = true;
-    createOakscriptRegistry().then((registry) => {
-      if (!live) return;
-      const ctl = new IndicatorController(registry);
-      ctl.add("EMA", { length: 21 }); // seed a couple
-      ctl.add("RSI", { length: 14 });
-      setIndicators(ctl);
-    });
-    return () => {
-      live = false;
-    };
+  // Built-in MIT catalog — no external indicator runtime.
+  const indicators = useMemo(() => {
+    const ctl = new IndicatorController(createBuiltinRegistry());
+    ctl.add("EMA", { length: 21 });
+    ctl.add("RSI", { length: 14 });
+    return ctl;
   }, []);
 
   return (
     <div style={{ padding: 12 }}>
       <p>Toggle indicators in the panel (top-right). Overlays draw on price; oscillators get their own pane.</p>
       <div style={{ height: "75vh" }}>
-        {indicators ? (
-          <ChartView data={data} indicators={indicators} theme="dark">
-            <IndicatorPicker />
-          </ChartView>
-        ) : (
-          <p>Loading indicator catalog…</p>
-        )}
+        <ChartView data={data} indicators={indicators} theme="dark">
+          <IndicatorPicker />
+        </ChartView>
       </div>
     </div>
   );

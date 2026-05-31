@@ -45,8 +45,8 @@ generic part was re-authored and the domain part dropped.
 | --- | --- |
 | `ChartCanvas.tsx` (shadcn/lucide, app aliases, IST hardcode) | `ChartController` (core) + `ChartView` (React), dependency-light |
 | `chartData.ts` (`@/lib/api` `WireOhlcvRow`, IST offset, NSE 09:15 anchor) | `core/data.ts` + `core/time.ts` — `RawBar`, parameterized `sessionOpenMinutes`, `applyFixedOffset` |
-| `engine/DrawingEngine.ts` (hard `lightweight-charts-line-tools-core` types) | `drawing/DrawingEngine.ts` over structural `LineToolsRuntime`; MPL wiring isolated in `lineToolsAdapter.ts` |
-| `indicators/registry.ts` + `IndicatorManager.tsx` (imports `oakscriptjs` directly) | `indicators/registry.ts` + `IndicatorController.ts` with local types; `oakscript.ts` lazy-loads the dep |
+| `engine/DrawingEngine.ts` (wrapper over a third-party line-tools runtime) | `drawing/*` — original engine (`DrawingEngine` + `DrawingPrimitive` + `DrawingController`) on lightweight-charts primitives; no third-party drawing runtime |
+| `indicators/registry.ts` + `IndicatorManager.tsx` (third-party indicator runtime) | `indicators/*` — `IndicatorRegistry` + `IndicatorController` + original `builtin.ts` catalog; no third-party indicator runtime |
 | `measurement/MeasurementManager.tsx` (React glue) | `MeasurementController` (framework-agnostic) |
 | `packages/replay-engine`, `sync-engine`, `chart-engine`, `workspace` | `replay/`, `sync/`, `core/`, `plugins/`, `data-source/` — `@ourorg`→`@candlekit`, domain event kinds (`expiry`) removed |
 

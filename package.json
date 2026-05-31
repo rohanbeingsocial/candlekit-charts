@@ -50,16 +50,6 @@
       "import": "./dist/react/index.js",
       "require": "./dist/react/index.cjs"
     },
-    "./drawing-linetools": {
-      "types": "./dist/drawing-linetools.d.ts",
-      "import": "./dist/drawing-linetools.js",
-      "require": "./dist/drawing-linetools.cjs"
-    },
-    "./indicators-oakscript": {
-      "types": "./dist/indicators-oakscript.d.ts",
-      "import": "./dist/indicators-oakscript.js",
-      "require": "./dist/indicators-oakscript.cjs"
-    },
     "./styles.css": "./styles.css",
     "./package.json": "./package.json"
   },
@@ -71,7 +61,6 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:smoke": "vitest run --config vitest.smoke.config.ts",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "peerDependencies": {
@@ -86,15 +75,6 @@
     "react-dom": {
       "optional": true
     }
-  },
-  "optionalDependencies": {
-    "lightweight-charts-indicators": "^0.4.1",
-    "lightweight-charts-line-tools-circle": "github:difurious/lightweight-charts-line-tools-circle",
-    "lightweight-charts-line-tools-core": "github:difurious/lightweight-charts-line-tools-core",
-    "lightweight-charts-line-tools-fib-retracement": "github:difurious/lightweight-charts-line-tools-fib-retracement",
-    "lightweight-charts-line-tools-lines": "github:difurious/lightweight-charts-line-tools-lines",
-    "lightweight-charts-line-tools-rectangle": "github:difurious/lightweight-charts-line-tools-rectangle",
-    "oakscriptjs": "^0.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

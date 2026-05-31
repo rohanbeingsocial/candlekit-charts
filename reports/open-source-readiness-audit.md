@@ -71,17 +71,15 @@ lazily, so a clone can build and test without them.
 - Two barrels define the surface (`src/index.ts`, `src/react/index.ts`); nothing
   else is public.
 - `sideEffects` limited to CSS → tree-shakeable.
-- Subpath entries isolate optional runtimes so the core bundle stays minimal.
+- Two entries (`.` core, `./react`); the core bundle pulls in no framework code.
 - Epoch-ms is the single time unit in the public API.
 
 ## 6. Residual risks / follow-ups
 
 | Item | Severity | Note |
 | --- | --- | --- |
-| Drawing runtime is git-hosted (not on npm) | Low | MPL-2.0, optional; documented. Consumers who want drawing install via git URL. A future option is vendoring or a published mirror. |
 | "Lightweight Charts™" trademark | Low | Apache-2.0 code; trademark acknowledged in NOTICE/README; project states non-affiliation. |
-| Indicator catalog contents vary by version | Low | The registry auto-discovers whatever `lightweight-charts-indicators` exports; documented. |
-| DOM-heavy components lack automated tests | Low | Validated via examples; unit tests cover pure logic. |
+| DOM-heavy components (drawing/measurement render paths) | Low | Validated via examples; pure logic (data/resample/replay/sync/indicators math) is unit tested. |
 
 ## 7. Conclusion
 

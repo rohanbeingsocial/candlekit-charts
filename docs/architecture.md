@@ -18,7 +18,7 @@
 ┌──────────────────────────────────────────────────────────────┐
 │  React bindings  (src/react)   — ChartView, hooks, overlays    │  optional
 ├──────────────────────────────────────────────────────────────┤
-│  Plugins  — DrawingPlugin · IndicatorController · Measurement  │
+│  Plugins  — DrawingController · IndicatorController · Measurement │
 │            · your ChartPlugin                                  │
 ├──────────────────────────────────────────────────────────────┤
 │  ChartController  (src/chart)  — owns lightweight-charts + bus │  the hub
@@ -28,7 +28,7 @@
 │  Core  (src/core, events, plugins/types, data-source/types)    │  no runtime deps
 └──────────────────────────────────────────────────────────────┘
                          ▼ resolves at consumer
-              lightweight-charts (peer)  ·  optional runtimes (lazy)
+              lightweight-charts (peer) — the only runtime dependency
 ```
 
 ## The hub: ChartController
@@ -52,23 +52,21 @@ is synchronous and error-isolated: a throwing listener never blocks siblings.
 This is the seam that keeps the controller small: drawing/indicators/measurement
 are not special-cased in the controller — they are plugins like any you write.
 
-## Optional runtimes & tree-shaking
+## Self-contained drawing & indicators
 
-The drawing tools (`lightweight-charts-line-tools-*`, MPL-2.0, git-hosted) and
-the indicator catalog (`lightweight-charts-indicators`, MIT) are **not** imported
-by the core. They are reached only through:
+Drawing tools and indicators are **original implementations** that ship in the
+core — no third-party drawing or indicator runtime, nothing extra to install.
 
-- `src/drawing/lineToolsAdapter.ts` → entry `@candlekit/charts/drawing-linetools`
-- `src/indicators/oakscript.ts` → entry `@candlekit/charts/indicators-oakscript`
+- **Drawing** (`src/drawing/*`): a `DrawingController` (pointer/keyboard) over a
+  pure `DrawingEngine` (model + events) rendered by a `DrawingPrimitive`
+  (`ISeriesPrimitive` on the chart canvas).
+- **Indicators** (`src/indicators/*`): an `IndicatorRegistry` + built-in catalog
+  (`createBuiltinRegistry`) of pure `calculate` functions, reconciled onto
+  lightweight-charts series/panes by `IndicatorController`.
 
-Both use a **non-literal dynamic `import()` specifier**, so:
-
-- `tsc` and the build succeed even when those packages aren't installed,
-- bundlers leave them as runtime imports,
-- the code is fetched only when a consumer calls the async factory.
-
-`package.json` declares them as `optionalDependencies`; `sideEffects` is limited
-to CSS so unused modules drop out.
+The only external runtime is **`lightweight-charts`** (a peer). `sideEffects` is
+limited to CSS, so unused modules tree-shake out and a vanilla bundle never
+pulls React.
 
 ## Coordinate / time model
 

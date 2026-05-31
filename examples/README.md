@@ -8,9 +8,12 @@ so **no build of the library is required** — just run an example.
 | --- | --- | --- |
 | `vanilla/` | `ChartController`, series types, theme toggle | Vanilla TS |
 | `react/` | `<ChartView>`, series + timeframe + theme | React |
-| `indicators/` | bundled indicator catalog + `<IndicatorPicker>` | React |
-| `drawing/` | line tools + `<DrawingToolbar>` + measurement | React |
+| `indicators/` | built-in indicator catalog + `<IndicatorPicker>` | React |
+| `drawing/` | drawing tools + `<DrawingToolbar>` + measurement | React |
 | `replay/` | deterministic replay + `<ReplayControls>` | React |
+
+Every example needs only `lightweight-charts` (+ `react` for the React ones).
+Drawing and indicators are built into `@candlekit/charts` — no extra installs.
 
 ## Run one
 
@@ -19,14 +22,6 @@ cd examples/react      # or vanilla | indicators | drawing | replay
 npm install
 npm run dev            # Vite dev server → http://localhost:5173
 ```
-
-## Extra install for optional runtimes
-
-- **indicators/** — `npm install` already pulls `lightweight-charts-indicators`
-  and `oakscriptjs` (MIT, on npm).
-- **drawing/** — pulls the MPL-2.0 line-tools from GitHub (declared in its
-  `package.json`). If your environment can't reach GitHub, the demo shows a
-  friendly message and the rest of the chart still works.
 
 ## Note on `generateBars`
 

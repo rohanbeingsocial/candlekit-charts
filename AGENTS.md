@@ -17,8 +17,9 @@ rings:
    components + hooks. A thin wrapper over the core; never put core logic here.
 
 Cross-cutting concerns are **plugins** (`ChartPlugin`) and a typed **event bus**.
-Optional third-party runtimes (drawing tools, indicator catalog) are **lazy
-`import()`ed** from dedicated subpath entries so they never enter the core bundle.
+Drawing tools and indicators are **original, self-contained implementations** in
+the core — no third-party drawing/indicator runtime. The only external runtime is
+`lightweight-charts` (peer).
 
 ```
 data source ─► core/data (resample/normalize) ─► ChartController ─► lightweight-charts
@@ -37,9 +38,9 @@ data source ─► core/data (resample/normalize) ─► ChartController ─► 
 | `src/plugins/` | `ChartPlugin` + `PluginContext` + `ChartEventMap`. | `lightweight-charts` (types), `core`, `events` |
 | `src/chart/` | `ChartController` — the imperative chart wrapper. | `lightweight-charts`, `core`, `events`, `plugins` |
 | `src/data-source/` | `BarDataSource` / `StreamingDataSource` / `ReplayDataSource` contracts. | `core` |
-| `src/drawing/` | `DrawingEngine` facade + `DrawingPlugin`; `lineToolsAdapter` is the only file touching the MPL packages. | `core`, `plugins`, `lightweight-charts` (types) |
+| `src/drawing/` | `DrawingController` (plugin) + `DrawingEngine` (model) + `DrawingPrimitive` (renderer) + geometry. Original engine, no third-party runtime. | `core`, `plugins`, `lightweight-charts`, `fancy-canvas` (types) |
 | `src/measurement/` | Ruler primitive + `MeasurementController`. | `lightweight-charts`, `fancy-canvas` (types), `core`, `plugins` |
-| `src/indicators/` | `IndicatorRegistry` + `IndicatorController`; `oakscript.ts` is the only file touching `lightweight-charts-indicators`. | `lightweight-charts`, `core`, `plugins` |
+| `src/indicators/` | `IndicatorRegistry` + `IndicatorController` + built-in catalog (`builtin.ts`). All original. | `lightweight-charts`, `core`, `plugins` |
 | `src/replay/` | Deterministic `ReplayController`. | `core`, `data-source` |
 | `src/sync/` | Multi-chart `SyncEngine`. | `core` |
 | `src/react/` | React components + hooks. | everything in core + `react` |
@@ -59,10 +60,11 @@ Never import `react` from core. Never import an engine from `core`.
 
 ## Extension points
 
-- **New indicator** → `registry.register(def)` with an `IndicatorDef`. No core
-  change. See README "Indicator Examples".
-- **New drawing runtime** → implement `LineToolsRuntime` (structural) and build a
-  `DrawingPlugin` with your `createRuntime`. The MPL adapter is one example.
+- **New indicator** → `registry.register(def)` with an `IndicatorDef` (or extend
+  `createBuiltinRegistry()`). No core change. See README "Indicator Examples".
+- **New drawing tool** → add the id to `TOOL_POINTS`, a render `case` in
+  `DrawingPrimitive`, and a hit-test `case` in `DrawingController.bodyHit`. The
+  serializable model means it persists for free.
 - **New data source** → implement `BarDataSource` / `StreamingDataSource` /
   `ReplayDataSource`.
 - **New behavior** → write a `ChartPlugin` and `controller.use(plugin)`. It gets
@@ -75,9 +77,8 @@ Never import `react` from core. Never import an engine from `core`.
 1. The barrels (`src/index.ts`, `src/react/index.ts`) define the public surface.
    Anything not re-exported there is internal and may change without notice.
 2. Adding exports is a minor version; changing/removing them is a major.
-3. Keep optional runtimes out of `src/index.ts`. They live only in their subpath
-   entries (`drawing-linetools`, `indicators-oakscript`) and load via dynamic
-   `import()` with a **non-literal specifier** (so `tsc`/build pass without them).
+3. The only external runtime is `lightweight-charts` (peer). Do not add new
+   runtime dependencies for drawing/indicators — they are self-contained.
 4. Every tsup `entry` must have a matching `exports` map key in `package.json`.
 5. `sideEffects` is `["**/*.css"]` only — keep modules side-effect free so
    tree-shaking works.

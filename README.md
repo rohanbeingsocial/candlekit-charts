@@ -30,12 +30,12 @@ and the optional third-party runtimes (drawing tools, indicator catalog) are
   timeframes via a session-aware resampler; responsive auto-resize; light/dark
   themes with full color override.
 - **Drawing tools** — trend line, ray, extended line, horizontal/vertical line,
-  arrow, cross-line, rectangle, circle, Fibonacci retracement, with selection,
-  locking, magnet-snap, and persistence. (Text/brush available through the
-  pluggable runtime.)
-- **Indicators** — extensible registry; the bundled set (via
-  `lightweight-charts-indicators`) includes SMA, EMA, WMA, VWAP, RSI, MACD,
-  Bollinger Bands, ATR, Stochastic, and more. Register your own with one call.
+  arrow, rectangle, circle, Fibonacci retracement, with selection, drag-to-move,
+  handle reshaping, locking, and persistence. Original engine rendered on
+  lightweight-charts canvas primitives — no third-party drawing runtime.
+- **Indicators** — extensible registry + a built-in catalog (SMA, EMA, WMA,
+  VWAP, Bollinger Bands, RSI, MACD, ATR, Stochastic), all original
+  implementations. Register your own with one call.
 - **Measurement** — price, percentage, bar-distance, time-delta, and
   risk/reward, painted as a canvas ruler.
 - **Replay** — deterministic playback over historical bars: play/pause, step
@@ -60,20 +60,10 @@ npm install @candlekit/charts lightweight-charts
 npm install react react-dom
 ```
 
-Optional runtimes (lazy-loaded; install only if you use them):
-
-```bash
-# Bundled indicator catalog
-npm install lightweight-charts-indicators oakscriptjs
-
-# Drawing tools (MPL-2.0, git-hosted — not on npm)
-npm install \
-  github:difurious/lightweight-charts-line-tools-core \
-  github:difurious/lightweight-charts-line-tools-lines \
-  github:difurious/lightweight-charts-line-tools-rectangle \
-  github:difurious/lightweight-charts-line-tools-circle \
-  github:difurious/lightweight-charts-line-tools-fib-retracement
-```
+That's it. `lightweight-charts` is the only runtime dependency (a peer, so you
+control its version); `react`/`react-dom` are needed only for
+`@candlekit/charts/react`. **Drawing tools and indicators are built in** — no
+extra packages, no git installs.
 
 ## Quick Start
 
@@ -164,24 +154,32 @@ import { ReplayControls } from "@candlekit/charts/react";
 
 ```tsx
 import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
-import { createLineToolsDrawingPlugin } from "@candlekit/charts/drawing-linetools";
 
-const drawing = await createLineToolsDrawingPlugin({ storageKey: "drawings:AAPL" });
-
-<ChartView data={bars} drawing={drawing}>
+// `drawing` accepts true, an options object, or a DrawingController instance.
+<ChartView data={bars} drawing={{ storageKey: "drawings:AAPL" }}>
   <DrawingToolbar />
 </ChartView>;
+```
+
+Imperative (vanilla):
+
+```ts
+import { ChartController, DrawingController } from "@candlekit/charts";
+
+const chart = new ChartController(el);
+const drawing = new DrawingController({ storageKey: "drawings:AAPL" });
+chart.use(drawing);
+drawing.engine.startTool("TrendLine");
 ```
 
 ## Indicator Examples
 
 ```tsx
-import { ChartView, IndicatorPicker, IndicatorController } from "@candlekit/charts/react";
-import { createOakscriptRegistry } from "@candlekit/charts/indicators-oakscript";
+import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@candlekit/charts/react";
 
-const registry = await createOakscriptRegistry();
-const indicators = new IndicatorController(registry);
+const indicators = new IndicatorController(createBuiltinRegistry());
 indicators.add("RSI", { length: 14 });
+indicators.add("EMA", { length: 21 });
 
 <ChartView data={bars} indicators={indicators}>
   <IndicatorPicker />
@@ -235,8 +233,8 @@ chart.use(lastPriceLabel);
 | `toBars`, `resample`, `floorToBucket` | fn | Pure data normalization + session-aware resampling. |
 | `resolveTheme`, `lightTheme`, `darkTheme` | fn/const | Theme presets + resolution. |
 | `EventBus` | class | Typed sync event bus. |
-| `DrawingEngine`, `DrawingPlugin` | class | Runtime-agnostic drawing facade + plugin. |
-| `IndicatorRegistry`, `IndicatorController` | class | Extensible indicator framework. |
+| `DrawingController`, `DrawingEngine` | class | Built-in drawing plugin + its model/state. |
+| `IndicatorRegistry`, `IndicatorController`, `createBuiltinRegistry` | class/fn | Extensible indicator framework + built-in catalog. |
 | `MeasurementController`, `RulerPrimitive` | class | Shift-drag measurement. |
 | `createReplayController` | fn | Deterministic replay. |
 | `createSyncEngine` | fn | Multi-chart sync. |
@@ -252,8 +250,8 @@ Full reference: [docs/api-reference.md](docs/api-reference.md).
   preserve user pan/zoom.
 - Replay uses a per-day LRU cache with backward/forward pre-fetch; the cursor
   drives everything (no wall-clock coupling).
-- Tree-shakeable subpath entries — vanilla bundles never pull React; drawing /
-  indicator runtimes are lazy `import()`ed only when enabled.
+- Tree-shakeable ESM — a vanilla bundle never pulls React. Drawing and
+  indicators are self-contained (no extra runtime deps to load).
 
 ## Browser Support
 
@@ -262,9 +260,10 @@ ESM and CJS builds are shipped; `target: es2020`.
 
 ## Roadmap
 
-- [ ] First-class text & freehand/brush drawing components
+- [ ] Text + freehand/brush drawing tools
 - [ ] Indicator settings UI (param editing) in the React picker
 - [ ] Crosshair tooltip component
+- [ ] More indicators (Ichimoku, SuperTrend, Keltner)
 - [ ] Vue / Svelte bindings
 - [ ] Screenshot/export helper
 

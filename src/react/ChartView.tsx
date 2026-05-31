@@ -4,7 +4,7 @@ import type { Bar, SeriesType } from "../core/types";
 import { resample, toBars, type RawBar } from "../core/data";
 import type { ResampleOptions } from "../core/types";
 import type { ThemeInput } from "../core/theme";
-import type { DrawingPlugin } from "../drawing/DrawingPlugin";
+import { DrawingController, type DrawingControllerOptions } from "../drawing/DrawingController";
 import type { IndicatorController } from "../indicators/IndicatorController";
 import { MeasurementController, type MeasurementOptions } from "../measurement/MeasurementController";
 import { useChartController } from "./hooks/useChartController";
@@ -23,8 +23,11 @@ export interface ChartViewProps {
   autoFit?: boolean;
   chartOptions?: DeepPartial<ChartOptions>;
 
-  /** Drawing plugin (build via `createLineToolsDrawingPlugin`). */
-  drawing?: DrawingPlugin | null;
+  /**
+   * Enable drawing tools. `true` for defaults, an options object (e.g.
+   * `{ storageKey }`), or a pre-built {@link DrawingController}.
+   */
+  drawing?: boolean | DrawingControllerOptions | DrawingController | null;
   /** Indicator controller (build with an `IndicatorRegistry`). */
   indicators?: IndicatorController | null;
   /** Enable Shift-drag measurement. `true` for defaults, or pass options. */
@@ -77,23 +80,29 @@ export function ChartView({
       : toBars(rows);
   }, [data, resampleMinutes, resampleOptions]);
 
-  // Register optional plugins + publish API.
+  // Resolve the drawing prop to a controller. Pass a stable value (boolean or a
+  // memoized instance) to avoid re-initializing on every render.
+  const drawingCtl = useMemo<DrawingController | null>(() => {
+    if (!drawing) return null;
+    if (drawing instanceof DrawingController) return drawing;
+    return new DrawingController(typeof drawing === "object" ? drawing : {});
+  }, [drawing]);
+
+  // Register plugins + publish API.
   useEffect(() => {
     if (!controller) return;
     let measurementCtl: MeasurementController | null = null;
 
-    if (drawing) controller.use(drawing);
+    if (drawingCtl) controller.use(drawingCtl);
     if (indicators) controller.use(indicators);
     if (measurement) {
-      measurementCtl = new MeasurementController(
-        typeof measurement === "object" ? measurement : {},
-      );
+      measurementCtl = new MeasurementController(typeof measurement === "object" ? measurement : {});
       controller.use(measurementCtl);
     }
 
     const next: ChartViewApi = {
       controller,
-      drawing: drawing ?? null,
+      drawing: drawingCtl,
       indicators: indicators ?? null,
       measurement: measurementCtl,
     };
@@ -101,12 +110,12 @@ export function ChartView({
     onReady?.(next);
 
     return () => {
-      if (drawing) controller.remove(drawing.id);
+      if (drawingCtl) controller.remove(drawingCtl.id);
       if (indicators) controller.remove(indicators.id);
       if (measurementCtl) controller.remove(measurementCtl.id);
     };
     // onReady intentionally excluded from deps — callers pass inline fns.
-  }, [controller, drawing, indicators, measurement]);
+  }, [controller, drawingCtl, indicators, measurement]);
 
   // Data.
   useEffect(() => {
