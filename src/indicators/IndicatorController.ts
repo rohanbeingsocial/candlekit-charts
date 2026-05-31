@@ -94,6 +94,19 @@ export class IndicatorController implements ChartPlugin {
     return [...this.active.keys()];
   }
 
+  /** The active indicator (name + resolved params), or undefined if off. */
+  getActive(name: string): ActiveIndicator | undefined {
+    return this.active.get(name);
+  }
+
+  /** Turn every active indicator off. */
+  clear(): void {
+    if (this.active.size === 0) return;
+    this.active.clear();
+    this.refresh();
+    this.onChange?.(this.activeNames());
+  }
+
   /** Turn an indicator on (or update its params). */
   add(name: string, params: Record<string, unknown> = {}): void {
     const def = this.registry.get(name);

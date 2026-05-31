@@ -69,37 +69,286 @@
   color: var(--ck-accent-fg);
 }
 
-/* ── Indicator picker ──────────────────────────────────────────────────────── */
-.ck-picker {
+/* ── Indicator picker (dropdown) ───────────────────────────────────────────── */
+.ck-ind {
   position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 10;
-  width: 220px;
-  max-height: 70%;
-  overflow-y: auto;
-  padding: 8px 10px;
+  z-index: 12;
   font-size: 12px;
+  color: var(--ck-fg);
+}
+.ck-ind-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
   color: var(--ck-fg);
   background: var(--ck-bg);
   backdrop-filter: blur(6px);
   border: 1px solid var(--ck-border);
   border-radius: var(--ck-radius);
+  cursor: pointer;
+  font: inherit;
 }
-.ck-picker-heading {
-  margin: 6px 0 2px;
+.ck-ind-trigger:hover {
+  border-color: var(--ck-accent);
+}
+.ck-ind-trigger-icon {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--ck-accent);
+}
+.ck-ind-count {
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ck-accent-fg);
+  background: var(--ck-accent);
+}
+.ck-ind-caret {
+  color: var(--ck-muted);
+  font-size: 10px;
+}
+.ck-ind-panel {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  width: 280px;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  background: var(--ck-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--ck-border);
+  border-radius: var(--ck-radius);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.ck-ind-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--ck-border);
+}
+.ck-ind-title {
   font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+}
+.ck-ind-x {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  background: transparent;
+  color: var(--ck-muted);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.ck-ind-x:hover {
+  background: rgba(127, 127, 127, 0.16);
+  color: var(--ck-fg);
+}
+.ck-ind-search {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--ck-border);
+}
+.ck-ind-search input {
+  width: 100%;
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ck-fg);
+  background: color-mix(in srgb, var(--ck-fg) 8%, transparent);
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+  outline: none;
+}
+.ck-ind-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 0;
+  border-bottom: 1px solid var(--ck-border);
+}
+.ck-ind-tab {
+  padding: 4px 7px 6px;
+  font: inherit;
+  font-size: 10px;
+  color: var(--ck-muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.ck-ind-tab--active {
+  color: var(--ck-accent);
+  border-bottom-color: var(--ck-accent);
+}
+.ck-ind-tab-count {
+  opacity: 0.5;
+  margin-left: 2px;
+}
+.ck-ind-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.ck-ind-empty {
+  padding: 28px 0;
+  text-align: center;
   color: var(--ck-muted);
 }
-.ck-picker-row {
+.ck-ind-item {
+  border-bottom: 1px solid color-mix(in srgb, var(--ck-border) 50%, transparent);
+}
+.ck-ind-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 0;
+  padding: 6px 8px;
+}
+.ck-ind-row:hover {
+  background: rgba(127, 127, 127, 0.08);
+}
+.ck-ind-row--active {
+  background: color-mix(in srgb, var(--ck-accent) 8%, transparent);
+}
+.ck-ind-chev {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--ck-muted);
   cursor: pointer;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.ck-ind-chev--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+.ck-ind-name {
+  flex: 1;
+  min-width: 0;
+}
+.ck-ind-name-title {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ck-ind-name-short {
+  font-size: 9px;
+  color: var(--ck-muted);
+  line-height: 1.2;
+}
+.ck-ind-cat {
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+.ck-ind-cat--overlay {
+  color: #4f8cff;
+  background: rgba(79, 140, 255, 0.14);
+}
+.ck-ind-cat--oscillator {
+  color: var(--ck-warn);
+  background: color-mix(in srgb, var(--ck-warn) 14%, transparent);
+}
+.ck-ind-cat--pattern {
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.14);
+}
+.ck-ind-switch {
+  width: 28px;
+  height: 15px;
+  border: 0;
+  border-radius: 999px;
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--ck-fg) 28%, transparent);
+  transition: background 0.15s;
+}
+.ck-ind-switch--on {
+  background: var(--ck-accent);
+}
+.ck-ind-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+.ck-ind-switch--on .ck-ind-knob {
+  transform: translateX(13px);
+}
+.ck-ind-params {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px 10px 26px;
+  background: color-mix(in srgb, var(--ck-fg) 5%, transparent);
+}
+.ck-ind-param {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ck-ind-param-label {
+  width: 78px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--ck-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ck-ind-param input[type="number"],
+.ck-ind-param select {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 10px;
+  color: var(--ck-fg);
+  background: var(--ck-bg);
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.ck-ind-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-top: 1px solid var(--ck-border);
+  font-size: 9px;
+  color: var(--ck-muted);
+}
+.ck-ind-clear {
+  border: 0;
+  background: transparent;
+  color: var(--ck-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+}
+.ck-ind-clear:hover {
+  color: var(--ck-down);
 }
 
 /* ── Measurement readout (Shift-drag ruler) ────────────────────────────────── */

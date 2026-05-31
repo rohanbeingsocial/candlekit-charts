@@ -1,4 +1,4 @@
-# @candlekit/charts
+  # @candlekit/charts
 
 > Tree-shakeable financial charting toolkit for the web — candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Framework-agnostic core with optional React bindings. Built on [Lightweight Charts™](https://github.com/tradingview/lightweight-charts).
 
