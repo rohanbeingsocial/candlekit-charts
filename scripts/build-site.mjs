@@ -22,8 +22,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 const siteDir = resolve(repoRoot, "site");
 
-// Order = display order on the landing page.
-const EXAMPLES = ["vanilla", "react", "indicators", "drawing", "replay"];
+// The deployed site is ONE unified demo (chart + drawing + indicators +
+// measurement + replay), mirroring the workspace it was extracted from. The
+// other example folders stay in-repo for focused local runs / docs.
+const EXAMPLES = ["workspace"];
 
 const SITE_BASE = (process.env.SITE_BASE || "/candlekit-charts/").replace(/\/?$/, "/");
 

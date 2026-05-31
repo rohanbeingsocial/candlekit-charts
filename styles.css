@@ -15,6 +15,9 @@
   --ck-border: #e5e7eb;
   --ck-accent: #2962ff;
   --ck-accent-fg: #ffffff;
+  --ck-up: #16a34a;
+  --ck-down: #dc2626;
+  --ck-warn: #d97706;
   --ck-radius: 6px;
 }
 
@@ -25,6 +28,9 @@
   --ck-muted: #9ca3af;
   --ck-border: rgba(148, 163, 184, 0.25);
   --ck-accent: #4f8cff;
+  --ck-up: #34d399;
+  --ck-down: #f87171;
+  --ck-warn: #fbbf24;
 }
 
 /* ── Drawing toolbar ───────────────────────────────────────────────────────── */
@@ -96,36 +102,199 @@
   cursor: pointer;
 }
 
-/* ── Replay controls ───────────────────────────────────────────────────────── */
+/* ── Measurement readout (Shift-drag ruler) ────────────────────────────────── */
+.ck-measure-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+.ck-measure {
+  position: absolute;
+  padding: 6px 10px;
+  font-family: inherit;
+  color: var(--ck-muted);
+  background: var(--ck-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--ck-border);
+  border-radius: var(--ck-radius);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+.ck-measure--up {
+  border-color: color-mix(in srgb, var(--ck-up) 40%, transparent);
+}
+.ck-measure--down {
+  border-color: color-mix(in srgb, var(--ck-down) 40%, transparent);
+}
+.ck-measure-pct {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 3px;
+}
+.ck-measure--up .ck-measure-pct {
+  color: var(--ck-up);
+}
+.ck-measure--down .ck-measure-pct {
+  color: var(--ck-down);
+}
+.ck-measure-pts {
+  font-size: 12px;
+}
+.ck-measure--up .ck-measure-pts {
+  color: var(--ck-up);
+}
+.ck-measure--down .ck-measure-pts {
+  color: var(--ck-down);
+}
+.ck-measure-meta {
+  font-size: 11px;
+  color: var(--ck-muted);
+}
+
+/* ── Replay panel ──────────────────────────────────────────────────────────── */
 .ck-replay {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
   font-size: 12px;
   color: var(--ck-fg);
   background: var(--ck-bg);
   border: 1px solid var(--ck-border);
   border-radius: var(--ck-radius);
 }
+.ck-replay-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ck-replay-title {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  color: var(--ck-muted);
+}
+.ck-replay-badge {
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--ck-border);
+  color: var(--ck-muted);
+}
+.ck-replay-badge--ready {
+  color: var(--ck-warn);
+  background: color-mix(in srgb, var(--ck-warn) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ck-warn) 40%, transparent);
+}
+.ck-replay-badge--loading {
+  color: var(--ck-accent);
+  background: color-mix(in srgb, var(--ck-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ck-accent) 40%, transparent);
+}
+.ck-replay-badge--error {
+  color: var(--ck-down);
+  background: color-mix(in srgb, var(--ck-down) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ck-down) 40%, transparent);
+}
+.ck-replay-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ck-replay-time {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.ck-replay-bar {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ck-fg) 12%, transparent);
+}
+.ck-replay-bar-fill {
+  height: 100%;
+  background: var(--ck-warn);
+}
+.ck-replay-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--ck-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ck-replay-transport {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .ck-replay-btn {
-  height: 26px;
-  min-width: 30px;
+  height: 28px;
+  padding: 0 10px;
   color: var(--ck-fg);
   background: transparent;
   border: 1px solid var(--ck-border);
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
+}
+.ck-replay-btn:hover:not(:disabled) {
+  background: rgba(127, 127, 127, 0.14);
 }
 .ck-replay-btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
-.ck-replay-seek {
-  flex: 1;
-  min-width: 80px;
+.ck-replay-btn--play {
+  color: var(--ck-up);
+  border-color: color-mix(in srgb, var(--ck-up) 45%, transparent);
+  font-weight: 600;
 }
-.ck-replay-status {
-  color: var(--ck-muted);
-  min-width: 60px;
+.ck-replay-btn--pause {
+  color: var(--ck-warn);
+  border-color: color-mix(in srgb, var(--ck-warn) 45%, transparent);
+  font-weight: 600;
+}
+.ck-replay-speed {
+  margin-left: auto;
+  height: 28px;
+  color: var(--ck-fg);
+  background: transparent;
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+}
+.ck-replay-seek {
+  width: 100%;
+}
+.ck-replay-jumps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.ck-replay-jump {
+  padding: 4px 0;
+  font-size: 10px;
+  color: var(--ck-fg);
+  background: transparent;
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ck-replay-jump:hover:not(:disabled) {
+  background: rgba(127, 127, 127, 0.14);
+}
+.ck-replay-jump:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.ck-replay-error {
+  color: var(--ck-down);
+  font-size: 11px;
 }

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" class="dark" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>candlekit/charts — live demo</title>
+    <style>
+      :root { color-scheme: dark; }
+      html.dark { --app-bg: #0e1117; --app-fg: #e5e7eb; --app-panel: #161b22; --app-border: #2a313c; --app-muted: #97a0ad; }
+      html:not(.dark) { --app-bg: #ffffff; --app-fg: #1f2937; --app-panel: #f6f8fa; --app-border: #e5e7eb; --app-muted: #6b7280; color-scheme: light; }
+      * { box-sizing: border-box; }
+      html, body, #root { height: 100%; margin: 0; }
+      body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--app-bg); color: var(--app-fg); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

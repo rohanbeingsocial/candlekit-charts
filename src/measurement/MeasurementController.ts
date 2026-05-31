@@ -37,6 +37,8 @@ export class MeasurementController implements ChartPlugin {
   private start: MeasurementPoint | null = null;
   private ctx: PluginContext | null = null;
   private cleanup: Array<() => void> = [];
+  private listeners = new Set<(r: MeasurementResult | null) => void>();
+  private last: MeasurementResult | null = null;
 
   constructor(private readonly opts: MeasurementOptions = {}) {
     this.ruler = new RulerPrimitive(opts.colors);
@@ -93,8 +95,26 @@ export class MeasurementController implements ChartPlugin {
     }
   }
 
+  /**
+   * Subscribe to measurement updates (null = cleared). Fires immediately with
+   * the current value. Returns an unsubscribe fn. Lets UI (e.g. a React overlay)
+   * render the live %/pts/bars readout without the consumer wiring `onMeasure`.
+   */
+  subscribe(cb: (r: MeasurementResult | null) => void): () => void {
+    this.listeners.add(cb);
+    cb(this.last);
+    return () => this.listeners.delete(cb);
+  }
+
+  /** Latest measurement result, or null when idle. */
+  getResult(): MeasurementResult | null {
+    return this.last;
+  }
+
   private emit(result: MeasurementResult | null): void {
+    this.last = result;
     this.opts.onMeasure?.(result);
+    for (const cb of this.listeners) cb(result);
     // Custom event on the shared bus for plugins/UI that want it.
     this.ctx?.bus.emit("measure" as never, result as never);
   }

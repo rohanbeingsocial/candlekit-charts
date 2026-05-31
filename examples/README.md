@@ -6,6 +6,7 @@ so **no build of the library is required** — just run an example.
 
 | Folder | Demonstrates | Stack |
 | --- | --- | --- |
+| `workspace/` | **the all-in-one demo** (deployed to Pages) — chart + drawing toolbar + indicator picker + measurement ruler + replay panel + series/TF/theme | React |
 | `vanilla/` | `ChartController`, series types, theme toggle | Vanilla TS |
 | `react/` | `<ChartView>`, series + timeframe + theme | React |
 | `indicators/` | built-in indicator catalog + `<IndicatorPicker>` | React |

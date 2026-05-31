@@ -22,8 +22,14 @@
 </p>
 
 <p align="center">
-  <strong><a href="https://rohanbeingsocial.github.io/candlekit-charts/">▶ Live, interactive demos</a></strong>
-  — vanilla · react · indicators · drawing · replay
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/measurement.gif" alt="Shift-drag measurement ruler showing percentage move, points and bar and time delta" width="820" />
+  <br />
+  <em>Measurement ruler — Shift-drag for % move, points, bars · time</em>
+</p>
+
+<p align="center">
+  <strong><a href="https://rohanbeingsocial.github.io/candlekit-charts/workspace/">▶ Open the live demo</a></strong>
+  — drawing, indicators, measurement and replay in one chart
 </p>
 
 ---
