@@ -13,3 +13,17 @@ export const candlekitAlias = {
   "@candlekit/charts/react": resolve(root, "src/react/index.ts"),
   "@candlekit/charts": resolve(root, "src/index.ts"),
 };
+
+/**
+ * Force these to a single copy. Because the alias points at the library `src/`
+ * (above each example), imports like `lightweight-charts` / `react` made from
+ * inside `src/` would otherwise resolve against the repo-root `node_modules`
+ * (a second copy, or — in CI, where root deps aren't installed — none at all).
+ * Deduping collapses them onto the example's own copy.
+ */
+export const candlekitDedupe = ["react", "react-dom", "lightweight-charts"];
+
+export const candlekitResolve = {
+  alias: candlekitAlias,
+  dedupe: candlekitDedupe,
+};

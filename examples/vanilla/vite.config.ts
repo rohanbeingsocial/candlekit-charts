@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
-import { candlekitAlias } from "../shared/vite.shared";
+import { candlekitResolve } from "../shared/vite.shared";
 
 export default defineConfig({
-  resolve: { alias: candlekitAlias },
+  resolve: candlekitResolve,
   server: { fs: { strict: false } },
 });
