@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../Options Dashboard Full Local Beta"
+		},
+		{
+			"path": "C:/Users/rohan/Downloads/Payoff Chart/modules/optionsCharts"
+		}
+	],
+	"settings": {
+		"python-envs.defaultEnvManager": "ms-python.python:system"
+	}
+}
