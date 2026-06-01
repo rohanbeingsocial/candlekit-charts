@@ -2,7 +2,7 @@ import { StrictMode, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ChartView } from "@candlekit/charts/react";
 import type { SeriesType } from "@candlekit/charts";
-import { generateBars } from "../shared/sampleData";
+import { generateBars } from "@candlekit/charts";
 
 const TYPES: SeriesType[] = ["candlestick", "ohlc", "line", "area"];
 

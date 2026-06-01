@@ -134,3 +134,29 @@ export function resampleInterval(
 ): Bar[] {
   return resample(rows, interval.minutes, opts);
 }
+
+/**
+ * Generate synthetic OHLCV bars for demos and tests. Produces a random walk
+ * of 1-minute bars with no external dependencies.
+ */
+export function generateBars(
+  count = 500,
+  startPrice = 100,
+  startTs = Date.UTC(2024, 0, 2, 9, 30),
+): RawBar[] {
+  const bars: RawBar[] = [];
+  let price = startPrice;
+  let ts = startTs;
+  for (let i = 0; i < count; i++) {
+    const drift = (Math.random() - 0.5) * 1.5;
+    const open = price;
+    const close = Math.max(1, open + drift);
+    const high = Math.max(open, close) + Math.random() * 0.8;
+    const low = Math.min(open, close) - Math.random() * 0.8;
+    const volume = Math.round(500 + Math.random() * 2000);
+    bars.push({ ts, open, high, low, close, volume });
+    price = close;
+    ts += 60_000;
+  }
+  return bars;
+}

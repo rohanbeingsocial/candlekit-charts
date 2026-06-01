@@ -1,5 +1,5 @@
 import { ChartController, toBars, type SeriesType } from "@candlekit/charts";
-import { generateBars } from "../shared/sampleData";
+import { generateBars } from "@candlekit/charts";
 
 const chart = new ChartController(document.getElementById("chart")!, {
   theme: "dark",

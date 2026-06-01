@@ -11,7 +11,7 @@ import {
   type Bar,
 } from "@candlekit/charts/react";
 import "@candlekit/charts/styles.css";
-import { generateBars } from "../shared/sampleData";
+import { generateBars } from "@candlekit/charts";
 
 /** Build 3 intraday days of synthetic 1m bars and a day-addressable source. */
 function buildSource() {

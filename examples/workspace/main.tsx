@@ -19,7 +19,7 @@ import {
   type ReplayDataSource,
 } from "@candlekit/charts/react";
 import "@candlekit/charts/styles.css";
-import { generateBars } from "../shared/sampleData";
+import { generateBars } from "@candlekit/charts";
 
 const SYMBOL = "DEMO";
 const INTERVAL = "1m";

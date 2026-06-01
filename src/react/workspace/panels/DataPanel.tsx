@@ -4,8 +4,7 @@
 
 import { useMemo } from "react";
 import type { PanelInstance } from "../../../workspace";
-import { generateBars } from "../../../../examples/shared/sampleData";
-import { toBars } from "../../../core/data";
+import { generateBars, toBars } from "../../../core/data";
 
 export interface DataConfig {
   count?: number;

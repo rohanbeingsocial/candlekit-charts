@@ -2,7 +2,7 @@ import { StrictMode, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
 import "@candlekit/charts/styles.css";
-import { generateBars } from "../shared/sampleData";
+import { generateBars } from "@candlekit/charts";
 
 function App() {
   const data = useMemo(() => generateBars(600), []);
