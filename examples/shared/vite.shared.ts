@@ -9,6 +9,7 @@ const root = resolve(__dirname, "../..");
 
 export const candlekitAlias = {
   // Most-specific first — Vite matches aliases in declaration order.
+  "@candlekit/charts/react/workspace": resolve(root, "src/react/workspace/index.ts"),
   "@candlekit/charts/styles.css": resolve(root, "styles.css"),
   "@candlekit/charts/react": resolve(root, "src/react/index.ts"),
   "@candlekit/charts": resolve(root, "src/index.ts"),

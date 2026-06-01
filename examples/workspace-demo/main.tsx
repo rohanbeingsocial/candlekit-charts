@@ -1,4 +1,4 @@
-import { StrictMode, useState, type CSSProperties } from "react";
+import { StrictMode, useState, useCallback, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
 import {
   createWorkspace,
@@ -9,6 +9,8 @@ import {
   IndicatorPanel,
   ToolPanel,
   DataPanel,
+  useWorkspace,
+  useLayout,
 } from "@candlekit/charts/react/workspace";
 import "flexlayout-react/style/dark.css";
 
@@ -28,7 +30,7 @@ workspace.registerPanel({
   kind: "watchlist",
   displayName: "Watchlist",
   component: WatchlistPanel,
-  defaultConfig: () => ({ symbols: ["DEMO"] }),
+  defaultConfig: () => ({ symbols: ["DEMO", "BTC", "ETH", "SOL"] }),
 });
 
 workspace.registerPanel({
@@ -52,6 +54,70 @@ workspace.registerPanel({
   defaultConfig: () => ({ count: 100 }),
 });
 
+function Toolbar() {
+  const { workspace } = useWorkspace();
+  const { saveLayout, loadLayout, exportLayout, importLayout } = useLayout();
+  const [saved, setSaved] = useState(false);
+
+  const addPanel = useCallback((kind: string) => {
+    workspace.addPanel(kind, `${kind}-${Date.now()}`, undefined);
+  }, [workspace]);
+
+  const handleSave = useCallback(() => {
+    saveLayout("default");
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  }, [saveLayout]);
+
+  const handleLoad = useCallback(() => {
+    loadLayout("default");
+  }, [loadLayout]);
+
+  const handleExport = useCallback(() => {
+    const json = exportLayout();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "workspace-layout.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [exportLayout]);
+
+  const handleImport = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const json = ev.target?.result as string;
+        if (json) importLayout(json);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }, [importLayout]);
+
+  return (
+    <div style={S.toolbar}>
+      <span style={S.toolbarLabel}>Add panel:</span>
+      <button style={S.toolbarBtn} onClick={() => addPanel("chart")}>+ Chart</button>
+      <button style={S.toolbarBtn} onClick={() => addPanel("watchlist")}>+ Watchlist</button>
+      <button style={S.toolbarBtn} onClick={() => addPanel("indicators")}>+ Indicators</button>
+      <button style={S.toolbarBtn} onClick={() => addPanel("tools")}>+ Tools</button>
+      <button style={S.toolbarBtn} onClick={() => addPanel("data")}>+ Data</button>
+      <div style={S.divider} />
+      <button style={S.toolbarBtn} onClick={handleSave}>{saved ? "✓ Saved" : "Save Layout"}</button>
+      <button style={S.toolbarBtn} onClick={handleLoad}>Load Layout</button>
+      <button style={S.toolbarBtn} onClick={handleExport}>Export JSON</button>
+      <button style={S.toolbarBtn} onClick={handleImport}>Import JSON</button>
+    </div>
+  );
+}
+
 function App() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -70,11 +136,17 @@ function App() {
         <span style={S.brand}>
           candlekit<span style={{ color: "var(--app-muted)" }}>/</span>charts
         </span>
-        <span style={{ color: "var(--app-muted)", fontSize: 12 }}>Workspace Demo</span>
-        <button style={{ ...S.btn, marginLeft: "auto" }} onClick={toggleTheme}>
-          {theme === "dark" ? "☀ Light" : "🌙 Dark"}
-        </button>
+        <span style={{ color: "var(--app-muted)", fontSize: 12 }}>FlexLayout Workspace Demo</span>
+        <span style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+          <span style={{ color: "var(--app-muted)", fontSize: 11 }}>
+            Drag tabs to rearrange · Right-click tabs for options
+          </span>
+          <button style={S.btn} onClick={toggleTheme}>
+            {theme === "dark" ? "☀ Light" : "🌙 Dark"}
+          </button>
+        </span>
       </header>
+      <Toolbar />
       <div style={S.body}>
         <FlexLayoutAdapter workspace={workspace} />
       </div>
@@ -104,6 +176,38 @@ const S: Record<string, CSSProperties> = {
     border: "1px solid var(--app-border)",
     borderRadius: 5,
     cursor: "pointer",
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "6px 12px",
+    borderBottom: "1px solid var(--app-border)",
+    background: "var(--app-bg)",
+    flexShrink: 0,
+    flexWrap: "wrap",
+  },
+  toolbarLabel: {
+    fontSize: 11,
+    color: "var(--app-muted)",
+    marginRight: 4,
+  },
+  toolbarBtn: {
+    height: 24,
+    padding: "0 10px",
+    fontSize: 11,
+    fontFamily: "inherit",
+    color: "var(--app-fg)",
+    background: "var(--app-panel)",
+    border: "1px solid var(--app-border)",
+    borderRadius: 4,
+    cursor: "pointer",
+  },
+  divider: {
+    width: 1,
+    height: 16,
+    background: "var(--app-border)",
+    margin: "0 4px",
   },
   body: { flex: 1, minHeight: 0 },
 };
