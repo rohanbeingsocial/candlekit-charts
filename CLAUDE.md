@@ -49,6 +49,8 @@ src/
   replay/       deterministic ReplayController (per-day LRU + prefetch)
   sync/         multi-group SyncEngine
   react/        ChartView + overlay components (DrawingToolbar, IndicatorPicker, MeasurementOverlay, ReplayControls) + hooks
+  workspace/    Framework-agnostic workspace contracts + PanelRegistry + WorkspaceManager + LayoutPersistence + DefaultLayouts  **[Added by Kimi]**
+  react/workspace/  FlexLayoutAdapter + WorkspaceProvider + hooks + built-in panels (ChartPanel, Watchlist, etc.)  **[Added by Kimi]**
 tests/          vitest unit tests (pure logic only)
 examples/       workspace (the deployed all-in-one demo) + focused: react | vanilla | drawing | indicators | replay — Vite apps, consume src via alias
 docs/           getting-started, architecture, api-reference, drawing-tools, indicators, replay-system, plugin-development, contributing
@@ -56,9 +58,9 @@ reports/        OSS-readiness audit, licensing-attribution, excluded-files, migr
 ```
 
 Barrels define the public surface: [src/index.ts](src/index.ts) (core),
-`src/react/index.ts` (React). Anything not re-exported there is internal.
+`src/react/index.ts` (React), `src/react/workspace/index.ts` (workspace). Anything not re-exported there is internal.
 
-Build: tsup, **2 entries** (`.` core, `./react`) → ESM + CJS + `.d.ts`. Each tsup
+Build: tsup, **3 entries** (`.` core, `./react`, `./react/workspace`) → ESM + CJS + `.d.ts`. Each tsup
 entry must have a matching `exports` key in `package.json`.
 
 ---
@@ -167,3 +169,147 @@ needs one.
    per the `files` allowlist). **Publishing is effectively permanent** — names
    can't be reused after unpublish.
 5. Tag `vX.Y.Z`.
+
+---
+
+## Workspace System (Phase 2) — Added by Kimi
+
+The multi-panel FlexLayout workspace system was implemented as a purely additive
+layer by Kimi in one pass. It consists of:
+
+1. **Core contracts** (`src/workspace/`)
+   - `PanelRegistry`, `WorkspaceManager`, `LayoutPersistence`
+   - `LocalStoragePersistence`, JSON import/export adapters
+   - Default layouts (`buildDefaultLayout`, `buildSingleChartLayout`)
+
+2. **React adapter** (`src/react/workspace/`)
+   - `FlexLayoutAdapter` — wraps `flexlayout-react` behind an abstraction
+   - `WorkspaceProvider`, `useWorkspace`, `usePanel`, `useLayout`
+   - Built-in panels: `ChartPanel`, `WatchlistPanel`, `IndicatorPanel`, `ToolPanel`, `DataPanel`
+   - `ChartPanel` reuses existing `ChartView` + `SyncEngine` for linked groups
+
+3. **New demo** (`examples/workspace-demo/`)
+   - Shows multiple charts, draggable tabs, dockable panels, layout save/load,
+     dynamic panel registration, and synced chart groups.
+
+4. **Build / packaging updates**
+   - `package.json`: added `flexlayout-react` as optional peer + new `./react/workspace` export
+   - `tsup.config.ts`: added `react/workspace/index` entry
+   - `scripts/build-site.mjs`: included `workspace-demo` in EXAMPLES
+   - `scripts/site-assets/index.html`: added Workspace Demo card to landing page
+
+Consumers use:
+```ts
+import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@candlekit/charts/react/workspace";
+```
+
+All existing functionality (landing page, demos, GitHub Pages, package exports,
+chart APIs) remains intact. Workspace is additive only — no breaking changes.
+
+---
+
+## Workspace System (Phase 2) — Added by Kimi
+
+The multi-panel FlexLayout workspace system was implemented as a purely additive
+layer by Kimi in one pass. It consists of:
+
+1. **Core contracts** (`src/workspace/`)
+   - `PanelRegistry`, `WorkspaceManager`, `LayoutPersistence`
+   - `LocalStoragePersistence`, JSON import/export adapters
+   - Default layouts (`buildDefaultLayout`, `buildSingleChartLayout`)
+
+2. **React adapter** (`src/react/workspace/`)
+   - `FlexLayoutAdapter` — wraps `flexlayout-react` behind an abstraction
+   - `WorkspaceProvider`, `useWorkspace`, `usePanel`, `useLayout`
+   - Built-in panels: `ChartPanel`, `WatchlistPanel`, `IndicatorPanel`, `ToolPanel`, `DataPanel`
+   - `ChartPanel` reuses existing `ChartView` + `SyncEngine` for linked groups
+
+3. **New demo** (`examples/workspace-demo/`)
+   - Shows multiple charts, draggable tabs, dockable panels, layout save/load,
+     dynamic panel registration, and synced chart groups.
+
+4. **Build / packaging updates**
+   - `package.json`: added `flexlayout-react` as optional peer + new `./react/workspace` export
+   - `tsup.config.ts`: added `react/workspace/index` entry
+   - `scripts/build-site.mjs`: included `workspace-demo` in EXAMPLES
+   - `scripts/site-assets/index.html`: added Workspace Demo card to landing page
+
+Consumers use:
+```ts
+import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@candlekit/charts/react/workspace";
+```
+
+All existing functionality (landing page, demos, GitHub Pages, package exports,
+chart APIs) remains intact. Workspace is additive only — no breaking changes.
+
+---
+
+## Workspace System (Phase 2) — Added by Kimi
+
+The multi-panel FlexLayout workspace system was implemented as a purely additive
+layer by Kimi in one pass. It consists of:
+
+1. **Core contracts** (`src/workspace/`)
+   - `PanelRegistry`, `WorkspaceManager`, `LayoutPersistence`
+   - `LocalStoragePersistence`, JSON import/export adapters
+   - Default layouts (`buildDefaultLayout`, `buildSingleChartLayout`)
+
+2. **React adapter** (`src/react/workspace/`)
+   - `FlexLayoutAdapter` — wraps `flexlayout-react` behind an abstraction
+   - `WorkspaceProvider`, `useWorkspace`, `usePanel`, `useLayout`
+   - Built-in panels: `ChartPanel`, `WatchlistPanel`, `IndicatorPanel`, `ToolPanel`, `DataPanel`
+   - `ChartPanel` reuses existing `ChartView` + `SyncEngine` for linked groups
+
+3. **New demo** (`examples/workspace-demo/`)
+   - Shows multiple charts, draggable tabs, dockable panels, layout save/load,
+     dynamic panel registration, and synced chart groups.
+
+4. **Build / packaging updates**
+   - `package.json`: added `flexlayout-react` as optional peer + new `./react/workspace` export
+   - `tsup.config.ts`: added `react/workspace/index` entry
+   - `scripts/build-site.mjs`: included `workspace-demo` in EXAMPLES
+   - `scripts/site-assets/index.html`: added Workspace Demo card to landing page
+
+Consumers use:
+```ts
+import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@candlekit/charts/react/workspace";
+```
+
+All existing functionality (landing page, demos, GitHub Pages, package exports,
+chart APIs) remains intact. Workspace is additive only — no breaking changes.
+
+---
+
+## Workspace System (Phase 2) — Added by Kimi
+
+The multi-panel FlexLayout workspace system was implemented as a purely additive
+layer by Kimi in one pass. It consists of:
+
+1. **Core contracts** (`src/workspace/`)
+   - `PanelRegistry`, `WorkspaceManager`, `LayoutPersistence`
+   - `LocalStoragePersistence`, JSON import/export adapters
+   - Default layouts (`buildDefaultLayout`, `buildSingleChartLayout`)
+
+2. **React adapter** (`src/react/workspace/`)
+   - `FlexLayoutAdapter` — wraps `flexlayout-react` behind an abstraction
+   - `WorkspaceProvider`, `useWorkspace`, `usePanel`, `useLayout`
+   - Built-in panels: `ChartPanel`, `WatchlistPanel`, `IndicatorPanel`, `ToolPanel`, `DataPanel`
+   - `ChartPanel` reuses existing `ChartView` + `SyncEngine` for linked groups
+
+3. **New demo** (`examples/workspace-demo/`)
+   - Shows multiple charts, draggable tabs, dockable panels, layout save/load,
+     dynamic panel registration, and synced chart groups.
+
+4. **Build / packaging updates**
+   - `package.json`: added `flexlayout-react` as optional peer + new `./react/workspace` export
+   - `tsup.config.ts`: added `react/workspace/index` entry
+   - `scripts/build-site.mjs`: included `workspace-demo` in EXAMPLES
+   - `scripts/site-assets/index.html`: added Workspace Demo card to landing page
+
+Consumers use:
+```ts
+import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@candlekit/charts/react/workspace";
+```
+
+All existing functionality (landing page, demos, GitHub Pages, package exports,
+chart APIs) remains intact. Workspace is additive only — no breaking changes.

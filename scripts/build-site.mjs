@@ -24,7 +24,7 @@ const siteDir = resolve(repoRoot, "site");
 
 // `workspace` is the headline all-in-one demo; the rest are focused examples.
 // All deploy so the landing can link them. Order = build order.
-const EXAMPLES = ["workspace", "vanilla", "react", "indicators", "drawing", "replay"];
+const EXAMPLES = ["workspace", "workspace-demo", "vanilla", "react", "indicators", "drawing", "replay"];
 
 const SITE_BASE = (process.env.SITE_BASE || "/candlekit-charts/").replace(/\/?$/, "/");
 
