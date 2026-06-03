@@ -23,6 +23,15 @@ export * from "./chart/ChartController";
 // ── Data source contracts ───────────────────────────────────────────────────────
 export * from "./data-source/types";
 
+// ── Live feed / broker data layer (transport-agnostic adapters) ─────────────────
+export * from "./feed/types";
+export * from "./feed/aggregator";
+export * from "./feed/reconnect";
+export * from "./feed/MockFeed";
+
+// ── ML / AI overlay contracts ───────────────────────────────────────────────────
+export * from "./ml/types";
+
 // ── Drawing (original engine rendered on lightweight-charts primitives) ─────────
 export * from "./drawing/types";
 export * from "./drawing/geometry";
