@@ -29,6 +29,8 @@ import {
 } from "flexlayout-react";
 import type { PanelDefinition, PanelInstance, WorkspaceManager } from "../../../workspace";
 import { createModelFromJson, modelToJson } from "./ModelFactory";
+import { WorkspaceProvider } from "../WorkspaceProvider";
+import { useWorkspace } from "../hooks/useWorkspace";
 
 export interface FlexLayoutAdapterProps {
   workspace: WorkspaceManager;
@@ -60,32 +62,6 @@ export function FlexLayoutAdapter({
   );
 }
 
-// ── Context ──────────────────────────────────────────────────────────────────
-
-import { createContext, useContext } from "react";
-
-const WorkspaceContext = createContext<WorkspaceManager | null>(null);
-
-function WorkspaceProvider({
-  workspace,
-  children,
-}: {
-  workspace: WorkspaceManager;
-  children: ReactNode;
-}) {
-  return (
-    <WorkspaceContext.Provider value={workspace}>
-      {children}
-    </WorkspaceContext.Provider>
-  );
-}
-
-export function useWorkspaceContext(): WorkspaceManager {
-  const ctx = useContext(WorkspaceContext);
-  if (!ctx) throw new Error("useWorkspaceContext must be used inside <WorkspaceProvider>");
-  return ctx;
-}
-
 // ── Inner component ──────────────────────────────────────────────────────────
 
 function FlexLayoutAdapterInner({
@@ -99,7 +75,7 @@ function FlexLayoutAdapterInner({
   hideToolbar?: boolean;
   onReady?: () => void;
 }) {
-  const workspace = useWorkspaceContext();
+  const workspace = useWorkspace();
   const [model, setModel] = useState<Model | null>(null);
   const layoutRef = useRef<ILayoutApi | null>(null);
   const modelRef = useRef<Model | null>(null);

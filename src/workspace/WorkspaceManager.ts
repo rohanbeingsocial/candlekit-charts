@@ -127,10 +127,18 @@ export class WorkspaceManagerImpl implements WorkspaceManager {
   }
 
   importLayout(blob: unknown): void {
-    const parsed = blob as WorkspaceLayout;
+    let parsed: unknown = blob;
+    if (typeof parsed === "string") {
+      try {
+        parsed = JSON.parse(parsed);
+      } catch {
+        return;
+      }
+    }
     if (!parsed || typeof parsed !== "object") return;
+    const layout = parsed as WorkspaceLayout;
     this.current = {
-      ...parsed,
+      ...layout,
       id: this.id,
       updatedAt: new Date().toISOString(),
     };

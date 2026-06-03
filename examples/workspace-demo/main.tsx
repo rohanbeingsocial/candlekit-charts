@@ -9,6 +9,7 @@ import {
   IndicatorPanel,
   ToolPanel,
   DataPanel,
+  WorkspaceProvider,
   useWorkspace,
   useLayout,
 } from "@candlekit/charts/react/workspace";
@@ -60,7 +61,7 @@ function Toolbar() {
   const [saved, setSaved] = useState(false);
 
   const addPanel = useCallback((kind: string) => {
-    workspace.addPanel(kind, `${kind}-${Date.now()}`, undefined);
+    workspace.addPanel(kind);
   }, [workspace]);
 
   const handleSave = useCallback(() => {
@@ -74,7 +75,7 @@ function Toolbar() {
   }, [loadLayout]);
 
   const handleExport = useCallback(() => {
-    const json = exportLayout();
+    const json = JSON.stringify(exportLayout(), null, 2);
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -131,26 +132,28 @@ function App() {
   };
 
   return (
-    <div style={S.app}>
-      <header style={S.header}>
-        <span style={S.brand}>
-          candlekit<span style={{ color: "var(--app-muted)" }}>/</span>charts
-        </span>
-        <span style={{ color: "var(--app-muted)", fontSize: 12 }}>FlexLayout Workspace Demo</span>
-        <span style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ color: "var(--app-muted)", fontSize: 11 }}>
-            Drag tabs to rearrange · Right-click tabs for options
+    <WorkspaceProvider workspace={workspace}>
+      <div style={S.app}>
+        <header style={S.header}>
+          <span style={S.brand}>
+            candlekit<span style={{ color: "var(--app-muted)" }}>/</span>charts
           </span>
-          <button style={S.btn} onClick={toggleTheme}>
-            {theme === "dark" ? "☀ Light" : "🌙 Dark"}
-          </button>
-        </span>
-      </header>
-      <Toolbar />
-      <div style={S.body}>
-        <FlexLayoutAdapter workspace={workspace} />
+          <span style={{ color: "var(--app-muted)", fontSize: 12 }}>FlexLayout Workspace Demo</span>
+          <span style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+            <span style={{ color: "var(--app-muted)", fontSize: 11 }}>
+              Drag tabs to rearrange · Right-click tabs for options
+            </span>
+            <button style={S.btn} onClick={toggleTheme}>
+              {theme === "dark" ? "☀ Light" : "🌙 Dark"}
+            </button>
+          </span>
+        </header>
+        <Toolbar />
+        <div style={S.body}>
+          <FlexLayoutAdapter workspace={workspace} hideToolbar />
+        </div>
       </div>
-    </div>
+    </WorkspaceProvider>
   );
 }
 
