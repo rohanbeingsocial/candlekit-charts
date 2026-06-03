@@ -19,6 +19,7 @@ import {
   type ChartViewApi,
   type SeriesType,
   IndicatorController,
+  usePageTheme,
 } from "../../index";
 import { getWorkspaceIndicatorRegistry } from "./indicatorRegistry";
 import { generateBars, type RawBar } from "../../../core/data";
@@ -39,7 +40,9 @@ export const DEFAULT_CHART_CONFIG: ChartPanelConfig = {
   symbol: "DEMO",
   interval: "1m",
   seriesType: "candlestick",
-  theme: "dark",
+  // No `theme` default: the panel follows the page theme (usePageTheme) unless a
+  // config explicitly overrides it, so a global light/dark toggle reaches the
+  // chart canvas without per-panel config plumbing.
 };
 
 /** Per-symbol seed price so each chart tab renders a distinct synthetic walk. */
@@ -87,6 +90,7 @@ function ChartPanelInner({
 }) {
   const [api, setApi] = useState<ChartViewApi | null>(null);
   const applyingRef = useRef(false);
+  const pageTheme = usePageTheme();
 
   // Indicator catalog — shared workspace registry (built-ins by default; a host
   // can swap in the full indicators-tv set via setWorkspaceIndicatorRegistry).
@@ -220,7 +224,7 @@ function ChartPanelInner({
         data={data}
         resampleMinutes={resampleMinutes}
         seriesType={config.seriesType ?? "candlestick"}
-        theme={config.theme ?? "dark"}
+        theme={config.theme ?? pageTheme}
         drawing={drawingOpts}
         measurement
         indicators={indicators}
