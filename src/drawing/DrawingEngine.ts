@@ -61,6 +61,19 @@ export class DrawingEngine {
     this.emit();
   }
 
+  /**
+   * Fix the current preview point to `p` and add a fresh trailing preview.
+   * Used by tools that need 3+ anchors: each click locks the live point and
+   * starts previewing the next one.
+   */
+  appendDraftPoint(p: DrawingPoint): void {
+    if (!this.draft) return;
+    const pts = this.draft.points.slice(0, -1);
+    pts.push(p, p);
+    this.draft.points = pts;
+    this.emit();
+  }
+
   getDraft(): Drawing | null {
     return this.draft;
   }

@@ -18,7 +18,7 @@ import type {
   ISeriesApi,
 } from "lightweight-charts";
 import type { CanvasRenderingTarget2D } from "fancy-canvas";
-import { FIB_LEVELS, type Drawing } from "./types";
+import { FIB_LEVELS, FIB_EXT_LEVELS, type Drawing } from "./types";
 import type { DrawingEngine } from "./DrawingEngine";
 
 interface Anchor {
@@ -48,10 +48,14 @@ class Renderer implements IPrimitivePaneRenderer {
         const { style, tool } = s.drawing;
         const a = s.anchors[0];
         const b = s.anchors[1];
+        const c = s.anchors[2];
         const ax = a?.x == null ? null : a.x * hpr;
         const ay = a?.y == null ? null : a.y * vpr;
         const bx = b?.x == null ? null : b.x * hpr;
         const by = b?.y == null ? null : b.y * vpr;
+        const cx = c?.x == null ? null : c.x * hpr;
+        const cy = c?.y == null ? null : c.y * vpr;
+        const pts = s.drawing.points;
 
         ctx.save();
         ctx.strokeStyle = style.color;
@@ -63,8 +67,17 @@ class Renderer implements IPrimitivePaneRenderer {
           case "HorizontalLine":
             if (ay != null) line(ctx, 0, ay, W, ay);
             break;
+          case "HorizontalRay":
+            if (ax != null && ay != null) line(ctx, ax, ay, W, ay);
+            break;
           case "VerticalLine":
             if (ax != null) line(ctx, ax, 0, ax, H);
+            break;
+          case "CrossLine":
+            if (ax != null && ay != null) {
+              line(ctx, 0, ay, W, ay);
+              line(ctx, ax, 0, ax, H);
+            }
             break;
           case "TrendLine":
             if (ax != null && ay != null && bx != null && by != null) line(ctx, ax, ay, bx, by);
@@ -101,14 +114,82 @@ class Renderer implements IPrimitivePaneRenderer {
             break;
           case "Circle":
             if (ax != null && ay != null && bx != null && by != null) {
-              const cx = (ax + bx) / 2;
-              const cy = (ay + by) / 2;
+              const ecx = (ax + bx) / 2;
+              const ecy = (ay + by) / 2;
               const rx = Math.abs(bx - ax) / 2;
               const ry = Math.abs(by - ay) / 2;
               ctx.beginPath();
-              ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+              ctx.ellipse(ecx, ecy, rx, ry, 0, 0, Math.PI * 2);
               if (style.fill) ctx.fill();
               ctx.stroke();
+            }
+            break;
+          case "Triangle":
+            if (ax != null && ay != null && bx != null && by != null && cx != null && cy != null) {
+              ctx.beginPath();
+              ctx.moveTo(ax, ay);
+              ctx.lineTo(bx, by);
+              ctx.lineTo(cx, cy);
+              ctx.closePath();
+              if (style.fill) ctx.fill();
+              ctx.stroke();
+            }
+            break;
+          case "ParallelChannel":
+            if (ax != null && ay != null && bx != null && by != null && cx != null && cy != null) {
+              const c2x = cx + (bx - ax);
+              const c2y = cy + (by - ay);
+              if (style.fill) {
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(bx, by);
+                ctx.lineTo(c2x, c2y);
+                ctx.lineTo(cx, cy);
+                ctx.closePath();
+                ctx.fill();
+              }
+              line(ctx, ax, ay, bx, by);
+              line(ctx, cx, cy, c2x, c2y);
+            }
+            break;
+          case "PriceRange":
+            if (ax != null && ay != null && bx != null && by != null) {
+              const x = Math.min(ax, bx);
+              const y = Math.min(ay, by);
+              const w = Math.abs(bx - ax);
+              const h = Math.abs(by - ay);
+              if (style.fill) ctx.fillRect(x, y, w, h);
+              ctx.strokeRect(x, y, w, h);
+              const p0 = pts[0]?.price;
+              const p1 = pts[1]?.price;
+              if (p0 != null && p1 != null) {
+                const dPrice = p1 - p0;
+                const pct = p0 !== 0 ? (dPrice / p0) * 100 : 0;
+                ctx.font = `${11 * hpr}px ui-monospace, monospace`;
+                ctx.fillStyle = style.color;
+                ctx.fillText(
+                  `${dPrice >= 0 ? "+" : ""}${dPrice.toFixed(2)} (${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%)`,
+                  x + 4 * hpr,
+                  y + 13 * hpr,
+                );
+              }
+            }
+            break;
+          case "DateRange":
+            if (ax != null && bx != null) {
+              const x1 = Math.min(ax, bx);
+              const x2 = Math.max(ax, bx);
+              if (style.fill) ctx.fillRect(x1, 0, x2 - x1, H);
+              line(ctx, ax, 0, ax, H);
+              line(ctx, bx, 0, bx, H);
+              const t0 = pts[0]?.time;
+              const t1 = pts[1]?.time;
+              if (t0 != null && t1 != null) {
+                const mins = Math.abs(t1 - t0) / 60;
+                ctx.font = `${11 * hpr}px ui-monospace, monospace`;
+                ctx.fillStyle = style.color;
+                ctx.fillText(`${mins.toFixed(0)}m`, (x1 + x2) / 2 - 8 * hpr, 14 * hpr);
+              }
             }
             break;
           case "FibRetracement":
@@ -117,6 +198,19 @@ class Renderer implements IPrimitivePaneRenderer {
               ctx.fillStyle = style.color;
               for (const lvl of FIB_LEVELS) {
                 const y = ay + (by - ay) * lvl;
+                line(ctx, 0, y, W, y);
+                ctx.fillText(`${(lvl * 100).toFixed(1)}%`, 4 * hpr, y - 2 * hpr);
+              }
+            }
+            break;
+          case "FibExtension":
+            if (ax != null && ay != null && by != null && cy != null) {
+              if (bx != null) line(ctx, ax, ay, bx, by); // guide leg a→b
+              ctx.font = `${10 * hpr}px ui-monospace, monospace`;
+              ctx.fillStyle = style.color;
+              const legY = by - ay;
+              for (const lvl of FIB_EXT_LEVELS) {
+                const y = cy + legY * lvl;
                 line(ctx, 0, y, W, y);
                 ctx.fillText(`${(lvl * 100).toFixed(1)}%`, 4 * hpr, y - 2 * hpr);
               }
@@ -133,7 +227,7 @@ class Renderer implements IPrimitivePaneRenderer {
           ctx.strokeStyle = style.color;
           ctx.lineWidth = 1.5 * hpr;
           const r = 4 * hpr;
-          for (const an of [a, b]) {
+          for (const an of s.anchors) {
             if (an?.x == null || an?.y == null) continue;
             ctx.beginPath();
             ctx.rect(an.x * hpr - r, an.y * vpr - r, r * 2, r * 2);

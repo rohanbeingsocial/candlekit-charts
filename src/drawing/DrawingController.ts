@@ -15,7 +15,7 @@ import type { ChartPlugin, PluginContext } from "../plugins/types";
 import { DrawingEngine } from "./DrawingEngine";
 import { DrawingPrimitive } from "./DrawingPrimitive";
 import { localStorageKV, saveDrawings, loadDrawings, type KVStore } from "./persistence";
-import { FIB_LEVELS, type Drawing, type DrawingPoint } from "./types";
+import { FIB_LEVELS, FIB_EXT_LEVELS, type Drawing, type DrawingPoint } from "./types";
 import { distToSegment, distToLine, distToRay, distToRectEdges, distToEllipse, pointInRect, type Pt } from "./geometry";
 
 export interface DrawingControllerOptions {
@@ -113,7 +113,8 @@ export class DrawingController implements ChartPlugin {
       e.preventDefault();
       e.stopPropagation();
       this.suppressPan(true);
-      if (this.engine.pointsNeeded(tool) === 1) {
+      const need = this.engine.pointsNeeded(tool);
+      if (need === 1) {
         this.engine.commit({
           id: this.engine.newDrawingId(),
           tool,
@@ -122,11 +123,19 @@ export class DrawingController implements ChartPlugin {
         });
         this.suppressPan(false);
       } else if (!this.engine.getDraft()) {
+        // First click: anchor + live preview ([p, p]).
         this.engine.beginDraft(tool, dp);
       } else {
         const draft = this.engine.getDraft()!;
-        this.engine.commit({ ...draft, points: [draft.points[0], dp] });
-        this.suppressPan(false);
+        // Lock the current preview point to dp.
+        const fixed = draft.points.slice(0, -1).concat(dp);
+        if (fixed.length >= need) {
+          this.engine.commit({ ...draft, points: fixed });
+          this.suppressPan(false);
+        } else {
+          // More anchors to place — start previewing the next one.
+          this.engine.appendDraftPoint(dp);
+        }
       }
       return;
     }
@@ -242,12 +251,17 @@ export class DrawingController implements ChartPlugin {
     const a = this.project(d.points[0]);
     if (!a) return false;
     const b = d.points[1] ? this.project(d.points[1]) : null;
+    const c = d.points[2] ? this.project(d.points[2]) : null;
     const t = this.tol;
     switch (d.tool) {
       case "HorizontalLine":
         return Math.abs(p.y - a.y) <= t;
+      case "HorizontalRay":
+        return Math.abs(p.y - a.y) <= t && p.x >= a.x - t;
       case "VerticalLine":
         return Math.abs(p.x - a.x) <= t;
+      case "CrossLine":
+        return Math.abs(p.y - a.y) <= t || Math.abs(p.x - a.x) <= t;
       case "TrendLine":
       case "Arrow":
         return !!b && distToSegment(p, a, b) <= t;
@@ -256,12 +270,27 @@ export class DrawingController implements ChartPlugin {
       case "ExtendedLine":
         return !!b && distToLine(p, a, b) <= t;
       case "Rectangle":
+      case "PriceRange":
         return !!b && (distToRectEdges(p, a, b) <= t || pointInRect(p, a, b));
+      case "DateRange":
+        return !!b && (Math.abs(p.x - a.x) <= t || Math.abs(p.x - b.x) <= t);
       case "Circle":
         return !!b && distToEllipse(p, a, b) <= t;
+      case "Triangle":
+        return (
+          !!b &&
+          !!c &&
+          (distToSegment(p, a, b) <= t || distToSegment(p, b, c) <= t || distToSegment(p, c, a) <= t)
+        );
+      case "ParallelChannel": {
+        if (!b || !c) return false;
+        const c2 = { x: c.x + (b.x - a.x), y: c.y + (b.y - a.y) };
+        return distToSegment(p, a, b) <= t || distToSegment(p, c, c2) <= t;
+      }
       case "FibRetracement":
-        if (!b) return false;
-        return FIB_LEVELS.some((lvl) => Math.abs(p.y - (a.y + (b.y - a.y) * lvl)) <= t);
+        return !!b && FIB_LEVELS.some((lvl) => Math.abs(p.y - (a.y + (b.y - a.y) * lvl)) <= t);
+      case "FibExtension":
+        return !!b && !!c && FIB_EXT_LEVELS.some((lvl) => Math.abs(p.y - (c.y + (b.y - a.y) * lvl)) <= t);
       default:
         return !!b && distToSegment(p, a, b) <= t;
     }

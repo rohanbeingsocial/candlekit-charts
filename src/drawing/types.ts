@@ -11,11 +11,18 @@ export type DrawingToolId =
   | "Ray"
   | "ExtendedLine"
   | "HorizontalLine"
+  | "HorizontalRay"
   | "VerticalLine"
+  | "CrossLine"
   | "Rectangle"
   | "Circle"
+  | "Triangle"
+  | "ParallelChannel"
   | "Arrow"
+  | "PriceRange"
+  | "DateRange"
   | "FibRetracement"
+  | "FibExtension"
   | (string & {});
 
 /** Number of anchor points each tool needs. */
@@ -24,11 +31,18 @@ export const TOOL_POINTS: Record<string, number> = {
   Ray: 2,
   ExtendedLine: 2,
   HorizontalLine: 1,
+  HorizontalRay: 1,
   VerticalLine: 1,
+  CrossLine: 1,
   Rectangle: 2,
   Circle: 2,
+  Triangle: 3,
+  ParallelChannel: 3,
   Arrow: 2,
+  PriceRange: 2,
+  DateRange: 2,
   FibRetracement: 2,
+  FibExtension: 3,
 };
 
 /** An anchor in data space: `time` is the lightweight-charts time (epoch seconds). */
@@ -61,3 +75,6 @@ export const DEFAULT_STYLE: DrawingStyle = {
 
 /** Fibonacci retracement levels (fraction of the leg). */
 export const FIB_LEVELS = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+
+/** Fibonacci extension/projection levels (fraction of the leg). */
+export const FIB_EXT_LEVELS = [0, 0.618, 1, 1.272, 1.618, 2, 2.618];

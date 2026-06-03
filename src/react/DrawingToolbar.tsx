@@ -14,11 +14,18 @@ const DEFAULT_TOOLS: { id: DrawingToolId; label: string; title?: string }[] = [
   { id: "Ray", label: "→", title: "Ray" },
   { id: "ExtendedLine", label: "↔", title: "Extended line" },
   { id: "HorizontalLine", label: "─", title: "Horizontal line" },
+  { id: "HorizontalRay", label: "─→", title: "Horizontal ray" },
   { id: "VerticalLine", label: "│", title: "Vertical line" },
+  { id: "CrossLine", label: "✛", title: "Cross line" },
   { id: "Arrow", label: "↗", title: "Arrow" },
   { id: "Rectangle", label: "▭", title: "Rectangle" },
-  { id: "Circle", label: "◯", title: "Circle" },
+  { id: "Circle", label: "◯", title: "Ellipse" },
+  { id: "Triangle", label: "△", title: "Triangle" },
+  { id: "ParallelChannel", label: "▱", title: "Parallel channel" },
+  { id: "PriceRange", label: "↕", title: "Price range" },
+  { id: "DateRange", label: "↔|", title: "Date range" },
   { id: "FibRetracement", label: "Fib", title: "Fibonacci retracement" },
+  { id: "FibExtension", label: "FibE", title: "Fibonacci extension" },
 ];
 
 /**
