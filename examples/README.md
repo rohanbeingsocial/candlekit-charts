@@ -1,12 +1,12 @@
 # Examples
 
-Five standalone Vite apps that exercise `@candlekit/charts`. Each consumes the
+Six standalone Vite apps that exercise `@candlekit/charts`. Each consumes the
 library straight from `../../src` via a Vite alias (see `shared/vite.shared.ts`),
 so **no build of the library is required** — just run an example.
 
 | Folder | Demonstrates | Stack |
 | --- | --- | --- |
-| `workspace/` | **the all-in-one demo** (deployed to Pages) — chart + drawing toolbar + indicator picker + measurement ruler + replay panel + series/TF/theme | React |
+| `workspace/` | **the unified workspace** (deployed to Pages) — FlexLayout splits/syncs chart panes; each pane owns drawing tools + indicator picker + measurement ruler + per-pane replay | React |
 | `vanilla/` | `ChartController`, series types, theme toggle | Vanilla TS |
 | `react/` | `<ChartView>`, series + timeframe + theme | React |
 | `indicators/` | built-in indicator catalog + `<IndicatorPicker>` | React |
@@ -15,6 +15,8 @@ so **no build of the library is required** — just run an example.
 
 Every example needs only `lightweight-charts` (+ `react` for the React ones).
 Drawing and indicators are built into `@candlekit/charts` — no extra installs.
+The `workspace/` app additionally pulls `flexlayout-react` (the pane splitter)
+and the `lightweight-charts-indicators` catalog.
 
 ## Run one
 

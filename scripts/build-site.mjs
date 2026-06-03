@@ -22,9 +22,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 const siteDir = resolve(repoRoot, "site");
 
-// `workspace` is the headline all-in-one demo; the rest are focused examples.
-// All deploy so the landing can link them. Order = build order.
-const EXAMPLES = ["workspace", "workspace-demo", "vanilla", "react", "indicators", "drawing", "replay"];
+// `workspace` is the headline unified workspace (split chart panes; each pane
+// owns drawing, indicators, measurement, replay). The rest are focused examples
+// that isolate one part of the API. All deploy so the landing can link them.
+// Order = build order.
+const EXAMPLES = ["workspace", "vanilla", "react", "indicators", "drawing", "replay"];
 
 const SITE_BASE = (process.env.SITE_BASE || "/candlekit-charts/").replace(/\/?$/, "/");
 

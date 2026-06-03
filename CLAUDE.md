@@ -52,7 +52,7 @@ src/
   workspace/    Framework-agnostic workspace contracts + PanelRegistry + WorkspaceManager + LayoutPersistence + DefaultLayouts  **[Added by Kimi]**
   react/workspace/  FlexLayoutAdapter + WorkspaceProvider + hooks + built-in panels (ChartPanel, Watchlist, etc.)  **[Added by Kimi]**
 tests/          vitest unit tests (pure logic only)
-examples/       workspace (the deployed all-in-one demo) + focused: react | vanilla | drawing | indicators | replay — Vite apps, consume src via alias
+examples/       workspace (the deployed unified workspace — split chart panes; each pane owns drawing/indicators/measurement/replay) + focused: react | vanilla | drawing | indicators | replay — Vite apps, consume src via alias
 docs/           getting-started, architecture, api-reference, drawing-tools, indicators, replay-system, plugin-development, contributing
 reports/        OSS-readiness audit, licensing-attribution, excluded-files, migration-notes, launch-and-marketing
 ```
@@ -185,18 +185,24 @@ layer by Kimi in one pass. It consists of:
 2. **React adapter** (`src/react/workspace/`)
    - `FlexLayoutAdapter` — wraps `flexlayout-react` behind an abstraction
    - `WorkspaceProvider`, `useWorkspace`, `usePanel`, `useLayout`
-   - Built-in panels: `ChartPanel`, `WatchlistPanel`, `IndicatorPanel`, `ToolPanel`, `DataPanel`
-   - `ChartPanel` reuses existing `ChartView` + `SyncEngine` for linked groups
+   - Built-in panels: `ChartPanel` (the canonical pane) + generic `WatchlistPanel`,
+     `IndicatorPanel`, `ToolPanel`, `DataPanel` (still exported for custom hosts;
+     the workspace demo no longer registers them)
+   - `ChartPanel` is the full chart pane — `ChartView` + drawing toolbar + indicator
+     picker + measurement + per-pane replay + `SyncEngine` linked groups. Drawing,
+     indicators and replay attach to the pane, not separate windows.
 
-3. **New demo** (`examples/workspace-demo/`)
-   - Shows multiple charts, draggable tabs, dockable panels, layout save/load,
-     dynamic panel registration, and synced chart groups.
+3. **Unified workspace demo** (`examples/workspace/`)
+   - One workspace: FlexLayout splits/resizes/closes/adds chart panes and syncs
+     groups; each pane is a full chart pane. No standalone indicator/tool/replay
+     windows, no separate "FlexLayout" mode. (The old `examples/workspace-demo/`
+     was folded into this.)
 
 4. **Build / packaging updates**
-   - `package.json`: added `flexlayout-react` as optional peer + new `./react/workspace` export
-   - `tsup.config.ts`: added `react/workspace/index` entry
-   - `scripts/build-site.mjs`: included `workspace-demo` in EXAMPLES
-   - `scripts/site-assets/index.html`: added Workspace Demo card to landing page
+   - `package.json`: `flexlayout-react` optional peer + `./react/workspace` export
+   - `tsup.config.ts`: `react/workspace/index` entry
+   - `scripts/build-site.mjs`: `workspace` headlines EXAMPLES
+   - `scripts/site-assets/index.html`: landing headlines the unified workspace
 
 Consumers use:
 ```ts
