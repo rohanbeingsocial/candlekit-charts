@@ -10,6 +10,7 @@ const root = resolve(__dirname, "../..");
 export const candlekitAlias = {
   // Most-specific first — Vite matches aliases in declaration order.
   "@candlekit/charts/react/workspace": resolve(root, "src/react/workspace/index.ts"),
+  "@candlekit/charts/indicators-tv": resolve(root, "src/indicators-tv/index.ts"),
   "@candlekit/charts/styles.css": resolve(root, "styles.css"),
   "@candlekit/charts/react": resolve(root, "src/react/index.ts"),
   "@candlekit/charts": resolve(root, "src/index.ts"),
@@ -22,7 +23,14 @@ export const candlekitAlias = {
  * (a second copy, or — in CI, where root deps aren't installed — none at all).
  * Deduping collapses them onto the example's own copy.
  */
-export const candlekitDedupe = ["react", "react-dom", "lightweight-charts", "flexlayout-react"];
+export const candlekitDedupe = [
+  "react",
+  "react-dom",
+  "lightweight-charts",
+  "flexlayout-react",
+  "lightweight-charts-indicators",
+  "oakscriptjs",
+];
 
 export const candlekitResolve = {
   alias: candlekitAlias,

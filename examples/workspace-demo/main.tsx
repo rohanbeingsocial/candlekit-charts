@@ -10,9 +10,15 @@ import {
   ToolPanel,
   DataPanel,
   WorkspaceProvider,
+  setWorkspaceIndicatorRegistry,
   useLayout,
 } from "@candlekit/charts/react/workspace";
+import { createFullIndicatorRegistry } from "@candlekit/charts/indicators-tv";
 import "flexlayout-react/style/dark.css";
+
+// Make every ChartPanel's Indicators dropdown list the full 400+ MIT catalog
+// (candlekit built-ins + lightweight-charts-indicators) before any panel mounts.
+setWorkspaceIndicatorRegistry(createFullIndicatorRegistry());
 
 const workspace = createWorkspace({
   id: "demo",

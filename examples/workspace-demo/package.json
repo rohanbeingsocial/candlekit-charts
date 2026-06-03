@@ -9,6 +9,8 @@
   "dependencies": {
     "flexlayout-react": "^0.9.1",
     "lightweight-charts": "^5.0.0",
+    "lightweight-charts-indicators": "^0.4.2",
+    "oakscriptjs": "^0.2.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -19,8 +19,8 @@ import {
   type ChartViewApi,
   type SeriesType,
   IndicatorController,
-  createBuiltinRegistry,
 } from "../../index";
+import { getWorkspaceIndicatorRegistry } from "./indicatorRegistry";
 import { generateBars, type RawBar } from "../../../core/data";
 import { SyncEngineImpl } from "../../../sync/SyncEngine";
 import type { SyncEvent, SyncMember } from "../../../sync/types";
@@ -88,9 +88,10 @@ function ChartPanelInner({
   const [api, setApi] = useState<ChartViewApi | null>(null);
   const applyingRef = useRef(false);
 
-  // Built-in indicator catalog.
+  // Indicator catalog — shared workspace registry (built-ins by default; a host
+  // can swap in the full indicators-tv set via setWorkspaceIndicatorRegistry).
   const indicators = useMemo(() => {
-    const ctl = new IndicatorController(createBuiltinRegistry());
+    const ctl = new IndicatorController(getWorkspaceIndicatorRegistry());
     ctl.add("EMA", { length: 21 });
     return ctl;
   }, []);

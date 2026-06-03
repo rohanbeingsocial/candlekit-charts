@@ -23,6 +23,10 @@ export { createModelFromJson, modelToJson } from "./flexlayout/ModelFactory";
 
 // Built-in panels
 export { ChartPanel, type ChartPanelConfig, DEFAULT_CHART_CONFIG } from "./panels/ChartPanel";
+export {
+  setWorkspaceIndicatorRegistry,
+  getWorkspaceIndicatorRegistry,
+} from "./panels/indicatorRegistry";
 export { WatchlistPanel, type WatchlistConfig } from "./panels/WatchlistPanel";
 export { IndicatorPanel, type IndicatorConfig } from "./panels/IndicatorPanel";
 export { ToolPanel, type ToolConfig } from "./panels/ToolPanel";

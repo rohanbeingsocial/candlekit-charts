@@ -55,6 +55,11 @@
       "import": "./dist/react/workspace/index.js",
       "require": "./dist/react/workspace/index.cjs"
     },
+    "./indicators-tv": {
+      "types": "./dist/indicators-tv/index.d.ts",
+      "import": "./dist/indicators-tv/index.js",
+      "require": "./dist/indicators-tv/index.cjs"
+    },
     "./styles.css": "./styles.css",
     "./package.json": "./package.json"
   },
@@ -70,10 +75,12 @@
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "peerDependencies": {
+    "flexlayout-react": "^0.9.1",
     "lightweight-charts": "^5.0.0",
+    "lightweight-charts-indicators": "^0.4.0",
+    "oakscriptjs": "^0.2.0",
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "flexlayout-react": "^0.9.1"
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -84,6 +91,12 @@
     },
     "flexlayout-react": {
       "optional": true
+    },
+    "lightweight-charts-indicators": {
+      "optional": true
+    },
+    "oakscriptjs": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -93,6 +106,8 @@
     "eslint": "^9.0.0",
     "flexlayout-react": "^0.9.1",
     "lightweight-charts": "^5.0.0",
+    "lightweight-charts-indicators": "^0.4.2",
+    "oakscriptjs": "^0.2.8",
     "prettier": "^3.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
