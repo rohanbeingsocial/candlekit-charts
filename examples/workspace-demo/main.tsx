@@ -10,7 +10,6 @@ import {
   ToolPanel,
   DataPanel,
   WorkspaceProvider,
-  useWorkspace,
   useLayout,
 } from "@candlekit/charts/react/workspace";
 import "flexlayout-react/style/dark.css";
@@ -55,14 +54,13 @@ workspace.registerPanel({
   defaultConfig: () => ({ count: 100 }),
 });
 
-function Toolbar() {
-  const { workspace } = useWorkspace();
+// Layout save/load/export/import, passed into the adapter's built-in toolbar via
+// the `toolbar` extra slot — mirrors how the main site puts its saved-layout
+// switcher in WorkspaceShell.toolbarExtra. Add Panel + Reset come from the
+// adapter's own toolbar (same component as the production workspace shell).
+function LayoutControls() {
   const { saveLayout, loadLayout, exportLayout, importLayout } = useLayout();
   const [saved, setSaved] = useState(false);
-
-  const addPanel = useCallback((kind: string) => {
-    workspace.addPanel(kind);
-  }, [workspace]);
 
   const handleSave = useCallback(() => {
     saveLayout("default");
@@ -103,19 +101,12 @@ function Toolbar() {
   }, [importLayout]);
 
   return (
-    <div style={S.toolbar}>
-      <span style={S.toolbarLabel}>Add panel:</span>
-      <button style={S.toolbarBtn} onClick={() => addPanel("chart")}>+ Chart</button>
-      <button style={S.toolbarBtn} onClick={() => addPanel("watchlist")}>+ Watchlist</button>
-      <button style={S.toolbarBtn} onClick={() => addPanel("indicators")}>+ Indicators</button>
-      <button style={S.toolbarBtn} onClick={() => addPanel("tools")}>+ Tools</button>
-      <button style={S.toolbarBtn} onClick={() => addPanel("data")}>+ Data</button>
-      <div style={S.divider} />
+    <>
       <button style={S.toolbarBtn} onClick={handleSave}>{saved ? "✓ Saved" : "Save Layout"}</button>
       <button style={S.toolbarBtn} onClick={handleLoad}>Load Layout</button>
       <button style={S.toolbarBtn} onClick={handleExport}>Export JSON</button>
       <button style={S.toolbarBtn} onClick={handleImport}>Import JSON</button>
-    </div>
+    </>
   );
 }
 
@@ -148,9 +139,8 @@ function App() {
             </button>
           </span>
         </header>
-        <Toolbar />
         <div style={S.body}>
-          <FlexLayoutAdapter workspace={workspace} hideToolbar />
+          <FlexLayoutAdapter workspace={workspace} toolbar={<LayoutControls />} />
         </div>
       </div>
     </WorkspaceProvider>
