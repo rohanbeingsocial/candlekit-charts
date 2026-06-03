@@ -41,6 +41,15 @@ chart-lib/
 │   ├── sync/
 │   │   ├── types.ts               SyncEvent/Flag/Group/Member
 │   │   └── SyncEngine.ts          Multi-group, re-entrancy-guarded broadcaster
+│   ├── feed/                      Broker-agnostic data layer (in core entry)
+│   │   ├── types.ts               MarketDataProvider/RealtimeFeed/HistoricalFeed/BrokerProvider
+│   │   ├── aggregator.ts          TickAggregator (tick→OHLC)
+│   │   ├── reconnect.ts           withReconnect (backoff + resubscribe)
+│   │   └── MockFeed.ts            Synthetic provider for dev/tests
+│   ├── ml/
+│   │   └── types.ts               MLPlugin/FeatureGenerator/SignalProvider/PredictionOverlay
+│   ├── indicators-tv/             Optional entry (peer: lightweight-charts-indicators)
+│   │   └── index.ts               registerTradingViewIndicators / createFullIndicatorRegistry
 │   └── react/                     React bindings (second build entry)
 │       ├── index.ts               React barrel (re-exports core + components)
 │       ├── ChartView.tsx          Declarative chart + plugin host
@@ -57,8 +66,9 @@ chart-lib/
 └── (config) package.json · tsconfig.json · tsup.config.ts · vitest.config.ts · eslint.config.js
 ```
 
-Two build entries (`index`, `react/index`), each with a `package.json` `exports`
-key.
+Four build entries (`index`, `react/index`, `react/workspace/index`,
+`indicators-tv/index`), each with a `package.json` `exports` key. The feed + ml
+layers ship inside the core `index` entry (pure, dependency-free).
 
 ## Core modules
 
