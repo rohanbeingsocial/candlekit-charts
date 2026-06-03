@@ -101,6 +101,15 @@ charts a host wires as `SyncMember`s. It is intentionally decoupled from
    `ReplayControls`) are absolutely-positioned DOM over the canvas; they call the
    controller/engine imperatively. They never render bars.
 
+**Layout & theme (kept deliberately simple).** Multi-chart layouts are just
+nested `<SplitPane>`s (a ~110-line resizable split, no docking/persistence) — a
+resize changes a flex-basis, so charts autosize without remounting. Theme is one
+`data-theme` attribute on `<html>`: it drives the chrome vars, the `.ck-*`
+overlay vars (`styles.css`: `:root` = light, `[data-theme="dark"]` = dark), and —
+via `usePageTheme()` — each chart's `theme` prop. Toggling re-themes everything
+at once with no remount. The `examples/drawing` demo is the canonical example of
+this.
+
 ## Extension points
 
 | Want to add… | Do this | Touches core? |
@@ -109,6 +118,8 @@ charts a host wires as `SyncMember`s. It is intentionally decoupled from
 | Drawing tool | id in `TOOL_POINTS` + render `case` in `DrawingPrimitive` + hit-test `case` in `DrawingController` | drawing only |
 | Behavior | implement `ChartPlugin`, `controller.use(plugin)` | no |
 | Data source | implement `BarDataSource`/`StreamingDataSource`/`ReplayDataSource` | no |
+| Multi-chart layout | nest `<SplitPane>` (resizable, dependency-free) — no workspace manager needed | no |
+| Global theme | toggle `data-theme` on `<html>`; `usePageTheme()` reflects it into panels | no |
 | Broker / live feed | implement `MarketDataProvider` (`HistoricalFeed` + `RealtimeFeed`); wrap with `withReconnect`; aggregate ticks with `TickAggregator` | no |
 | ML overlay | implement `MLPlugin` (`run(bars) → MLResult`), offload compute to Worker/WASM | no |
 | Framework binding | mirror `src/react/` in a sibling dir + tsup entry + `exports` key | no |

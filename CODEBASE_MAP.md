@@ -57,7 +57,9 @@ chart-lib/
 │       ├── DrawingToolbar.tsx
 │       ├── IndicatorPicker.tsx
 │       ├── ReplayControls.tsx
-│       └── hooks/useChartController.ts
+│       ├── SplitPane.tsx          Resizable two-pane split (nest for grids)
+│       ├── hooks/useChartController.ts
+│       └── hooks/usePageTheme.ts  Reflect <html data-theme> into React
 ├── tests/                        Vitest unit tests (data, replay, sync, events)
 ├── examples/                     Standalone Vite demo apps
 ├── docs/                         Long-form documentation
