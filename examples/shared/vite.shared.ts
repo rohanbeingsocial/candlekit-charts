@@ -22,7 +22,7 @@ export const candlekitAlias = {
  * (a second copy, or — in CI, where root deps aren't installed — none at all).
  * Deduping collapses them onto the example's own copy.
  */
-export const candlekitDedupe = ["react", "react-dom", "lightweight-charts"];
+export const candlekitDedupe = ["react", "react-dom", "lightweight-charts", "flexlayout-react"];
 
 export const candlekitResolve = {
   alias: candlekitAlias,
