@@ -1,13 +1,24 @@
-  # @candlekit/charts
+<div align="center">
 
-> Tree-shakeable financial charting toolkit for the web — candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Framework-agnostic core with optional React bindings. Built on [Lightweight Charts™](https://github.com/tradingview/lightweight-charts).
+# @getcandlekit/charts
 
-<p align="center">
+**A tree-shakeable financial charting toolkit for the web.**
+
+Candlestick · OHLC · line · area · volume · drawing tools · pluggable indicators · measurement ruler · deterministic replay engine.<br />
+A framework-agnostic core with optional React bindings, built on [Lightweight Charts™](https://github.com/tradingview/lightweight-charts).
+
+<p>
   <em>A clean, extensible layer over lightweight-charts — the orchestration you keep rewriting, packaged once.</em>
 </p>
 
 [![CI](https://github.com/rohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
+[![npm version](https://img.shields.io/npm/v/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+</div>
+
+> [!NOTE]
+> **Candlekit is a vibe-coded project** — designed and built rapidly and iteratively with AI-assisted development. It is functional, tested, and documented, but treat it as early-stage software: pin a version, read the changelog before upgrading, and open an issue if something looks off.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/drawing.gif" alt="Drawing a trendline, rectangle and Fibonacci retracement on a candlestick chart" width="820" />
@@ -36,7 +47,7 @@
 
 ## Overview
 
-`@candlekit/charts` wraps lightweight-charts with the pieces a real trading UI
+`@getcandlekit/charts` wraps lightweight-charts with the pieces a real trading UI
 needs but the base library leaves to you: a stable chart controller, a
 runtime-agnostic drawing engine, an extensible indicator framework, a Shift-drag
 measurement ruler, multi-chart sync, and a deterministic historical replay
@@ -70,24 +81,25 @@ import.
   CJS, event system, plugin system, and extensible data-source / indicator /
   drawing frameworks.
 
-## Screenshots
+## Replay
 
-<!-- Replace these placeholders with real captures from examples/ -->
-| Candles + indicators | Drawing tools | Replay |
-| --- | --- | --- |
-| _![candles](docs/assets/screenshot-candles.png)_ | _![drawing](docs/assets/screenshot-drawing.png)_ | _![replay](docs/assets/screenshot-replay.png)_ |
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/replay.gif" alt="Deterministic historical replay stepping and seeking over candlestick bars" width="820" />
+  <br />
+  <em>Deterministic replay — play/pause, step ±1, speed control, seek/jump</em>
+</p>
 
 ## Installation
 
 ```bash
-npm install @candlekit/charts lightweight-charts
+npm install @getcandlekit/charts lightweight-charts
 # React bindings (optional):
 npm install react react-dom
 ```
 
 That's it. `lightweight-charts` is the only runtime dependency (a peer, so you
 control its version); `react`/`react-dom` are needed only for
-`@candlekit/charts/react`. **Drawing tools and indicators are built in** — no
+`@getcandlekit/charts/react`. **Drawing tools and indicators are built in** — no
 extra packages, no git installs.
 
 ## Quick Start
@@ -95,7 +107,7 @@ extra packages, no git installs.
 ### Vanilla JS / TypeScript
 
 ```ts
-import { ChartController, toBars } from "@candlekit/charts";
+import { ChartController, toBars } from "@getcandlekit/charts";
 
 const el = document.getElementById("chart")!;
 const chart = new ChartController(el, { theme: "dark", seriesType: "candlestick" });
@@ -106,8 +118,8 @@ chart.setData(toBars(myRows)); // myRows: { ts, open, high, low, close, volume }
 ### React
 
 ```tsx
-import { ChartView } from "@candlekit/charts/react";
-import "@candlekit/charts/styles.css";
+import { ChartView } from "@getcandlekit/charts/react";
+import "@getcandlekit/charts/styles.css";
 
 export function App({ bars }) {
   return (
@@ -139,21 +151,21 @@ ws.onBar((bar) => chart.updateBar(bar)); // appends or replaces the last bar
 **Session-aware resampling** (align buckets to a 09:30 market open instead of UTC midnight):
 
 ```ts
-import { resample } from "@candlekit/charts";
+import { resample } from "@getcandlekit/charts";
 const candles = resample(rows, 15, { sessionOpenMinutes: 9 * 60 + 30 });
 ```
 
 **Fixed-offset exchange time** (render an always-UTC+5:30 market in wall-clock):
 
 ```ts
-import { applyFixedOffset } from "@candlekit/charts";
+import { applyFixedOffset } from "@getcandlekit/charts";
 const shifted = rows.map((r) => ({ ...r, ts: applyFixedOffset(r.ts, 330) }));
 ```
 
 ## Replay Examples
 
 ```ts
-import { createReplayController } from "@candlekit/charts";
+import { createReplayController } from "@getcandlekit/charts";
 
 const replay = createReplayController();
 replay.onBar((e) => chart.updateBar(e.bar));
@@ -171,14 +183,14 @@ replay.play();
 React transport bar:
 
 ```tsx
-import { ReplayControls } from "@candlekit/charts/react";
+import { ReplayControls } from "@getcandlekit/charts/react";
 <ReplayControls controller={replay} />
 ```
 
 ## Drawing Tool Examples
 
 ```tsx
-import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
+import { ChartView, DrawingToolbar } from "@getcandlekit/charts/react";
 
 // `drawing` accepts true, an options object, or a DrawingController instance.
 <ChartView data={bars} drawing={{ storageKey: "drawings:AAPL" }}>
@@ -189,7 +201,7 @@ import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
 Imperative (vanilla):
 
 ```ts
-import { ChartController, DrawingController } from "@candlekit/charts";
+import { ChartController, DrawingController } from "@getcandlekit/charts";
 
 const chart = new ChartController(el);
 const drawing = new DrawingController({ storageKey: "drawings:AAPL" });
@@ -200,7 +212,7 @@ drawing.engine.startTool("TrendLine");
 ## Indicator Examples
 
 ```tsx
-import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@candlekit/charts/react";
+import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@getcandlekit/charts/react";
 
 const indicators = new IndicatorController(createBuiltinRegistry());
 indicators.add("RSI", { length: 14 });
@@ -214,7 +226,7 @@ indicators.add("EMA", { length: 21 });
 Register a **custom indicator** (the extension point):
 
 ```ts
-import { IndicatorRegistry } from "@candlekit/charts";
+import { IndicatorRegistry } from "@getcandlekit/charts";
 
 const registry = new IndicatorRegistry().register({
   name: "PriceMid",
@@ -234,7 +246,7 @@ const registry = new IndicatorRegistry().register({
 ## Plugin Examples
 
 ```ts
-import type { ChartPlugin } from "@candlekit/charts";
+import type { ChartPlugin } from "@getcandlekit/charts";
 
 const lastPriceLabel: ChartPlugin = {
   id: "last-price-label",

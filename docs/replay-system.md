@@ -17,7 +17,7 @@ is reproducible regardless of machine speed.
 ## Implement a data source
 
 ```ts
-import type { ReplayDataSource } from "@candlekit/charts";
+import type { ReplayDataSource } from "@getcandlekit/charts";
 
 const source: ReplayDataSource = {
   async fetchDay(symbol, interval, date) {
@@ -38,7 +38,7 @@ You own holiday/gap logic — the engine just walks the dates you return.
 ## Drive a chart
 
 ```ts
-import { ChartController, createReplayController } from "@candlekit/charts";
+import { ChartController, createReplayController } from "@getcandlekit/charts";
 
 const chart = new ChartController(el);
 const replay = createReplayController({
@@ -82,7 +82,7 @@ replay.play();
 React:
 
 ```tsx
-import { ReplayControls } from "@candlekit/charts/react";
+import { ReplayControls } from "@getcandlekit/charts/react";
 <ReplayControls controller={replay} speeds={[1, 2, 4, 8, 16]} />
 ```
 

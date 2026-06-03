@@ -1,8 +1,8 @@
 import { StrictMode, useMemo } from "react";
 import { createRoot } from "react-dom/client";
-import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@candlekit/charts/react";
-import "@candlekit/charts/styles.css";
-import { generateBars } from "@candlekit/charts";
+import { ChartView, IndicatorPicker, IndicatorController, createBuiltinRegistry } from "@getcandlekit/charts/react";
+import "@getcandlekit/charts/styles.css";
+import { generateBars } from "@getcandlekit/charts";
 
 function App() {
   const data = useMemo(() => generateBars(600), []);

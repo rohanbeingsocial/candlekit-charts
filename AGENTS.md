@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Guidance for AI coding agents (and humans) working in `@candlekit/charts`. Read
+Guidance for AI coding agents (and humans) working in `@getcandlekit/charts`. Read
 this before editing. It encodes the architecture, the rules that keep the public
 API stable, and how to extend the library without breaking tree-shaking.
 
 ## Project architecture
 
-`@candlekit/charts` is a thin, opinionated layer over
+`@getcandlekit/charts` is a thin, opinionated layer over
 [lightweight-charts](https://github.com/tradingview/lightweight-charts). Two
 rings:
 

@@ -30,7 +30,7 @@ Register: `controller.use(plugin)`. Remove: `controller.remove(plugin.id)`.
 
 ```ts
 import { LineSeries, type ISeriesApi, type Time } from "lightweight-charts";
-import type { ChartPlugin } from "@candlekit/charts";
+import type { ChartPlugin } from "@getcandlekit/charts";
 
 export function vwapAnchored(): ChartPlugin {
   let line: ISeriesApi<"Line"> | null = null;
@@ -99,6 +99,6 @@ custom keys (the map has an index signature) for plugin-to-plugin messaging.
 ## Packaging a plugin
 
 A plugin can live in your app or ship as its own package depending only on
-`@candlekit/charts` (peer) + `lightweight-charts` (peer). Export a factory
+`@getcandlekit/charts` (peer) + `lightweight-charts` (peer). Export a factory
 (`(options) => ChartPlugin`) for ergonomics — that is the `ChartPluginFactory<O>`
 type.

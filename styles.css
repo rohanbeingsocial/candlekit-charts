@@ -1,8 +1,8 @@
 /*
- * @candlekit/charts — optional styles for the bundled React overlay components
+ * @getcandlekit/charts — optional styles for the bundled React overlay components
  * (DrawingToolbar, IndicatorPicker, ReplayControls). Import once:
  *
- *   import "@candlekit/charts/styles.css";
+ *   import "@getcandlekit/charts/styles.css";
  *
  * Everything is namespaced under `.ck-*` and driven by CSS variables so you can
  * theme it without overriding individual rules.

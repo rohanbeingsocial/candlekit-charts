@@ -6,13 +6,13 @@ indicator, drawing tools, and replay.
 ## 1. Install
 
 ```bash
-npm install @candlekit/charts lightweight-charts
+npm install @getcandlekit/charts lightweight-charts
 # React (optional):
 npm install react react-dom
 ```
 
 `lightweight-charts` is a **peer dependency** — you control its version. React is
-an optional peer; only needed for `@candlekit/charts/react`.
+an optional peer; only needed for `@getcandlekit/charts/react`.
 
 ## 2. Your data shape
 
@@ -34,7 +34,7 @@ Raw rows may carry `null`/`NaN` — `toBars()` cleans, sorts, and dedupes them.
 ## 3. Vanilla chart
 
 ```ts
-import { ChartController, toBars } from "@candlekit/charts";
+import { ChartController, toBars } from "@getcandlekit/charts";
 
 const chart = new ChartController(document.getElementById("chart")!, {
   theme: "dark",
@@ -50,8 +50,8 @@ The container should have a height (the chart auto-sizes to it).
 ## 4. React chart
 
 ```tsx
-import { ChartView } from "@candlekit/charts/react";
-import "@candlekit/charts/styles.css"; // only if you use the overlay components
+import { ChartView } from "@getcandlekit/charts/react";
+import "@getcandlekit/charts/styles.css"; // only if you use the overlay components
 
 function Chart({ bars }) {
   return (
@@ -67,7 +67,7 @@ function Chart({ bars }) {
 Resample 1-minute rows on the fly:
 
 ```ts
-import { resample } from "@candlekit/charts";
+import { resample } from "@getcandlekit/charts";
 chart.setData(resample(rows, 15)); // 15-minute candles
 ```
 
@@ -80,7 +80,7 @@ For exchanges with a session open other than midnight UTC, pass
 ## 6. Add an indicator
 
 ```ts
-import { IndicatorController, createBuiltinRegistry } from "@candlekit/charts";
+import { IndicatorController, createBuiltinRegistry } from "@getcandlekit/charts";
 
 const indicators = new IndicatorController(createBuiltinRegistry());
 chart.use(indicators);
@@ -93,7 +93,7 @@ plus your own. See [indicators.md](./indicators.md).
 ## 7. Add drawing tools
 
 ```ts
-import { DrawingController } from "@candlekit/charts";
+import { DrawingController } from "@getcandlekit/charts";
 
 const drawing = new DrawingController({ storageKey: "drawings:demo" });
 chart.use(drawing);

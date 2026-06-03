@@ -2,7 +2,7 @@
  * Synthetic OHLCV generator — no network, no production data. Produces a random
  * walk of 1-minute bars suitable for every example.
  */
-import type { RawBar } from "@candlekit/charts";
+import type { RawBar } from "@getcandlekit/charts";
 
 export function generateBars(count = 500, startPrice = 100, startTs = Date.UTC(2024, 0, 2, 9, 30)): RawBar[] {
   const bars: RawBar[] = [];

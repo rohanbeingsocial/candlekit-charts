@@ -1,10 +1,10 @@
 /**
- * @candlekit/charts — framework-agnostic entry.
+ * @getcandlekit/charts — framework-agnostic entry.
  *
  * Everything here is free of React. The only external runtime dependency is
  * `lightweight-charts` (peer). Drawing tools and indicators are original,
  * self-contained implementations — no third-party drawing/indicator runtimes.
- * The React bindings live at `@candlekit/charts/react`.
+ * The React bindings live at `@getcandlekit/charts/react`.
  */
 
 // ── Core ───────────────────────────────────────────────────────────────────────

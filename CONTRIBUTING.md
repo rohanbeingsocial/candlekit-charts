@@ -1,4 +1,4 @@
-# Contributing to @candlekit/charts
+# Contributing to @getcandlekit/charts
 
 Thanks for helping improve the library. This guide covers setup, build, test,
 and PR expectations. For architecture and extension points, read

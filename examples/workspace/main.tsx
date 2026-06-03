@@ -8,9 +8,9 @@ import {
   WorkspaceProvider,
   setWorkspaceIndicatorRegistry,
   useLayout,
-} from "@candlekit/charts/react/workspace";
-import { createFullIndicatorRegistry } from "@candlekit/charts/indicators-tv";
-import "@candlekit/charts/styles.css";
+} from "@getcandlekit/charts/react/workspace";
+import { createFullIndicatorRegistry } from "@getcandlekit/charts/indicators-tv";
+import "@getcandlekit/charts/styles.css";
 import "flexlayout-react/style/dark.css";
 
 // ── The canonical workspace ──────────────────────────────────────────────────

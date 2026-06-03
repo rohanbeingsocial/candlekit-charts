@@ -9,9 +9,9 @@ import {
   type ReplayController,
   type ReplayDataSource,
   type Bar,
-} from "@candlekit/charts/react";
-import "@candlekit/charts/styles.css";
-import { generateBars } from "@candlekit/charts";
+} from "@getcandlekit/charts/react";
+import "@getcandlekit/charts/styles.css";
+import { generateBars } from "@getcandlekit/charts";
 
 /** Build 3 intraday days of synthetic 1m bars and a day-addressable source. */
 function buildSource() {

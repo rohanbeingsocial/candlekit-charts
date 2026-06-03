@@ -2,7 +2,7 @@
  * Shared indicator registry for the built-in ChartPanel.
  *
  * Defaults to candlekit's own MIT catalog. A host can swap in a richer registry
- * (e.g. the 400+ `@candlekit/charts/indicators-tv` set) once at startup, before
+ * (e.g. the 400+ `@getcandlekit/charts/indicators-tv` set) once at startup, before
  * panels mount, so every ChartPanel's Indicators dropdown lists it — without the
  * core panel taking a dependency on any third-party indicator runtime.
  */

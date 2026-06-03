@@ -3,8 +3,8 @@
 Generated descriptions of the public surface. Types are authoritative in the
 shipped `.d.ts`; this is the prose companion. Import paths:
 
-- `@candlekit/charts` — core (everything below except React components)
-- `@candlekit/charts/react` — React components/hooks (+ re-exports of core)
+- `@getcandlekit/charts` — core (everything below except React components)
+- `@getcandlekit/charts/react` — React components/hooks (+ re-exports of core)
 
 ---
 

@@ -1,6 +1,6 @@
 # Licensing & Attribution Report
 
-Audit of every dependency in `@candlekit/charts`: license, attribution
+Audit of every dependency in `@getcandlekit/charts`: license, attribution
 requirement, redistribution rights, third-party origin, and how it is included.
 
 ## Summary
@@ -52,7 +52,7 @@ No attribution to those projects is required because none of their code remains.
 - **Apache-2.0 + MIT → MIT distribution:** compatible. MIT (our code) imposes no
   constraints upstream; Apache-2.0 and MIT permit redistribution with notice.
 - **No copyleft in the runtime or published package** (no GPL/LGPL/AGPL/MPL), so
-  nothing propagates obligations to `@candlekit/charts` or its consumers. The one
+  nothing propagates obligations to `@getcandlekit/charts` or its consumers. The one
   MPL-2.0 package in the tree (`lightningcss`) is a dev-only optional-peer
   transitive of the build toolchain — not redistributed, not a runtime dep.
 - **Trademark:** "Lightweight Charts™" is TradingView's mark. The code is
@@ -69,6 +69,6 @@ No attribution to those projects is required because none of their code remains.
 
 ## Redistribution rights — conclusion
 
-`@candlekit/charts` may be published to npm and distributed publicly under MIT.
+`@getcandlekit/charts` may be published to npm and distributed publicly under MIT.
 The only external runtime, `lightweight-charts`, installs from npm as a normal
 peer dependency. There are no git-hosted or copyleft dependencies.

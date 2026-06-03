@@ -1,6 +1,6 @@
 # Examples
 
-Six standalone Vite apps that exercise `@candlekit/charts`. Each consumes the
+Six standalone Vite apps that exercise `@getcandlekit/charts`. Each consumes the
 library straight from `../../src` via a Vite alias (see `shared/vite.shared.ts`),
 so **no build of the library is required** — just run an example.
 
@@ -14,7 +14,7 @@ so **no build of the library is required** — just run an example.
 | `replay/` | deterministic replay + `<ReplayControls>` | React |
 
 Every example needs only `lightweight-charts` (+ `react` for the React ones).
-Drawing and indicators are built into `@candlekit/charts` — no extra installs.
+Drawing and indicators are built into `@getcandlekit/charts` — no extra installs.
 The `workspace/` app additionally pulls `flexlayout-react` (the pane splitter)
 and the `lightweight-charts-indicators` catalog.
 

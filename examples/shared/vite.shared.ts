@@ -3,17 +3,17 @@ import { resolve } from "node:path";
 /**
  * Shared Vite alias map so examples consume the library straight from `src/`
  * (no build step needed to try them). In a real consumer app you would instead
- * `npm install @candlekit/charts` and drop these aliases.
+ * `npm install @getcandlekit/charts` and drop these aliases.
  */
 const root = resolve(__dirname, "../..");
 
 export const candlekitAlias = {
   // Most-specific first — Vite matches aliases in declaration order.
-  "@candlekit/charts/react/workspace": resolve(root, "src/react/workspace/index.ts"),
-  "@candlekit/charts/indicators-tv": resolve(root, "src/indicators-tv/index.ts"),
-  "@candlekit/charts/styles.css": resolve(root, "styles.css"),
-  "@candlekit/charts/react": resolve(root, "src/react/index.ts"),
-  "@candlekit/charts": resolve(root, "src/index.ts"),
+  "@getcandlekit/charts/react/workspace": resolve(root, "src/react/workspace/index.ts"),
+  "@getcandlekit/charts/indicators-tv": resolve(root, "src/indicators-tv/index.ts"),
+  "@getcandlekit/charts/styles.css": resolve(root, "styles.css"),
+  "@getcandlekit/charts/react": resolve(root, "src/react/index.ts"),
+  "@getcandlekit/charts": resolve(root, "src/index.ts"),
 };
 
 /**

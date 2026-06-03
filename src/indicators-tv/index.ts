@@ -1,5 +1,5 @@
 /**
- * @candlekit/charts/indicators-tv — optional bulk indicator catalog.
+ * @getcandlekit/charts/indicators-tv — optional bulk indicator catalog.
  *
  * Registers the full `lightweight-charts-indicators` set (400+ indicators) into
  * a candlekit {@link IndicatorRegistry} via {@link defFromRaw}. Both that package
@@ -9,8 +9,8 @@
  *
  * Usage:
  * ```ts
- * import { createFullIndicatorRegistry } from "@candlekit/charts/indicators-tv";
- * import { IndicatorController } from "@candlekit/charts";
+ * import { createFullIndicatorRegistry } from "@getcandlekit/charts/indicators-tv";
+ * import { IndicatorController } from "@getcandlekit/charts";
  * const indicators = new IndicatorController(createFullIndicatorRegistry());
  * ```
  *

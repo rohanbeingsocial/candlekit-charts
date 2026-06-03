@@ -1,5 +1,5 @@
 /**
- * @candlekit/charts/react/workspace — React workspace bindings.
+ * @getcandlekit/charts/react/workspace — React workspace bindings.
  *
  * FlexLayout-backed multi-panel workspace system. Optional peer dependency on
  * `flexlayout-react`.

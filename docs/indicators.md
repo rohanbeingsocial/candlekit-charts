@@ -34,7 +34,7 @@ converts your ms bars automatically.
 VWAP, Bollinger Bands, RSI, MACD, ATR, Stochastic** (`BUILTIN_INDICATORS`).
 
 ```ts
-import { IndicatorController, createBuiltinRegistry } from "@candlekit/charts";
+import { IndicatorController, createBuiltinRegistry } from "@getcandlekit/charts";
 
 const registry = createBuiltinRegistry();
 const indicators = new IndicatorController(registry);
@@ -49,7 +49,7 @@ console.log(indicators.activeNames());
 ## React
 
 ```tsx
-import { ChartView, IndicatorPicker } from "@candlekit/charts/react";
+import { ChartView, IndicatorPicker } from "@getcandlekit/charts/react";
 
 <ChartView data={bars} indicators={indicators}>
   <IndicatorPicker />
@@ -64,7 +64,7 @@ controller.
 Any object matching `IndicatorDef` registers — this is the extension point:
 
 ```ts
-import { createBuiltinRegistry } from "@candlekit/charts";
+import { createBuiltinRegistry } from "@getcandlekit/charts";
 
 const donchian: IndicatorDef = {
   name: "Donchian",

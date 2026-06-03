@@ -1,5 +1,5 @@
 /**
- * @candlekit/charts/workspace — framework-agnostic workspace contracts + logic.
+ * @getcandlekit/charts/workspace — framework-agnostic workspace contracts + logic.
  *
  * Re-exported by the React workspace barrel. Consumers who only need the
  * contracts (e.g. to write a custom layout driver) can import from here.

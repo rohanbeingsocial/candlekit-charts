@@ -1,13 +1,13 @@
 # Migration Notes
 
-For maintainers of the original dashboard who want to consume `@candlekit/charts`
+For maintainers of the original dashboard who want to consume `@getcandlekit/charts`
 instead of the in-tree chart code, and a record of what changed during extraction.
 
 ## What moved where
 
 | Original (in-app) | Library import |
 | --- | --- |
-| `components/chart/ChartCanvas.tsx` | `ChartController` + `<ChartView>` (`@candlekit/charts` / `/react`) |
+| `components/chart/ChartCanvas.tsx` | `ChartController` + `<ChartView>` (`@getcandlekit/charts` / `/react`) |
 | `components/chart/chartData.ts` | `toBars`, `resample`, `floorToBucket`, `applyFixedOffset`, `dateOf`, `timeOf` |
 | `components/chart/engine/DrawingEngine.ts` | `DrawingController` + `DrawingEngine` (original engine; no third-party runtime) |
 | `components/chart/indicators/*` | `IndicatorController` + `createBuiltinRegistry` (original catalog) + `<IndicatorPicker>` |

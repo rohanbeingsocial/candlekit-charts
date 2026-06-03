@@ -16,7 +16,7 @@ Arrow, FibRetracement.** Add your own by extending the renderer + hit-test (see
 ### React
 
 ```tsx
-import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
+import { ChartView, DrawingToolbar } from "@getcandlekit/charts/react";
 
 // `drawing` accepts: true | options object | a DrawingController instance.
 <ChartView data={bars} drawing={{ storageKey: "drawings:AAPL" }}>
@@ -27,7 +27,7 @@ import { ChartView, DrawingToolbar } from "@candlekit/charts/react";
 ### Vanilla / imperative
 
 ```ts
-import { ChartController, DrawingController } from "@candlekit/charts";
+import { ChartController, DrawingController } from "@getcandlekit/charts";
 
 const chart = new ChartController(el);
 const drawing = new DrawingController({ storageKey: "drawings:AAPL", hitTolerance: 6 });

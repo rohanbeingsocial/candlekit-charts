@@ -1,4 +1,4 @@
-# Launch & Marketing Plan — @candlekit/charts
+# Launch & Marketing Plan — @getcandlekit/charts
 
 How to take this from a private repo to a noticed open-source project. Ordered by
 leverage. Not shipped to npm (excluded via `.npmignore`).
@@ -47,7 +47,7 @@ These determine whether a visitor stars or bounces in the first 20 seconds.
    `drawing-tools`), social-preview image, MIT license shown, CI badge green.
 6. **npm presence** — publish `0.1.0` (or `0.1.0-beta`). An unpublished package
    can't be `npm install`ed, which kills momentum from any post. Reserve the
-   `@candlekit` scope/org on npm early.
+   `@getcandlekit` scope/org on npm early.
 7. **CHANGELOG + semver discipline** — signals "maintained," which is what
    evaluators actually screen for.
 
@@ -98,7 +98,7 @@ referral sources. Optimize for **downloads + returning demo visitors**, not star
 ## 6. Risks / watch-outs
 
 - **Single peer dependency.** lightweight-charts is the only external runtime;
-  drawing and indicators are built in, so install is just `npm i @candlekit/charts
+  drawing and indicators are built in, so install is just `npm i @getcandlekit/charts
   lightweight-charts` with no git URLs or copyleft to explain. This is a selling
   point — lead with "no extra runtimes" rather than burying it.
 - **Trademark.** Keep "Lightweight Charts™" attribution + non-affiliation
@@ -109,7 +109,7 @@ referral sources. Optimize for **downloads + returning demo visitors**, not star
 
 ## 7. First-week checklist
 
-- [ ] Publish to npm (reserve `@candlekit` scope)
+- [ ] Publish to npm (reserve `@getcandlekit` scope)
 - [ ] Deploy live demo; add URL to repo About + README
 - [ ] Replace README screenshot placeholders with real GIF + images
 - [ ] Add repo topics + social-preview image

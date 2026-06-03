@@ -1,7 +1,7 @@
 # Open-Source Readiness Audit
 
 **Subject:** extraction of the charting library from a private trading dashboard
-into the standalone public package `@candlekit/charts`.
+into the standalone public package `@getcandlekit/charts`.
 **Date:** 2026-05-30.
 **Verdict:** ✅ Ready to open-source. No secrets, credentials, internal URLs, or
 backend code are present in the extracted surface. All dependencies are

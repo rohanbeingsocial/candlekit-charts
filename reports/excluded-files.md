@@ -1,6 +1,6 @@
 # Excluded Files & Code
 
-What was intentionally **left out** of `@candlekit/charts` during extraction, and
+What was intentionally **left out** of `@getcandlekit/charts` during extraction, and
 why. The goal: a clean-room generic charting library with zero proprietary or
 private material and no dependency on the original application.
 
@@ -48,7 +48,7 @@ generic part was re-authored and the domain part dropped.
 | `engine/DrawingEngine.ts` (wrapper over a third-party line-tools runtime) | `drawing/*` — original engine (`DrawingEngine` + `DrawingPrimitive` + `DrawingController`) on lightweight-charts primitives; no third-party drawing runtime |
 | `indicators/registry.ts` + `IndicatorManager.tsx` (third-party indicator runtime) | `indicators/*` — `IndicatorRegistry` + `IndicatorController` + original `builtin.ts` catalog; no third-party indicator runtime |
 | `measurement/MeasurementManager.tsx` (React glue) | `MeasurementController` (framework-agnostic) |
-| `packages/replay-engine`, `sync-engine`, `chart-engine`, `workspace` | `replay/`, `sync/`, `core/`, `plugins/`, `data-source/` — `@ourorg`→`@candlekit`, domain event kinds (`expiry`) removed |
+| `packages/replay-engine`, `sync-engine`, `chart-engine`, `workspace` | `replay/`, `sync/`, `core/`, `plugins/`, `data-source/` — `@ourorg`→`@getcandlekit`, domain event kinds (`expiry`) removed |
 
 ## Carried over (clean, generic)
 - The replay cursor/LRU algorithm, the sync broadcast/re-entrancy logic, the

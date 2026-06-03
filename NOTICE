@@ -1,17 +1,17 @@
-@candlekit/charts
+@getcandlekit/charts
 Copyright (c) 2026 candlekit contributors
 
 This product is licensed under the MIT License (see LICENSE).
 
 The drawing tools and indicators in this package are original implementations
-written for @candlekit/charts; they do not incorporate third-party drawing or
+written for @getcandlekit/charts; they do not incorporate third-party drawing or
 indicator source.
 
 ================================================================================
 Third-party software
 ================================================================================
 
-@candlekit/charts renders on the following package, declared as a peer
+@getcandlekit/charts renders on the following package, declared as a peer
 dependency and resolved at the consumer (its source is not vendored here). Its
 license governs its own code; the attribution below is provided to satisfy that
 license's notice requirement.

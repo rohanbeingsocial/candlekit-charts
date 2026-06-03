@@ -1,5 +1,5 @@
 /**
- * @candlekit/charts/react — React bindings.
+ * @getcandlekit/charts/react — React bindings.
  *
  * Re-exports the core surface plus the React components/hooks so consumers can
  * import everything from one place when using React.

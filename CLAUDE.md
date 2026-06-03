@@ -1,4 +1,4 @@
-# @candlekit/charts — Project Reference
+# @getcandlekit/charts — Project Reference
 
 ## What This Is
 
@@ -6,7 +6,7 @@ Framework-agnostic financial charting toolkit, a thin opinionated layer over
 [lightweight-charts](https://github.com/tradingview/lightweight-charts) v5.
 Candlestick / OHLC / line / area / volume; original drawing tools, pluggable
 indicators, measurement ruler, deterministic replay, multi-chart sync. Core is
-React-free; optional React bindings ship at `@candlekit/charts/react`.
+React-free; optional React bindings ship at `@getcandlekit/charts/react`.
 
 Extracted and generalized from a production trading dashboard into a standalone,
 public-ready library. **No proprietary material, no backend, no transport** — data
@@ -162,7 +162,7 @@ needs one.
 1. `npm run typecheck && npm run lint && npm run test && npm run build`.
 2. Update `CHANGELOG.md`; bump `version` (semver per barrel rules).
 3. **npm prerequisites (manual, one-time):** `npm login` (interactive + 2FA), and
-   the **`@candlekit` org must exist** on npmjs.com (create it free for public
+   the **`@getcandlekit` org must exist** on npmjs.com (create it free for public
    packages) — or rename the scope. `publishConfig.access` is already `public`.
    Verify the tarball with `npm publish --dry-run` (runs `prepublishOnly`).
 4. `npm publish` (ships `dist/`, `styles.css`, `LICENSE`, `NOTICE`, `README.md`
@@ -206,7 +206,7 @@ layer by Kimi in one pass. It consists of:
 
 Consumers use:
 ```ts
-import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@candlekit/charts/react/workspace";
+import { createWorkspace, FlexLayoutAdapter, ChartPanel } from "@getcandlekit/charts/react/workspace";
 ```
 
 All existing functionality (landing page, demos, GitHub Pages, package exports,
@@ -234,7 +234,7 @@ for the full picture. All additive, all MIT.
    by contract.
 
 3. **Optional indicator catalog** (`src/indicators-tv/`, entry
-   `@candlekit/charts/indicators-tv`) — adapts the full
+   `@getcandlekit/charts/indicators-tv`) — adapts the full
    `lightweight-charts-indicators` set (~405 defs) via `defFromRaw`. Both it and
    its `oakscriptjs` peer are MIT **optional peers**, so the core ships no
    third-party indicator runtime unless this entry is imported.

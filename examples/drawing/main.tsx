@@ -9,8 +9,8 @@
 
 import { StrictMode, memo, useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
-import { ChartView, DrawingToolbar, SplitPane, generateBars, type RawBar } from "@candlekit/charts/react";
-import "@candlekit/charts/styles.css";
+import { ChartView, DrawingToolbar, SplitPane, generateBars, type RawBar } from "@getcandlekit/charts/react";
+import "@getcandlekit/charts/styles.css";
 
 type Theme = "light" | "dark";
 

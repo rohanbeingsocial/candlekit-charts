@@ -13,7 +13,7 @@ Tradier, or a custom WS/REST feed — drop in behind the same shape.
 import type {
   MarketDataProvider, HistoricalFeed, RealtimeFeed, BrokerProvider,
   FeedMessage, FeedStatus, FeedCapabilities,
-} from "@candlekit/charts";
+} from "@getcandlekit/charts";
 ```
 
 - **`HistoricalFeed`** — `getBars(req)` for ranged history; optional
@@ -36,7 +36,7 @@ Helpers you get for free:
 ## Wiring it up
 
 ```ts
-import { withReconnect, TickAggregator } from "@candlekit/charts";
+import { withReconnect, TickAggregator } from "@getcandlekit/charts";
 
 const provider = new MyBrokerFeed(creds);          // implements MarketDataProvider
 
@@ -71,8 +71,8 @@ the official `dhanhq` SDK or raw WS/REST.
 import type {
   MarketDataProvider, HistoricalFeed, RealtimeFeed,
   FeedCapabilities, FeedMessage, FeedStatus, HistoryRequest,
-} from "@candlekit/charts";
-import type { Bar, SymbolId } from "@candlekit/charts";
+} from "@getcandlekit/charts";
+import type { Bar, SymbolId } from "@getcandlekit/charts";
 
 interface DhanCreds { clientId: string; accessToken: string; }
 

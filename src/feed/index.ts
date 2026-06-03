@@ -1,5 +1,5 @@
 /**
- * @candlekit/charts — broker-agnostic live feed + broker data layer.
+ * @getcandlekit/charts — broker-agnostic live feed + broker data layer.
  *
  * Transport-free contracts (MarketDataProvider / RealtimeFeed / HistoricalFeed /
  * BrokerProvider), a client-side tick→OHLC aggregator, a resilient reconnect
