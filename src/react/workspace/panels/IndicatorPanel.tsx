@@ -8,7 +8,7 @@ export interface IndicatorConfig {
   active?: string[];
 }
 
-const BUILTINS = ["SMA", "EMA", "RSI", "MACD", "Bollinger", "ATR", "Stochastic"];
+const BUILTINS = ["SMA", "EMA", "WMA", "VWAP", "Bollinger", "RSI", "MACD", "ATR", "Stochastic"];
 
 export function IndicatorPanel({
   instance,

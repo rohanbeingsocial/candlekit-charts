@@ -21,6 +21,7 @@ import {
   IndicatorController,
   createBuiltinRegistry,
 } from "../../index";
+import { generateBars, type RawBar } from "../../../core/data";
 import { SyncEngineImpl } from "../../../sync/SyncEngine";
 import type { SyncEvent, SyncMember } from "../../../sync/types";
 import type { PanelInstance } from "../../../workspace";
@@ -40,6 +41,23 @@ export const DEFAULT_CHART_CONFIG: ChartPanelConfig = {
   seriesType: "candlestick",
   theme: "dark",
 };
+
+/** Per-symbol seed price so each chart tab renders a distinct synthetic walk. */
+const SYMBOL_PRICE: Record<string, number> = {
+  DEMO: 100,
+  BTC: 42000,
+  ETH: 2300,
+  SOL: 110,
+};
+
+/** Map an interval code like "5m" / "1h" to resample minutes (1 = as-is). */
+function intervalMinutes(code?: string): number {
+  if (!code) return 1;
+  const m = /^(\d+)\s*(m|h)$/i.exec(code.trim());
+  if (!m) return 1;
+  const n = parseInt(m[1], 10);
+  return m[2].toLowerCase() === "h" ? n * 60 : n;
+}
 
 export function ChartPanel({
   instance,
@@ -78,6 +96,14 @@ function ChartPanelInner({
   }, []);
 
   const drawingOpts = useMemo(() => ({ storageKey: `candlekit:workspace:drawings:${panelId}` }), [panelId]);
+
+  // Synthetic demo data — one random walk per symbol. A real consumer would
+  // swap this for a data source / fetched bars via panel config.
+  const data = useMemo<RawBar[]>(
+    () => generateBars(375, SYMBOL_PRICE[config.symbol ?? "DEMO"] ?? 100),
+    [config.symbol],
+  );
+  const resampleMinutes = intervalMinutes(config.interval);
 
   const onReady = useCallback((chartApi: ChartViewApi) => {
     setApi(chartApi);
@@ -190,7 +216,8 @@ function ChartPanelInner({
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
       <ChartView
-        data={[]}
+        data={data}
+        resampleMinutes={resampleMinutes}
         seriesType={config.seriesType ?? "candlestick"}
         theme={config.theme ?? "dark"}
         drawing={drawingOpts}
