@@ -54,9 +54,21 @@ replay: ReplayController.getBarsUpToCursor ─► Bar[] ─► setData
   tick/trade into the current bar; the host calls `updateBar` (no React, no full
   re-set). Server-OHLC feeds skip the aggregator.
 - **Replay**: `ReplayController` owns a per-(symbol,interval) per-day LRU cache;
-  a cursor walks bars deterministically. The host reads `getBarsUpToCursor` on
-  each cursor tick and calls `setData`. No look-ahead — live and replay share the
-  same render path.
+  a cursor walks bars deterministically. No look-ahead — live and replay share
+  the same render path. Two host patterns:
+  - **Seek/jump** → `getBarsUpToCursor()` + `setData()` (full window).
+  - **Play/step** → subscribe `onBar` and call `updateBar(newBar)` per advance.
+    This is **O(1) per tick** vs `setData`'s O(cursor); prefer it for playback to
+    avoid O(N²) over a session.
+
+### Performance notes
+
+- **Live ticks** (`updateBar`) update only the last bar and fire the `onBar`
+  plugin hook; `IndicatorController.onBar` recomputes but `update()`s just the
+  newest plot point, so streaming never re-`setData`s a whole indicator series.
+- **Heavy compute** (full indicator recompute, features, backtest) belongs off
+  the render thread (Worker/WASM) for large N — the `IndicatorRegistry.calculate`
+  and `FeatureGenerator` seams isolate the implementation for that swap.
 
 ## Event flow
 

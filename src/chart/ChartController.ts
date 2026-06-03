@@ -148,6 +148,9 @@ export class ChartController {
         color: bar.close >= bar.open ? this.theme.volumeUp : this.theme.volumeDown,
       });
     }
+    // Notify plugins of the single-bar change (indicators recompute, etc.).
+    // Replay/history go through setData → onData; live ticks land here.
+    for (const p of this.plugins.values()) p.onBar?.(bar, this.bars);
   }
 
   setSeriesType(type: SeriesType): void {

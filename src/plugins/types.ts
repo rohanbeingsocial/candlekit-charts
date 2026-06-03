@@ -44,8 +44,11 @@ export interface ChartPlugin {
   init(ctx: PluginContext): void;
   /** Optional: theme changed; re-read colors. */
   onThemeChange?(theme: ChartTheme): void;
-  /** Optional: data changed; recompute. */
+  /** Optional: full data set changed; recompute. */
   onData?(bars: readonly Bar[]): void;
+  /** Optional: a single live/replay bar was appended or updated. Lets a plugin
+   *  react to streaming ticks without a full `onData` recompute. */
+  onBar?(bar: Bar, bars: readonly Bar[]): void;
   /** Release all resources (series, primitives, subscriptions). */
   destroy(): void;
 }

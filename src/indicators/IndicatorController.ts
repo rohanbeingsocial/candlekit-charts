@@ -63,6 +63,50 @@ export class IndicatorController implements ChartPlugin {
     this.refresh();
   }
 
+  /**
+   * Live/replay tick: refresh only the newest point of each active indicator.
+   * Recompute is O(bars) but we `update()` just the last LWC point instead of
+   * re-`setData`-ing the whole series, so streaming stays cheap. Newly-toggled
+   * indicators are materialized by `add()` → `refresh()`, not here.
+   */
+  onBar(): void {
+    const chart = this.chart;
+    const candle = this.candleSeries;
+    if (!chart || !candle || this.managed.size === 0) return;
+    const bars = this.bars();
+    if (bars.length === 0) return;
+
+    for (const [name, m] of this.managed) {
+      const def = this.registry.get(name);
+      const act = this.active.get(name);
+      if (!def || !act) continue;
+      let res: IndicatorResult;
+      try {
+        res = def.calculate(bars, act.params);
+      } catch {
+        continue;
+      }
+      if (m.isPattern) {
+        this.markers.set(name, buildMarkers(res));
+        this.flushMarkers();
+        continue;
+      }
+      for (const [plotId, raw] of Object.entries(res.plots)) {
+        const s = m.plotSeries.get(plotId);
+        if (!s) continue;
+        const filtered = filterValid(raw);
+        const last = filtered[filtered.length - 1];
+        if (!last) continue;
+        const pc = def.plotConfig.find((c) => c.id === plotId);
+        if (HISTOGRAM_STYLES.has(pc?.style ?? "")) {
+          (s as ISeriesApi<"Histogram">).update({ time: last.time as Time, value: last.value, color: last.color ?? pc?.color ?? "#888" });
+        } else {
+          (s as ISeriesApi<"Line">).update({ time: last.time as Time, value: last.value });
+        }
+      }
+    }
+  }
+
   destroy(): void {
     if (this.chart) {
       for (const m of this.managed.values()) {
