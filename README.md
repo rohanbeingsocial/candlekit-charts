@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/candlekit-banner.svg" alt="candlekit/charts — the all-in-one financial charting toolkit" width="880" />
+
 # candlekit/charts
 
 **A tree-shakeable financial charting toolkit for the web.**
