@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/candlekit-icon.svg" alt="CandleKit" width="88" height="88" />
+
 # @getcandlekit/charts
 
 **A tree-shakeable financial charting toolkit for the web.**
