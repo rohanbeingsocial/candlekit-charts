@@ -38,39 +38,54 @@
 }
 
 /* ── Drawing toolbar ───────────────────────────────────────────────────────── */
+/* Flush-left vertical sidebar, parity with the host trading-dashboard toolbar:
+ * pinned to the chart's top-left corner (no inset), right/bottom border only,
+ * rounded bottom-right. */
 .ck-toolbar {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0;
+  left: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 4px;
-  background: var(--ck-bg);
+  width: 36px;
+  padding: 4px 2px;
+  background: color-mix(in srgb, var(--ck-bg) 92%, transparent);
   backdrop-filter: blur(6px);
-  border: 1px solid var(--ck-border);
-  border-radius: var(--ck-radius);
+  border-right: 1px solid color-mix(in srgb, var(--ck-border) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ck-border) 60%, transparent);
+  border-radius: 0 0 8px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+/* Thin divider between tool groups (line tools · shapes · fib). */
+.ck-toolbar-sep {
+  height: 1px;
+  margin: 3px 4px;
+  background: color-mix(in srgb, var(--ck-border) 50%, transparent);
 }
 .ck-toolbar-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: var(--ck-fg);
+  color: var(--ck-muted);
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: color 0.1s, background-color 0.1s, box-shadow 0.1s;
 }
 .ck-toolbar-btn:hover {
-  background: rgba(127, 127, 127, 0.14);
+  background: color-mix(in srgb, var(--ck-muted) 14%, transparent);
+  color: var(--ck-fg);
 }
 .ck-toolbar-btn[data-active] {
-  background: var(--ck-accent);
-  color: var(--ck-accent-fg);
+  background: color-mix(in srgb, var(--ck-accent) 15%, transparent);
+  color: var(--ck-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ck-accent) 35%, transparent);
 }
 
 /* ── Indicator picker (dropdown) ───────────────────────────────────────────── */

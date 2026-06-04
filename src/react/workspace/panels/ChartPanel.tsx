@@ -134,19 +134,32 @@ export function ChartPanel({
 
   return (
     <PanelContext.Provider value={{ instance, updateConfig }}>
-      <ChartPanelInner config={config} groupId={groupId} panelId={instance.id} />
+      <ChartPanelInner config={config} groupId={groupId} panelId={instance.id} updateConfig={updateConfig} />
     </PanelContext.Provider>
   );
 }
+
+/** Instruments selectable from the chart's control pill (synthetic demo walks). */
+const PANEL_SYMBOLS: ReadonlyArray<{ id: string; label: string }> = [
+  { id: "DEMO", label: "DEMO" },
+  { id: "BTC", label: "BTC" },
+  { id: "ETH", label: "ETH" },
+  { id: "SOL", label: "SOL" },
+];
+
+/** Timeframes offered in the control pill (parity with the host TF dropdown). */
+const PANEL_INTERVALS: readonly string[] = ["1m", "5m", "15m", "30m", "1h", "4h"];
 
 function ChartPanelInner({
   config,
   groupId,
   panelId,
+  updateConfig,
 }: {
   config: ChartPanelConfig;
   groupId?: string;
   panelId: string;
+  updateConfig: (next: Partial<ChartPanelConfig>) => void;
 }) {
   const [api, setApi] = useState<ChartViewApi | null>(null);
   const applyingRef = useRef(false);
@@ -350,12 +363,39 @@ function ChartPanelInner({
         indicators={indicators}
         onReady={onReady}
       >
-        {/* Indicators trigger docked into the chart toolbar (top-left column),
-            not floating in its own corner — matches the host workspace, where
-            the indicators control sits on the chart toolbar. */}
-        <div style={S.toolDock}>
+        {/* Flush-left vertical drawing toolbar (pinned by .ck-toolbar) — matches
+            the host trading-dashboard sidebar. */}
+        <DrawingToolbar />
+
+        {/* Control pill, offset right of the toolbar: instrument · timeframe ·
+            indicators · trade date · replay status. Mirrors the host chart pane
+            header, which carries the same controls in one mono pill. */}
+        <div style={S.controlPill}>
+          <select
+            value={symbol}
+            onChange={(e) => updateConfig({ symbol: e.target.value })}
+            style={{ ...S.pillSelect, fontWeight: 600 }}
+            disabled={replayOn}
+            title={replayOn ? "Symbol locked during replay" : "Instrument"}
+          >
+            {!PANEL_SYMBOLS.some((s) => s.id === symbol) && <option value={symbol}>{symbol}</option>}
+            {PANEL_SYMBOLS.map((s) => (
+              <option key={s.id} value={s.id}>{s.label}</option>
+            ))}
+          </select>
+          <select
+            value={config.interval ?? "1m"}
+            onChange={(e) => updateConfig({ interval: e.target.value })}
+            style={S.pillSelect}
+            title="Timeframe"
+          >
+            {PANEL_INTERVALS.map((i) => (
+              <option key={i} value={i}>{i}</option>
+            ))}
+          </select>
           <IndicatorPicker className="ck-ind ck-ind--docked" />
-          <DrawingToolbar style={{ position: "static" }} />
+          <span style={S.pillDate} title="Session date">{session.date}</span>
+          {replayOn && <span style={S.pillReplay}>REPLAY</span>}
         </div>
         <MeasurementOverlay />
       </ChartView>
@@ -384,17 +424,47 @@ function ChartPanelInner({
 }
 
 const S: Record<string, CSSProperties> = {
-  // Top-left dock holding the indicators trigger above the drawing toolbar, so
-  // the two read as one chart toolbar instead of two floating corners.
-  toolDock: {
+  // Control pill, pinned just right of the 36px flush-left drawing toolbar.
+  // One mono row: instrument · timeframe · indicators · date · replay status.
+  controlPill: {
     position: "absolute",
     top: 8,
-    left: 8,
+    left: 44,
     zIndex: 12,
     display: "flex",
-    flexDirection: "column",
+    alignItems: "center",
     gap: 6,
-    alignItems: "flex-start",
+    height: 26,
+    padding: "0 6px",
+    fontSize: 11,
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+    color: "var(--app-fg)",
+    background: "color-mix(in srgb, var(--app-panel) 80%, transparent)",
+    border: "1px solid color-mix(in srgb, var(--app-border) 60%, transparent)",
+    borderRadius: 6,
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.18)",
+  },
+  pillSelect: {
+    height: 20,
+    fontSize: 11,
+    fontFamily: "inherit",
+    color: "var(--app-fg)",
+    background: "transparent",
+    border: "1px solid var(--app-border)",
+    borderRadius: 4,
+    padding: "0 2px",
+    cursor: "pointer",
+  },
+  pillDate: {
+    fontSize: 10,
+    color: "var(--app-muted)",
+    fontVariantNumeric: "tabular-nums",
+  },
+  pillReplay: {
+    fontSize: 10,
+    fontWeight: 600,
+    color: "var(--ck-warn, #f5a524)",
   },
   paneBar: {
     position: "absolute",
