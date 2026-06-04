@@ -1,6 +1,6 @@
 <div align="center">
 
-# @getcandlekit/charts
+# candlekit/charts
 
 **A tree-shakeable financial charting toolkit for the web.**
 
