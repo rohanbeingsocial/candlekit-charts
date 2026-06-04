@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="candlekit/charts — the all-in-one financial charting toolkit">
+  <defs>
+    <radialGradient id="glowTL" cx="22%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#4f9cff" stop-opacity="0.20"/>
+      <stop offset="55%" stop-color="#4f9cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowBR" cx="88%" cy="92%" r="65%">
+      <stop offset="0%" stop-color="#4f9cff" stop-opacity="0.10"/>
+      <stop offset="60%" stop-color="#4f9cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gridFade" cx="50%" cy="50%" r="62%">
+      <stop offset="35%" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridMask"><rect width="1280" height="400" fill="url(#gridFade)"/></mask>
+    <pattern id="grid" width="48" height="40" patternUnits="userSpaceOnUse">
+      <path d="M48 0V40 M0 40H48" stroke="rgba(148,163,184,0.06)" stroke-width="1" fill="none"/>
+    </pattern>
+    <filter id="markGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="8" stdDeviation="18" flood-color="#4f9cff" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#4f9cff" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- ground -->
+  <rect width="1280" height="400" fill="#0e1117"/>
+  <rect width="1280" height="400" fill="url(#grid)" mask="url(#gridMask)"/>
+  <rect width="1280" height="400" fill="url(#glowTL)"/>
+  <rect width="1280" height="400" fill="url(#glowBR)"/>
+
+  <!-- eyebrow -->
+  <text x="40" y="42" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="1.1" fill="#6b7480">CANDLEKIT / CHARTS</text>
+
+  <!-- lockup -->
+  <g transform="translate(286 116)" filter="url(#markGlow)">
+    <rect x="4" y="4" width="88" height="88" rx="22" fill="#4f9cff" transform="scale(1.4583)"/>
+    <g transform="scale(1.4583)">
+      <rect x="19" y="19" width="27" height="27" rx="7.5" fill="#0e1117"/>
+      <rect x="50" y="19" width="27" height="27" rx="7.5" fill="#0e1117"/>
+      <rect x="19" y="50" width="27" height="27" rx="7.5" fill="#0e1117"/>
+      <rect x="50" y="50" width="27" height="27" rx="7.5" fill="none" stroke="#0e1117" stroke-width="3.2"/>
+      <line x1="63.5" y1="58" x2="63.5" y2="69" stroke="#0e1117" stroke-width="3.2" stroke-linecap="round"/>
+      <line x1="58" y1="63.5" x2="69" y2="63.5" stroke="#0e1117" stroke-width="3.2" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <text font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600" font-size="64" letter-spacing="-1.6" x="456" y="212">
+    <tspan fill="#e5e7eb">candlekit</tspan><tspan fill="#4f9cff" font-weight="400">/</tspan><tspan fill="#c2c9d2">charts</tspan>
+  </text>
+  <text font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" letter-spacing="0.3" x="458" y="252" fill="#97a0ad">The all-in-one financial charting toolkit.</text>
+</svg>
