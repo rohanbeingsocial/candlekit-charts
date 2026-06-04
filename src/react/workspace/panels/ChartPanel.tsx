@@ -350,8 +350,13 @@ function ChartPanelInner({
         indicators={indicators}
         onReady={onReady}
       >
-        <DrawingToolbar />
-        <IndicatorPicker />
+        {/* Indicators trigger docked into the chart toolbar (top-left column),
+            not floating in its own corner — matches the host workspace, where
+            the indicators control sits on the chart toolbar. */}
+        <div style={S.toolDock}>
+          <IndicatorPicker className="ck-ind ck-ind--docked" />
+          <DrawingToolbar style={{ position: "static" }} />
+        </div>
         <MeasurementOverlay />
       </ChartView>
 
@@ -379,6 +384,18 @@ function ChartPanelInner({
 }
 
 const S: Record<string, CSSProperties> = {
+  // Top-left dock holding the indicators trigger above the drawing toolbar, so
+  // the two read as one chart toolbar instead of two floating corners.
+  toolDock: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    zIndex: 12,
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    alignItems: "flex-start",
+  },
   paneBar: {
     position: "absolute",
     top: 4,

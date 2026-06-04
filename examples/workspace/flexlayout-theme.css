@@ -1,0 +1,27 @@
+/*
+ * FlexLayout theme bridge for the workspace demo.
+ *
+ * flexlayout-react ships fixed light/dark stylesheets; importing dark.css alone
+ * leaves the tab strip black in light mode (the demo's light/dark toggle then
+ * looks broken). Here we re-point FlexLayout's base palette vars at the demo's
+ * own `--app-*` tokens, which already switch on `html.dark` / `:not(.dark)`.
+ * Result: the tab strip, splitters and borders follow the global theme toggle
+ * and match the host trading-dashboard palette exactly.
+ *
+ * MUST be imported AFTER `flexlayout-react/style/dark.css` so these win at equal
+ * specificity by source order.
+ */
+.flexlayout__layout {
+  --color-text: var(--app-fg);
+  --color-background: var(--app-bg);
+  --color-base: var(--app-bg);
+  --color-1: var(--app-panel);
+  --color-2: var(--app-panel);
+  --color-3: var(--app-border);
+  --color-4: var(--app-border);
+  --color-5: var(--app-muted);
+  --color-6: var(--app-muted);
+  --color-tab-selected: var(--app-fg);
+  --color-tab-selected-background: var(--app-bg);
+  --color-tabset-background-selected: var(--app-bg);
+}

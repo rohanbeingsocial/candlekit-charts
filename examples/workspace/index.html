@@ -6,8 +6,9 @@
     <title>candlekit/charts — live demo</title>
     <style>
       :root { color-scheme: dark; }
-      html.dark { --app-bg: #0e1117; --app-fg: #e5e7eb; --app-panel: #161b22; --app-border: #2a313c; --app-muted: #97a0ad; }
-      html:not(.dark) { --app-bg: #ffffff; --app-fg: #1f2937; --app-panel: #f6f8fa; --app-border: #e5e7eb; --app-muted: #6b7280; color-scheme: light; }
+      /* App chrome palette mirrors the host trading-dashboard tokens exactly. */
+      html.dark { --app-bg: hsl(224 24% 6%); --app-fg: hsl(210 30% 96%); --app-panel: hsl(224 22% 9%); --app-border: hsl(224 16% 16%); --app-muted: hsl(215 16% 60%); --app-accent: hsl(188 95% 55%); }
+      html:not(.dark) { --app-bg: hsl(0 0% 100%); --app-fg: hsl(224 24% 12%); --app-panel: hsl(220 14% 97%); --app-border: hsl(220 13% 88%); --app-muted: hsl(215 16% 40%); --app-accent: hsl(188 85% 38%); color-scheme: light; }
       * { box-sizing: border-box; }
       html, body, #root { height: 100%; margin: 0; }
       body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--app-bg); color: var(--app-fg); }
