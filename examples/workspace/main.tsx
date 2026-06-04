@@ -12,6 +12,9 @@ import {
 import { createFullIndicatorRegistry } from "@getcandlekit/charts/indicators-tv";
 import "@getcandlekit/charts/styles.css";
 import "flexlayout-react/style/dark.css";
+// Re-points FlexLayout's palette at the demo's --app-* tokens so the tab strip
+// follows the light/dark toggle. Must come after dark.css (source-order win).
+import "./flexlayout-theme.css";
 
 // ── The canonical workspace ──────────────────────────────────────────────────
 // One unified workspace: every pane is a full chart pane (chart + drawing tools

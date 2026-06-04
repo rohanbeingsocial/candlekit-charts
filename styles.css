@@ -8,65 +8,84 @@
  * theme it without overriding individual rules.
  */
 
+/* Palette mirrors the host trading-dashboard design tokens (shadcn HSL) so the
+ * overlay chrome matches it exactly. Light = :root, dark = [data-theme="dark"]
+ * / .dark. */
 :root {
-  --ck-bg: rgba(255, 255, 255, 0.82);
-  --ck-fg: #1f2937;
-  --ck-muted: #6b7280;
-  --ck-border: #e5e7eb;
-  --ck-accent: #2962ff;
-  --ck-accent-fg: #ffffff;
-  --ck-up: #16a34a;
-  --ck-down: #dc2626;
-  --ck-warn: #d97706;
+  --ck-bg: hsl(0 0% 100% / 0.82);
+  --ck-fg: hsl(224 24% 12%);
+  --ck-muted: hsl(215 16% 40%);
+  --ck-border: hsl(220 13% 88%);
+  --ck-accent: hsl(188 85% 38%);
+  --ck-accent-fg: hsl(0 0% 100%);
+  --ck-up: hsl(142 65% 38%);
+  --ck-down: hsl(350 75% 48%);
+  --ck-warn: hsl(38 92% 45%);
   --ck-radius: 6px;
 }
 
 [data-theme="dark"],
 .dark {
-  --ck-bg: rgba(20, 24, 33, 0.82);
-  --ck-fg: #e5e7eb;
-  --ck-muted: #9ca3af;
-  --ck-border: rgba(148, 163, 184, 0.25);
-  --ck-accent: #4f8cff;
-  --ck-up: #34d399;
-  --ck-down: #f87171;
-  --ck-warn: #fbbf24;
+  --ck-bg: hsl(224 22% 9% / 0.82);
+  --ck-fg: hsl(210 30% 96%);
+  --ck-muted: hsl(215 16% 60%);
+  --ck-border: hsl(224 16% 16%);
+  --ck-accent: hsl(188 95% 55%);
+  --ck-accent-fg: hsl(224 30% 8%);
+  --ck-up: hsl(142 72% 50%);
+  --ck-down: hsl(350 89% 60%);
+  --ck-warn: hsl(38 92% 55%);
 }
 
 /* ── Drawing toolbar ───────────────────────────────────────────────────────── */
+/* Flush-left vertical sidebar, parity with the host trading-dashboard toolbar:
+ * pinned to the chart's top-left corner (no inset), right/bottom border only,
+ * rounded bottom-right. */
 .ck-toolbar {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0;
+  left: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 4px;
-  background: var(--ck-bg);
+  width: 36px;
+  padding: 4px 2px;
+  background: color-mix(in srgb, var(--ck-bg) 92%, transparent);
   backdrop-filter: blur(6px);
-  border: 1px solid var(--ck-border);
-  border-radius: var(--ck-radius);
+  border-right: 1px solid color-mix(in srgb, var(--ck-border) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ck-border) 60%, transparent);
+  border-radius: 0 0 8px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+/* Thin divider between tool groups (line tools · shapes · fib). */
+.ck-toolbar-sep {
+  height: 1px;
+  margin: 3px 4px;
+  background: color-mix(in srgb, var(--ck-border) 50%, transparent);
 }
 .ck-toolbar-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: var(--ck-fg);
+  color: var(--ck-muted);
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: color 0.1s, background-color 0.1s, box-shadow 0.1s;
 }
 .ck-toolbar-btn:hover {
-  background: rgba(127, 127, 127, 0.14);
+  background: color-mix(in srgb, var(--ck-muted) 14%, transparent);
+  color: var(--ck-fg);
 }
 .ck-toolbar-btn[data-active] {
-  background: var(--ck-accent);
-  color: var(--ck-accent-fg);
+  background: color-mix(in srgb, var(--ck-accent) 15%, transparent);
+  color: var(--ck-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ck-accent) 35%, transparent);
 }
 
 /* ── Indicator picker (dropdown) ───────────────────────────────────────────── */
@@ -77,6 +96,18 @@
   z-index: 12;
   font-size: 12px;
   color: var(--ck-fg);
+}
+/* Docked variant: the picker is placed inside a chart-toolbar dock (top-left)
+ * rather than floating in its own corner. Drop the absolute corner pin and open
+ * the dropdown left-aligned under the trigger so it stays on-canvas. */
+.ck-ind--docked {
+  position: relative;
+  top: auto;
+  right: auto;
+}
+.ck-ind--docked .ck-ind-panel {
+  left: 0;
+  right: auto;
 }
 .ck-ind-trigger {
   display: inline-flex;
