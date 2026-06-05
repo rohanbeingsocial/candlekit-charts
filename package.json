@@ -1,6 +1,6 @@
 {
   "name": "@getcandlekit/charts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tree-shakeable financial charting toolkit: candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Built on lightweight-charts. Framework-agnostic core + optional React bindings.",
   "license": "MIT",
   "author": "candlekit contributors",
