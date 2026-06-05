@@ -22,6 +22,7 @@ import {
   type ChartViewApi,
   type SeriesType,
   type ReplayController,
+  type ReplayState,
   IndicatorController,
   usePageTheme,
 } from "../../index";
@@ -40,6 +41,7 @@ import {
   buildJumps,
   fmtClock,
 } from "./replaySession";
+import { getSharedReplay } from "./sharedReplay";
 
 export interface ChartPanelConfig {
   symbol?: string;
@@ -188,7 +190,43 @@ function ChartPanelInner({
     if (replayOn) renderReplayBars();
   }, [resampleMinutes, replayOn, renderReplayBars]);
 
-  const chartData = replayOn ? NO_DATA : staticData;
+  // ── Follow the SHARED replay (the workspace Replay panel) ────────────────────
+  // When the Replay panel loads a session, every chart follows that one
+  // controller's cursor — same model as the dashboard's host.replay. A pane's
+  // own per-pane replay (replayOn) takes precedence; otherwise it follows shared.
+  const shared = getSharedReplay();
+  const [sharedState, setSharedState] = useState<ReplayState>(() => shared.getState());
+  useEffect(() => shared.subscribe(setSharedState), [shared]);
+  const followShared = !replayOn && sharedState.status === "ready";
+
+  // Slice the shared controller's bars up to the cursor into this pane.
+  const renderSharedBars = useCallback(() => {
+    const a = apiRef.current;
+    if (!a || shared.getState().status !== "ready") return;
+    const raw = shared.getBarsUpToCursor(symbol, "1m");
+    const m = tfRef.current;
+    a.controller.setData(m > 1 ? resample(raw as readonly RawBar[], m) : raw);
+  }, [shared, symbol]);
+
+  // Materialize this pane's series on the shared controller, then render. The
+  // controller short-circuits ensureSeries when the key already exists; each
+  // controller notify (cursor tick, series add) re-runs this effect.
+  useEffect(() => {
+    if (!api || !followShared || sharedState.status !== "ready") return;
+    const hasIt = sharedState.activeSeries.some((s) => s.symbol === symbol && s.interval === "1m");
+    if (!hasIt) {
+      void shared.ensureSeries(symbol, "1m");
+      return;
+    }
+    renderSharedBars();
+  }, [api, followShared, sharedState, shared, symbol, renderSharedBars]);
+
+  // Re-slice when the timeframe changes while following the shared session.
+  useEffect(() => {
+    if (followShared) renderSharedBars();
+  }, [resampleMinutes, followShared, renderSharedBars]);
+
+  const chartData = replayOn || followShared ? NO_DATA : staticData;
 
   // Sync group attachment.
   useEffect(() => {

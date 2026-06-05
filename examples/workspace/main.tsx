@@ -34,9 +34,10 @@ const workspace = createWorkspace({
 });
 
 // Two registered panel kinds. The chart pane owns drawing, indicators,
-// measurement and a per-pane replay toggle. The replay pane is a dedicated
-// bar-by-bar replay surface — same synthetic session, transport always docked —
-// so it can be dropped in from "+ Add Panel" alongside the charts.
+// measurement and a per-pane replay toggle. The replay pane is a full-pane
+// transport that drives the page's SHARED replay controller — load a session
+// there and every chart pane follows the cursor (same model as a real trading
+// workspace). Drop either in from "+ Add Panel".
 workspace.registerPanel({
   kind: "chart",
   displayName: "Chart",
@@ -48,7 +49,7 @@ workspace.registerPanel({
   kind: "replay",
   displayName: "Replay",
   component: ReplayPanel,
-  defaultConfig: () => ({ symbol: "DEMO", interval: "1m", seriesType: "candlestick" }),
+  defaultConfig: () => ({}),
 });
 
 /** Save / load / export / import layouts — handed to the adapter toolbar. */

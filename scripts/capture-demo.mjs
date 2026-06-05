@@ -95,11 +95,15 @@ const SCENES = {
     }
     await sleep(800);
 
-    // 3) Add the dedicated Replay pane from the same menu.
+    // 3) Add the replay transport pane.
     await openMenuItem("Replay");
+    await sleep(900);
+
+    // 4) Load a shared session — every chart pane then follows the cursor.
+    await page.getByRole("button", { name: "Load session" }).click();
     await sleep(1100);
 
-    // 4) Play the replay session forward.
+    // 5) Play forward; the visible chart panes stream up to the cursor.
     const play = page.locator('button[title="Play"]').last();
     await play.waitFor({ state: "visible", timeout: 20000 });
     await page.waitForFunction(() => {
