@@ -4,18 +4,22 @@
 
 # candlekit/charts
 
-**A tree-shakeable financial charting toolkit for the web.**
+## The missing layer above Lightweight Charts™.
 
-Candlestick · OHLC · line · area · volume · drawing tools · pluggable indicators · measurement ruler · deterministic replay engine.<br />
-A framework-agnostic core with optional React bindings, built on [Lightweight Charts™](https://github.com/tradingview/lightweight-charts).
+CandleKit unifies the charting tools and extensions developers repeatedly source, adapt, and maintain from across the Lightweight Charts ecosystem.
 
-<p>
-  <em>A clean, extensible layer over lightweight-charts — the orchestration you keep rewriting, packaged once.</em>
-</p>
+Drawing Tools • Technical Indicators • Replay Engine • Measurement Tools • Annotations • React Bindings
 
-[![CI](https://github.com/rohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
+### Stop stitching together repositories.
+
+Get a cohesive toolkit, consistent APIs, and an extensible architecture built for production-grade financial charting.
+
+> *Everything you keep rebuilding around Lightweight Charts™ — packaged once.*
+
+[![CI](https://github.com/ohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/ohanbeingsocial/candlekit-charts/actions)
 [![npm version](https://img.shields.io/npm/v/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 
 </div>
 
