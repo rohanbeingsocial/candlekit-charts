@@ -16,7 +16,11 @@ Get a cohesive toolkit, consistent APIs, and an extensible architecture built fo
 
 [![CI](https://github.com/rohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
 [![npm version](https://img.shields.io/npm/v/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
+[![npm downloads](https://img.shields.io/npm/dm/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
+[![minzipped size](https://img.shields.io/bundlephobia/minzip/@getcandlekit/charts)](https://bundlephobia.com/package/@getcandlekit/charts)
+[![types](https://img.shields.io/npm/types/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/rohanbeingsocial/candlekit-charts?style=social)](https://github.com/rohanbeingsocial/candlekit-charts/stargazers)
 
 
 </div>
@@ -307,6 +311,14 @@ ESM and CJS builds are shipped; `target: es2020`.
 - [ ] More indicators (Ichimoku, SuperTrend, Keltner)
 - [ ] Vue / Svelte bindings
 - [ ] Screenshot/export helper
+
+## Star History
+
+If candlekit saves you from stitching repos together, a ⭐ helps others find it.
+
+<a href="https://star-history.com/#rohanbeingsocial/candlekit-charts&Date">
+  <img src="https://api.star-history.com/svg?repos=rohanbeingsocial/candlekit-charts&type=Date" alt="Star History Chart" width="640" />
+</a>
 
 ## Contributing
 

@@ -4,7 +4,7 @@
   "description": "Tree-shakeable financial charting toolkit: candlestick/OHLC/line/area/volume, drawing tools, pluggable indicators, measurement tools, and a deterministic replay engine. Built on lightweight-charts. Framework-agnostic core + optional React bindings.",
   "license": "MIT",
   "author": "candlekit contributors",
-  "homepage": "https://github.com/rohanbeingsocial/candlekit-charts#readme",
+  "homepage": "https://rohanbeingsocial.github.io/candlekit-charts/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rohanbeingsocial/candlekit-charts.git"
@@ -23,7 +23,12 @@
     "indicators",
     "drawing-tools",
     "replay",
-    "react"
+    "react",
+    "charting-library",
+    "stock-market",
+    "data-visualization",
+    "tradingview",
+    "fintech"
   ],
   "type": "module",
   "sideEffects": [
