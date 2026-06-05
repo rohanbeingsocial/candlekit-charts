@@ -19,11 +19,9 @@ import {
   ReplayControls,
   createReplayController,
   resample,
-  toBars,
   type ChartViewApi,
   type SeriesType,
   type ReplayController,
-  type ReplayDataSource,
   IndicatorController,
   usePageTheme,
 } from "../../index";
@@ -33,6 +31,15 @@ import { SyncEngineImpl } from "../../../sync/SyncEngine";
 import type { SyncEvent, SyncMember } from "../../../sync/types";
 import type { PanelInstance } from "../../../workspace";
 import { PanelContext } from "./PanelContext";
+import {
+  SESSION_START,
+  NO_DATA,
+  SYMBOL_PRICE,
+  intervalMinutes,
+  buildSession,
+  buildJumps,
+  fmtClock,
+} from "./replaySession";
 
 export interface ChartPanelConfig {
   symbol?: string;
@@ -51,76 +58,12 @@ export const DEFAULT_CHART_CONFIG: ChartPanelConfig = {
   // chart canvas without per-panel config plumbing.
 };
 
-/** Per-symbol seed price so each chart tab renders a distinct synthetic walk. */
-const SYMBOL_PRICE: Record<string, number> = {
-  DEMO: 100,
-  BTC: 42000,
-  ETH: 2300,
-  SOL: 110,
-};
-
-/** Map an interval code like "5m" / "1h" to resample minutes (1 = as-is). */
-function intervalMinutes(code?: string): number {
-  if (!code) return 1;
-  const m = /^(\d+)\s*(m|h)$/i.exec(code.trim());
-  if (!m) return 1;
-  const n = parseInt(m[1], 10);
-  return m[2].toLowerCase() === "h" ? n * 60 : n;
-}
-
 // ── Per-pane replay ──────────────────────────────────────────────────────────
 // Replay belongs to the chart pane (not a separate page/window): each pane can
 // scrub its own session via the ReplayControls dock. Off by default so the
 // default (synced) layout stays clean; toggled on per pane from the pane bar.
-
-/** Synthetic intraday session anchor (fake-UTC ms — the IST-as-UTC convention). */
-const SESSION_START = Date.UTC(2024, 0, 2, 9, 30);
-
-/** Stable empty array — feeding this as ChartView `data` hands the pane to the
- *  replay controller without an inline `[]` refiring setData each render. */
-const NO_DATA: RawBar[] = [];
-
-/** Build a day-addressable replay source over a pane's synthetic bars. */
-function buildSession(rawBars: RawBar[]): {
-  source: ReplayDataSource;
-  date: string;
-  start: number;
-  end: number;
-} {
-  const bars = toBars(rawBars);
-  const date = new Date(SESSION_START).toISOString().slice(0, 10);
-  const end = bars.length ? bars[bars.length - 1].ts : SESSION_START;
-  const source: ReplayDataSource = {
-    async fetchDay(_s, _i, d) {
-      return d === date ? bars : [];
-    },
-    async listDatesBefore() {
-      return [];
-    },
-    async listDatesAfter() {
-      return [];
-    },
-  };
-  return { source, date, start: SESSION_START, end };
-}
-
-/** Quick-jump markers (open · +1h… · close) for the replay transport. */
-function buildJumps(start: number, end: number): { label: string; ts: number }[] {
-  const out = [{ label: "Open", ts: start }];
-  for (let h = 1; h <= 5; h++) {
-    const ts = start + h * 60 * 60_000;
-    if (ts < end) out.push({ label: `+${h}h`, ts });
-  }
-  out.push({ label: "Close", ts: end });
-  return out;
-}
-
-/** Fake-UTC ts → wall clock (matches the chart's IST-as-UTC convention). */
-function fmtClock(ts: number): string {
-  const d = new Date(ts);
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`;
-}
+// The standalone ReplayPanel reuses the same synthetic-session helpers (see
+// ./replaySession) so a per-pane scrub and a dedicated replay tab stay in sync.
 
 export function ChartPanel({
   instance,
