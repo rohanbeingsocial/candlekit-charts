@@ -28,8 +28,18 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const env = process.env;
 const BASE = (env.BASE || "https://rohanbeingsocial.github.io/candlekit-charts/").replace(/\/?$/, "/");
 // `??` (not `||`) so an explicit empty DEMO="" targets the site root — a local
-// vite dev server serves the workspace app at "/", not "/workspace/".
-const DEMO = env.DEMO ?? "workspace";
+// vite dev server serves the workspace app at "/", not "/workspace/". When unset,
+// each scene falls back to its own demo (see SCENE_DEMO): most run against the
+// dense `workspace`, but `replay` runs against the focused single-chart `replay`
+// example so the streaming bars aren't hidden behind workspace indicators/panes.
+const DEMO_OVERRIDE = env.DEMO; // undefined ⇒ per-scene default below
+const SCENE_DEMO = {
+  workspace: "workspace",
+  drawing: "workspace",
+  indicators: "workspace",
+  measurement: "workspace",
+  replay: "replay",
+};
 const WIDTH = Number(env.WIDTH || 1180);
 const HEIGHT = Number(env.HEIGHT || 680);
 const DELAY_MS = Number(env.DELAY_MS || 140);
@@ -161,33 +171,61 @@ const SCENES = {
     await sleep(900);
   },
 
-  async replay(page) {
-    const play = page.locator('button[title="Play"]');
-    await play.waitFor({ state: "visible", timeout: 20000 });
-    await page.waitForFunction(() => {
-      const b = document.querySelector('button[title="Play"]');
-      return b && !b.disabled;
-    }, { timeout: 20000 });
-    // Jump to session open, then play forward.
-    await page.getByText("Open", { exact: true }).click().catch(() => {});
-    await page.selectOption(".ck-replay-speed", "16").catch(() => {});
-    await sleep(300);
-    await play.click();
-    await sleep(2400);
+  // Scenes may be a plain fn (whole run is recorded) OR `{ prep, act }` where
+  // `prep` runs BEFORE the frame recorder starts — use it for setup that would
+  // otherwise show as a frozen intro. The replay scene needs this: waiting for
+  // the controller to load + arming the speed is dead air, and only `act` (the
+  // forward play) should be in the GIF.
+  replay: {
+    async prep(page) {
+      const play = page.locator('button[title="Play"]');
+      await play.waitFor({ state: "visible", timeout: 20000 });
+      await page.waitForFunction(() => {
+        const b = document.querySelector('button[title="Play"]');
+        return b && !b.disabled;
+      }, { timeout: 20000 });
+      // Speed 8 ⇒ one bar every 1000/8 = 125ms (BASE_TICK_MS/speed), which is
+      // ~1 bar per captured frame at DELAY_MS=140 → a clean bar-by-bar march.
+      // Speed 16 (the old value) advanced ~2.2 bars/frame, so bars teleported.
+      await page.selectOption(".ck-replay-speed", "8").catch(() => {});
+      await sleep(300);
+    },
+    async act(page) {
+      const play = page.locator('button[title="Play"]');
+      await play.click();
+      // ~5.4s at 125ms/bar ≈ 43 bars stream in — fills the recorded window
+      // with visible candle formation rather than a short burst.
+      await sleep(5400);
+    },
   },
 };
 
 async function capture(browser, scene) {
   const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
-  const url = DEMO ? BASE + DEMO + "/" : BASE;
+  const demo = DEMO_OVERRIDE ?? SCENE_DEMO[scene] ?? "workspace";
+  const url = demo ? BASE + demo + "/" : BASE;
   await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
   await sleep(600);
+
+  // A scene is either a plain fn (recorded in full) or `{ prep, act }` where
+  // `prep` runs un-recorded first (see SCENES.replay).
+  const def = SCENES[scene];
+  const prep = typeof def === "object" ? def.prep : null;
+  const act = typeof def === "function" ? def : def.act;
+  if (prep) await prep(page);
+
   const frames = [];
   const stop = startCapture(page, frames);
-  await SCENES[scene](page);
+  await act(page);
   await sleep(300);
   await stop();
   await page.close();
+
+  // Debug: DUMP_FRAMES=1 writes the middle raw frame as PNG to eyeball that the
+  // scene actually shows what we want (e.g. visible replay bars). Not committed.
+  if (env.DUMP_FRAMES && frames.length) {
+    writeFileSync(resolve(outDir, `${scene}-mid.png`), frames[Math.floor(frames.length / 2)]);
+  }
 
   const gif = GIFEncoder();
   for (const buf of frames) {

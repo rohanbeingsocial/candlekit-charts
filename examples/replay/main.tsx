@@ -48,9 +48,16 @@ function App() {
   const onReady = (api: ChartViewApi) => {
     apiRef.current = api;
     const rc = createReplayController();
-    // Redraw history up to the cursor on every state change.
+    // Redraw history up to the cursor on every state change, then re-fit so the
+    // growing series fills the pane. Without the fit the time scale keeps its
+    // initial range (autoFit only fires once, on the first bar) and every new
+    // bar marches off the right edge — the replay would look frozen with a thin
+    // sliver of candles jammed at the right.
     rc.subscribe((s) => {
-      if (s.status === "ready") api.controller.setData(rc.getBarsUpToCursor("DEMO", "1m"));
+      if (s.status === "ready") {
+        api.controller.setData(rc.getBarsUpToCursor("DEMO", "1m"));
+        api.controller.fitContent();
+      }
     });
     rc.load({
       id: "demo",
