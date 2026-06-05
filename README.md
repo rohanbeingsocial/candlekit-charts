@@ -51,10 +51,10 @@ Get a cohesive toolkit, consistent APIs, and an extensible architecture built fo
 
 ## Overview
 
-`@getcandlekit/charts` wraps lightweight-charts with the pieces a real trading UI
+`candlekit/charts` wraps lightweight-charts with the pieces a real trading UI
 needs but the base library leaves to you: a stable chart controller, a
 runtime-agnostic drawing engine, an extensible indicator framework, a Shift-drag
-measurement ruler, multi-chart sync, and a deterministic historical replay
+measurement ruler, multi-chart sync, broker integration and a deterministic historical replay
 engine. The **core is framework-agnostic** (no React, no DOM framework); the
 optional **`/react` entry** adds components and hooks.
 
