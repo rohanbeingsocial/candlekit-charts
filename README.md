@@ -2,8 +2,6 @@
 
 <img src="assets/candlekit-banner.png" alt="candlekit/charts — the all-in-one financial charting toolkit" width="880" />
 
-# candlekit/charts
-
 ## The all in one unification layer built on Lightweight Charts™.
 
 CandleKit unifies the charting tools and extensions developers repeatedly source, adapt, and maintain from across the Lightweight Charts ecosystem.
