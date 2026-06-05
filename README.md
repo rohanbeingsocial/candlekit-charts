@@ -89,7 +89,7 @@ import.
 ## Replay
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/replay.gif" alt="Deterministic historical replay stepping and seeking over candlestick bars" width="820" />
+  <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/replay.gif?v=2" alt="Deterministic historical replay stepping and seeking over candlestick bars" width="820" />
   <br />
   <em>Deterministic replay — play/pause, step ±1, speed control, seek/jump</em>
 </p>
