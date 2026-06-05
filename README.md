@@ -4,7 +4,7 @@
 
 # candlekit/charts
 
-## The missing layer above Lightweight Charts™.
+## The all in one unification layer built on Lightweight Charts™.
 
 CandleKit unifies the charting tools and extensions developers repeatedly source, adapt, and maintain from across the Lightweight Charts ecosystem.
 
@@ -16,7 +16,7 @@ Get a cohesive toolkit, consistent APIs, and an extensible architecture built fo
 
 > *Everything you keep rebuilding around Lightweight Charts™ — packaged once.*
 
-[![CI](https://github.com/ohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
+[![CI](https://github.com/rohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/rohanbeingsocial/candlekit-charts/actions)
 [![npm version](https://img.shields.io/npm/v/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
