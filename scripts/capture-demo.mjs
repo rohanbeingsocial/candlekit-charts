@@ -27,11 +27,16 @@ const { GIFEncoder, quantize, applyPalette } = gifenc;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const env = process.env;
 const BASE = (env.BASE || "https://rohanbeingsocial.github.io/candlekit-charts/").replace(/\/?$/, "/");
-const DEMO = env.DEMO || "workspace";
+// `??` (not `||`) so an explicit empty DEMO="" targets the site root — a local
+// vite dev server serves the workspace app at "/", not "/workspace/".
+const DEMO = env.DEMO ?? "workspace";
 const WIDTH = Number(env.WIDTH || 1180);
 const HEIGHT = Number(env.HEIGHT || 680);
 const DELAY_MS = Number(env.DELAY_MS || 140);
 const MAXFRAMES = Number(env.MAXFRAMES || 52);
+// Palette size. Fewer colours = smaller GIF; the dense multi-pane `workspace`
+// scene (two extra charts + volume bars) needs this knob to stay under ~2MB.
+const COLORS = Math.max(2, Math.min(256, Number(env.COLORS || 256)));
 const SCENE = env.SCENE || "all";
 const outDir = resolve(__dirname, "site-assets");
 
@@ -56,6 +61,58 @@ function startCapture(page, frames) {
 // rail on the left (~x<50), indicator picker on the right (~x>770). Keep clicks
 // within x[120..720], y[120..470].
 const SCENES = {
+  // Headline multi-pane scene: the default two synced charts, then add a third
+  // chart from "+ Add Panel", resize the split, drop in the dedicated Replay
+  // pane (also from the menu) and play the session forward.
+  async workspace(page) {
+    await page.locator(".ck-toolbar").first().waitFor({ state: "visible", timeout: 20000 });
+    await sleep(800);
+
+    const addPanel = page.locator("button", { hasText: "Add Panel" }).first();
+    const openMenuItem = async (name) => {
+      await addPanel.click();
+      await sleep(320);
+      await page.getByRole("button", { name, exact: true }).click();
+    };
+
+    // 1) Add a third chart.
+    await openMenuItem("Chart");
+    await sleep(950);
+
+    // 2) Resize: drag the splitter between the two columns to widen the left one.
+    // (flexlayout names the column-divider by its handle axis: *_horz.)
+    const splitter = page.locator(".flexlayout__splitter.flexlayout__splitter_horz").first();
+    const box = await splitter.boundingBox().catch(() => null);
+    if (box) {
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      await page.mouse.move(cx, cy);
+      await page.mouse.down();
+      await page.mouse.move(cx + 150, cy, { steps: 16 });
+      await sleep(120);
+      await page.mouse.move(cx + 80, cy, { steps: 10 });
+      await page.mouse.up();
+    }
+    await sleep(800);
+
+    // 3) Add the dedicated Replay pane from the same menu.
+    await openMenuItem("Replay");
+    await sleep(1100);
+
+    // 4) Play the replay session forward.
+    const play = page.locator('button[title="Play"]').last();
+    await play.waitFor({ state: "visible", timeout: 20000 });
+    await page.waitForFunction(() => {
+      const bs = [...document.querySelectorAll('button[title="Play"]')];
+      const b = bs[bs.length - 1];
+      return b && !b.disabled;
+    }, { timeout: 20000 });
+    await page.selectOption(".ck-replay-speed", "16").catch(() => {});
+    await sleep(250);
+    await play.click();
+    await sleep(2400);
+  },
+
   async drawing(page) {
     await page.locator(".ck-toolbar").waitFor({ state: "visible", timeout: 20000 });
     await sleep(700);
@@ -131,7 +188,7 @@ async function capture(browser, scene) {
   const gif = GIFEncoder();
   for (const buf of frames) {
     const { width, height, data } = PNG.sync.read(buf);
-    const palette = quantize(data, 256, { format: "rgba4444" });
+    const palette = quantize(data, COLORS, { format: "rgba4444" });
     const index = applyPalette(data, palette, "rgba4444");
     gif.writeFrame(index, width, height, { palette, delay: DELAY_MS });
   }
@@ -141,7 +198,7 @@ async function capture(browser, scene) {
   console.log(`✅ ${out} — ${frames.length} frames ${WIDTH}x${HEIGHT}`);
 }
 
-const scenes = SCENE === "all" ? ["drawing", "indicators", "measurement", "replay"] : [SCENE];
+const scenes = SCENE === "all" ? ["workspace", "drawing", "indicators", "measurement", "replay"] : [SCENE];
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 try {
   for (const s of scenes) await capture(browser, s);

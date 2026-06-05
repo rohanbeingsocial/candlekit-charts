@@ -5,6 +5,7 @@ import {
   LocalStoragePersistence,
   FlexLayoutAdapter,
   ChartPanel,
+  ReplayPanel,
   WorkspaceProvider,
   setWorkspaceIndicatorRegistry,
   useLayout,
@@ -32,12 +33,21 @@ const workspace = createWorkspace({
   storage: new LocalStoragePersistence(),
 });
 
-// The chart pane is the only registered panel kind — FlexLayout adds/splits
-// chart panes; the pane itself owns drawing, indicators, measurement, replay.
+// Two registered panel kinds. The chart pane owns drawing, indicators,
+// measurement and a per-pane replay toggle. The replay pane is a dedicated
+// bar-by-bar replay surface — same synthetic session, transport always docked —
+// so it can be dropped in from "+ Add Panel" alongside the charts.
 workspace.registerPanel({
   kind: "chart",
   displayName: "Chart",
   component: ChartPanel,
+  defaultConfig: () => ({ symbol: "DEMO", interval: "1m", seriesType: "candlestick" }),
+});
+
+workspace.registerPanel({
+  kind: "replay",
+  displayName: "Replay",
+  component: ReplayPanel,
   defaultConfig: () => ({ symbol: "DEMO", interval: "1m", seriesType: "candlestick" }),
 });
 
