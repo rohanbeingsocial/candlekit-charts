@@ -4,22 +4,21 @@
 
 # candlekit/charts
 
-## The missing layer above Lightweight Charts™.
+## A unified financial charting toolkit for the web.
 
-CandleKit unifies the charting tools and extensions developers repeatedly source, adapt, and maintain from across the Lightweight Charts ecosystem.
+Built on [Lightweight Charts™](https://github.com/tradingview/lightweight-charts), CandleKit consolidates the charting tools, extensions, and workflows developers typically assemble from multiple repositories into a single, cohesive toolkit.
 
 Drawing Tools • Technical Indicators • Replay Engine • Measurement Tools • Annotations • React Bindings
 
-### Stop stitching together repositories.
+### One toolkit. One API. Consistent integrations.
 
-Get a cohesive toolkit, consistent APIs, and an extensible architecture built for production-grade financial charting.
+Focus on building charting experiences—not evaluating repositories, adapting APIs, and maintaining custom integrations.
 
-> *Everything you keep rebuilding around Lightweight Charts™ — packaged once.*
+> *An extensible layer over Lightweight Charts™ that brings the ecosystem together under a unified developer experience.*
 
 [![CI](https://github.com/ohanbeingsocial/candlekit-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/ohanbeingsocial/candlekit-charts/actions)
 [![npm version](https://img.shields.io/npm/v/@getcandlekit/charts.svg)](https://www.npmjs.com/package/@getcandlekit/charts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-
 
 </div>
 
