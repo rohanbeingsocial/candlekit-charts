@@ -98,8 +98,9 @@ export class IndicatorController implements ChartPlugin {
         const last = filtered[filtered.length - 1];
         if (!last) continue;
         const pc = def.plotConfig.find((c) => c.id === plotId);
+        const color = resolveColor(act.colors, plotId, pc?.color);
         if (HISTOGRAM_STYLES.has(pc?.style ?? "")) {
-          (s as ISeriesApi<"Histogram">).update({ time: last.time as Time, value: last.value, color: last.color ?? pc?.color ?? "#888" });
+          (s as ISeriesApi<"Histogram">).update({ time: last.time as Time, value: last.value, color: last.color ?? color });
         } else {
           (s as ISeriesApi<"Line">).update({ time: last.time as Time, value: last.value });
         }
@@ -151,12 +152,32 @@ export class IndicatorController implements ChartPlugin {
     this.onChange?.(this.activeNames());
   }
 
-  /** Turn an indicator on (or update its params). */
+  /** Turn an indicator on (or update its params). Preserves color overrides. */
   add(name: string, params: Record<string, unknown> = {}): void {
     const def = this.registry.get(name);
     if (!def) return;
-    this.active.set(name, { name, params: { ...def.defaultInputs, ...params } });
+    const prev = this.active.get(name);
+    this.active.set(name, {
+      name,
+      params: { ...def.defaultInputs, ...params },
+      colors: prev?.colors ?? {},
+    });
     this.refresh();
+    this.onChange?.(this.activeNames());
+  }
+
+  /**
+   * Override the per-plot colors of an active indicator. Colors do not affect
+   * computed values, so this re-applies series options in place rather than
+   * re-running `refresh()` — line series take `applyOptions({ color })`,
+   * histogram series are re-`setData`'d (per-point colors win where present).
+   * No-op if the indicator is not active.
+   */
+  setColors(name: string, colors: Record<string, string>): void {
+    const act = this.active.get(name);
+    if (!act) return;
+    this.active.set(name, { ...act, colors });
+    this.applyColors(name);
     this.onChange?.(this.activeNames());
   }
 
@@ -240,13 +261,15 @@ export class IndicatorController implements ChartPlugin {
         const s = m.plotSeries.get(plotId);
         if (!s) continue;
         const pc = def.plotConfig.find((c) => c.id === plotId);
+        const color = resolveColor(act.colors, plotId, pc?.color);
         const isHist = HISTOGRAM_STYLES.has(pc?.style ?? "");
         const filtered = filterValid(raw);
         if (isHist) {
           (s as ISeriesApi<"Histogram">).setData(
-            filtered.map((d) => ({ time: d.time as Time, value: d.value, color: d.color ?? pc?.color ?? "#888" })),
+            filtered.map((d) => ({ time: d.time as Time, value: d.value, color: d.color ?? color })),
           );
         } else {
+          (s as ISeriesApi<"Line">).applyOptions({ color });
           (s as ISeriesApi<"Line">).setData(filtered.map((d) => ({ time: d.time as Time, value: d.value })));
         }
       }
@@ -284,7 +307,7 @@ export class IndicatorController implements ChartPlugin {
       const plotSeries = new Map<string, ISeriesApi<"Line" | "Histogram">>();
       for (const [plotId, raw] of Object.entries(res.plots)) {
         const pc = def.plotConfig.find((c) => c.id === plotId);
-        const color = pc?.color ?? "#888";
+        const color = resolveColor(act.colors, plotId, pc?.color);
         const lineWidth = clampWidth(pc?.lineWidth ?? 1);
         const isHist = HISTOGRAM_STYLES.has(pc?.style ?? "");
         const filtered = filterValid(raw);
@@ -331,12 +354,47 @@ export class IndicatorController implements ChartPlugin {
     all.sort((a, b) => (a.time as number) - (b.time as number));
     this.markersPlugin.setMarkers(all);
   }
+
+  /**
+   * Re-style an active indicator's existing series from its current color
+   * overrides, without recomputing values. Patterns have no plot series.
+   */
+  private applyColors(name: string): void {
+    const m = this.managed.get(name);
+    const def = this.registry.get(name);
+    const act = this.active.get(name);
+    if (!m || !def || !act || m.isPattern) return;
+    let res: IndicatorResult;
+    try {
+      res = def.calculate(this.bars(), act.params);
+    } catch {
+      return;
+    }
+    for (const [plotId, s] of m.plotSeries) {
+      const pc = def.plotConfig.find((c) => c.id === plotId);
+      const color = resolveColor(act.colors, plotId, pc?.color);
+      if (HISTOGRAM_STYLES.has(pc?.style ?? "")) {
+        const raw = res.plots[plotId];
+        if (!raw) continue;
+        (s as ISeriesApi<"Histogram">).setData(
+          filterValid(raw).map((d) => ({ time: d.time as Time, value: d.value, color: d.color ?? color })),
+        );
+      } else {
+        (s as ISeriesApi<"Line">).applyOptions({ color });
+      }
+    }
+  }
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 function filterValid(data: PlotPoint[]): PlotPoint[] {
   return data.filter((d) => d.value != null && !Number.isNaN(d.value));
+}
+
+/** Per-plot user override wins, then the plot's configured color, then grey. */
+function resolveColor(colors: Record<string, string> | undefined, plotId: string, fallback?: string): string {
+  return colors?.[plotId] ?? fallback ?? "#888";
 }
 
 function clampWidth(w: number): 1 | 2 | 3 | 4 {

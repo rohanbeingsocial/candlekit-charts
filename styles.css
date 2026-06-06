@@ -361,6 +361,26 @@
   border-radius: 4px;
   padding: 2px 5px;
 }
+.ck-ind-param-sep {
+  height: 1px;
+  margin: 2px 0;
+  background: color-mix(in srgb, var(--ck-border) 60%, transparent);
+}
+.ck-ind-color input[type="color"] {
+  width: 24px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+.ck-ind-color-value {
+  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ck-muted);
+}
 .ck-ind-foot {
   display: flex;
   align-items: center;

@@ -79,4 +79,9 @@ export interface IndicatorDef {
 export interface ActiveIndicator {
   name: string;
   params: Record<string, unknown>;
+  /**
+   * Per-plot color overrides keyed by {@link PlotConfig.id}. When a plot has no
+   * entry here, rendering falls back to its `PlotConfig.color`, then grey.
+   */
+  colors: Record<string, string>;
 }

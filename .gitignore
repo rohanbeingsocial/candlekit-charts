@@ -11,3 +11,6 @@ coverage/
 examples/**/node_modules/
 examples/**/dist/
 site/
+
+# candlekit-sync local-only sync state — never publish
+.candlekit-sync.json

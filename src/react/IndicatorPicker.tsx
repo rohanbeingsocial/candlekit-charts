@@ -152,7 +152,7 @@ export function IndicatorPicker({ className, style, label = "Indicators" }: Indi
             {list.map((def) => {
               const act = indicators.getActive(def.name);
               const active = act !== undefined;
-              const hasParams = def.inputConfig.length > 0;
+              const hasParams = def.inputConfig.length > 0 || def.plotConfig.length > 0;
               const isOpen = expanded.has(def.name);
               return (
                 <div key={def.name} className="ck-ind-item">
@@ -195,6 +195,23 @@ export function IndicatorPicker({ className, style, label = "Indicators" }: Indi
                           }}
                         />
                       ))}
+
+                      {def.plotConfig.length > 0 && (
+                        <>
+                          {def.inputConfig.length > 0 && <div className="ck-ind-param-sep" />}
+                          {def.plotConfig.map((pc) => (
+                            <ColorRow
+                              key={pc.id}
+                              label={pc.title || pc.id}
+                              value={act.colors[pc.id] ?? pc.color ?? "#888888"}
+                              onChange={(val) => {
+                                indicators.setColors(def.name, { ...act.colors, [pc.id]: val });
+                                sync();
+                              }}
+                            />
+                          ))}
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -267,6 +284,44 @@ function ParamRow({ cfg, value, onChange }: ParamRowProps) {
           ))}
         </select>
       )}
+    </div>
+  );
+}
+
+interface ColorRowProps {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+}
+
+/**
+ * `<input type="color">` only accepts 6-digit hex. Drop alpha (`#rrggbbaa`) and
+ * expand shorthand (`#rgb`); anything non-hex (rgb()/named) falls back to grey.
+ */
+function toHex6(c: string): string {
+  const m = /^#([0-9a-fA-F]{3,8})$/.exec(c.trim());
+  if (!m) return "#888888";
+  const h = m[1];
+  if (h.length === 3)
+    return (
+      "#" +
+      h
+        .split("")
+        .map((x) => x + x)
+        .join("")
+    );
+  return "#" + h.slice(0, 6);
+}
+
+/** Per-plot color override swatch. The raw stored value is shown alongside. */
+function ColorRow({ label, value, onChange }: ColorRowProps) {
+  return (
+    <div className="ck-ind-param ck-ind-color">
+      <span className="ck-ind-param-label" title={label}>
+        {label}
+      </span>
+      <input type="color" value={toHex6(value)} onChange={(e) => onChange(e.target.value)} />
+      <span className="ck-ind-color-value">{value}</span>
     </div>
   );
 }

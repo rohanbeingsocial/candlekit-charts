@@ -4,6 +4,15 @@ All notable changes to `@getcandlekit/charts` are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/) and this project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Per-plot indicator colors** — `ActiveIndicator` gains a `colors` map (overrides
+  keyed by `PlotConfig.id`); new `IndicatorController.setColors(name, colors)`
+  re-styles live series in place without recomputing. The React `<IndicatorPicker>`
+  shows a color swatch per plot for active indicators (minor — additive API).
+
 ## [0.1.0] — Unreleased
 
 Initial public release. Extracted and generalized from a production trading
