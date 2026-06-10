@@ -23,7 +23,7 @@ Get a cohesive toolkit, consistent APIs, and an extensible architecture built fo
 </div>
 
 > [!NOTE]
-> **Candlekit is a vibe-coded project** — designed and built rapidly and iteratively with AI-assisted development. It is functional, tested, and documented, but treat it as early-stage software: pin a version, read the changelog before upgrading, and open an issue if something looks off.
+> **Candlekit is a vibe-coded project** — designed and built rapidly and iteratively with AI-assisted development. It is **functional, tested ([CI green](https://github.com/rohanbeingsocial/candlekit-charts/actions), with a Vitest suite under `/tests`), and documented**, but treat it as early-stage software: pin a version, read the changelog before upgrading, and open an issue if something looks off.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rohanbeingsocial/candlekit-charts/main/scripts/site-assets/drawing.gif" alt="Drawing a trendline, rectangle and Fibonacci retracement on a candlestick chart" width="820" />
