@@ -1,0 +1,5 @@
+Contact: https://github.com/rohanbeingsocial/candlekit-charts/security/advisories/new
+Expires: 2027-06-11T00:00:00.000Z
+Preferred-Languages: en
+Policy: https://github.com/rohanbeingsocial/candlekit-charts/blob/main/SECURITY.md
+Canonical: https://rohanbeingsocial.github.io/candlekit-charts/.well-known/security.txt

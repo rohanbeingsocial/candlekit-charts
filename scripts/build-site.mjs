@@ -14,7 +14,15 @@
  * Default is `/candlekit-charts/` (the repo name).
  */
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, copyFileSync, readdirSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  rmSync,
+  cpSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -51,14 +59,40 @@ for (const name of EXAMPLES) {
   run(`npm run build -- --base "${base}" --outDir "${outDir}" --emptyOutDir`, exampleDir);
 }
 
-// Landing page + any static assets (the showcase .gif files, social images)
-// live in scripts/site-assets/ and are copied verbatim to the site root.
+// Landing page + any static assets (the showcase .gif files, social images,
+// robots.txt, .well-known/security.txt) live in scripts/site-assets/ and are
+// copied verbatim (recursively) to the site root.
 const assetsDir = resolve(__dirname, "site-assets");
 if (existsSync(assetsDir)) {
-  for (const file of readdirSync(assetsDir)) {
-    copyFileSync(join(assetsDir, file), join(siteDir, file));
-    console.log(`copied asset: ${file}`);
+  for (const entry of readdirSync(assetsDir)) {
+    cpSync(join(assetsDir, entry), join(siteDir, entry), { recursive: true });
+    console.log(`copied asset: ${entry}`);
   }
+}
+
+// Security meta tags, injected into every deployed page at build time only so
+// dev servers (Vite HMR websockets) are unaffected. GitHub Pages cannot set
+// HTTP response headers, so meta tags are the ceiling here: CSP via
+// http-equiv works for resource directives (frame-ancestors / sandbox /
+// report-uri are ignored in meta per spec), Referrer-Policy has a meta
+// equivalent, X-Content-Type-Options does not (header-only — not achievable
+// on Pages). 'unsafe-inline' for styles: the landing page uses an inline
+// <style> block and the demos set style attributes; scripts stay 'self'-only.
+const SECURITY_META = [
+  `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'" />`,
+  `<meta name="referrer" content="strict-origin-when-cross-origin" />`,
+].join("\n    ");
+
+function injectSecurityMeta(htmlPath) {
+  const html = readFileSync(htmlPath, "utf8");
+  if (html.includes("Content-Security-Policy")) return;
+  writeFileSync(htmlPath, html.replace(/<head>/i, `<head>\n    ${SECURITY_META}`));
+  console.log(`security meta → ${htmlPath}`);
+}
+
+injectSecurityMeta(join(siteDir, "index.html"));
+for (const name of EXAMPLES) {
+  injectSecurityMeta(join(siteDir, name, "index.html"));
 }
 
 console.log(`\n✅ Site built at ${siteDir}`);
