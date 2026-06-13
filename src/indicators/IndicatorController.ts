@@ -193,6 +193,45 @@ export class IndicatorController implements ChartPlugin {
     else this.add(name);
   }
 
+  // ── State snapshot ───────────────────────────────────────────────────────────
+
+  /**
+   * Snapshot the active indicators as plain, serializable data. The returned
+   * array fully describes the indicator set — `{ name, params, colors }` per
+   * entry — and is deep-copied so mutating it cannot reach back into live state.
+   * Feed it through `JSON.stringify` for persistence; restore with
+   * {@link loadState}. Output is purely a function of this snapshot (indicators
+   * compute via a pure `calculate`), so a round-trip never changes what renders.
+   */
+  toState(): ActiveIndicator[] {
+    return [...this.active.values()].map((a) => ({
+      name: a.name,
+      params: { ...a.params },
+      colors: { ...a.colors },
+    }));
+  }
+
+  /**
+   * Replace the active set with a snapshot from {@link toState}. Unknown
+   * indicator names (not in the registry) are skipped; params are re-resolved
+   * against the def's defaults so a stale snapshot still yields valid inputs.
+   * Triggers a single refresh.
+   */
+  loadState(state: readonly ActiveIndicator[]): void {
+    this.active.clear();
+    for (const a of state) {
+      const def = this.registry.get(a.name);
+      if (!def) continue;
+      this.active.set(a.name, {
+        name: a.name,
+        params: { ...def.defaultInputs, ...a.params },
+        colors: { ...(a.colors ?? {}) },
+      });
+    }
+    this.refresh();
+    this.onChange?.(this.activeNames());
+  }
+
   // ── Lifecycle reconciliation ─────────────────────────────────────────────────
 
   private bars(): IndicatorBar[] {
