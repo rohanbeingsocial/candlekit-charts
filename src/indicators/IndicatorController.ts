@@ -23,7 +23,7 @@ import {
 import type { ChartPlugin, PluginContext } from "../plugins/types";
 import type { Bar } from "../core/types";
 import type { IndicatorRegistry } from "./registry";
-import type { ActiveIndicator, IndicatorBar, IndicatorResult, PlotPoint } from "./types";
+import type { ActiveIndicator, IndicatorBar, IndicatorResult, PlotConfig, PlotPoint } from "./types";
 
 const HISTOGRAM_STYLES = new Set(["histogram", "columns"]);
 
@@ -32,6 +32,14 @@ interface Managed {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pane: any | null;
   isPattern: boolean;
+}
+
+interface CachedEntry {
+  title: string;
+  plotConfig: PlotConfig[];
+  colors: Record<string, string>;
+  result: IndicatorResult;
+  paneIndex: number;
 }
 
 export class IndicatorController implements ChartPlugin {
@@ -45,6 +53,7 @@ export class IndicatorController implements ChartPlugin {
   private markers = new Map<string, SeriesMarker<Time>[]>();
   private markersPlugin: ISeriesMarkersPluginApi<Time> | null = null;
   private onChange?: (names: string[]) => void;
+  private computedCache = new Map<string, CachedEntry>();
 
   constructor(
     private readonly registry: IndicatorRegistry,
@@ -105,6 +114,10 @@ export class IndicatorController implements ChartPlugin {
           (s as ISeriesApi<"Line">).update({ time: last.time as Time, value: last.value });
         }
       }
+      const existing = this.computedCache.get(name);
+      if (existing) {
+        this.computedCache.set(name, { ...existing, result: res, colors: act.colors });
+      }
     }
   }
 
@@ -122,6 +135,7 @@ export class IndicatorController implements ChartPlugin {
     }
     this.managed.clear();
     this.markers.clear();
+    this.computedCache.clear();
     this.markersPlugin = null;
     this.chart = null;
     this.candleSeries = null;
@@ -142,6 +156,29 @@ export class IndicatorController implements ChartPlugin {
   /** The active indicator (name + resolved params), or undefined if off. */
   getActive(name: string): ActiveIndicator | undefined {
     return this.active.get(name);
+  }
+
+  /**
+   * Returns the display values of all active indicators at the given epoch-seconds
+   * timestamp. Used by the crosshair legend to show indicator values on hover.
+   * Values come from the last-computed cache — no recalculation per tick.
+   */
+  getValuesAt(tsSeconds: number): Array<{
+    name: string;
+    title: string;
+    paneIndex: number;
+    plots: Array<{ label: string; value: number | null; color: string }>;
+  }> {
+    const out: Array<{ name: string; title: string; paneIndex: number; plots: Array<{ label: string; value: number | null; color: string }> }> = [];
+    for (const [name, entry] of this.computedCache) {
+      const plots = entry.plotConfig.map((pc) => {
+        const pts = entry.result.plots[pc.id];
+        const value = pts ? findPlotValueAt(pts, tsSeconds) : null;
+        return { label: pc.title ?? pc.id, value, color: resolveColor(entry.colors, pc.id, pc.color) };
+      });
+      out.push({ name, title: entry.title, paneIndex: entry.paneIndex, plots });
+    }
+    return out;
   }
 
   /** Turn every active indicator off. */
@@ -278,6 +315,7 @@ export class IndicatorController implements ChartPlugin {
         this.flushMarkers();
       }
       this.managed.delete(name);
+      this.computedCache.delete(name);
     }
 
     // 2. Update still-active.
@@ -312,6 +350,8 @@ export class IndicatorController implements ChartPlugin {
           (s as ISeriesApi<"Line">).setData(filtered.map((d) => ({ time: d.time as Time, value: d.value })));
         }
       }
+      const paneIndex = m.pane !== null ? Math.max(0, chart.panes().indexOf(m.pane as never)) : 0;
+      this.computedCache.set(name, { title: def.title, plotConfig: def.plotConfig, colors: act.colors, result: res, paneIndex });
     }
 
     // 3. Add newly activated.
@@ -384,6 +424,7 @@ export class IndicatorController implements ChartPlugin {
         }
       }
       this.managed.set(name, { plotSeries, pane, isPattern: false });
+      this.computedCache.set(name, { title: def.title, plotConfig: def.plotConfig, colors: act.colors, result: res, paneIndex });
     }
   }
 
@@ -422,6 +463,8 @@ export class IndicatorController implements ChartPlugin {
         (s as ISeriesApi<"Line">).applyOptions({ color });
       }
     }
+    const entry = this.computedCache.get(name);
+    if (entry) this.computedCache.set(name, { ...entry, colors: act.colors });
   }
 }
 
@@ -446,6 +489,18 @@ function mapShape(shape: string): "arrowUp" | "arrowDown" | "circle" | "square" 
   if (l.includes("up") || l.includes("bull")) return "arrowUp";
   if (l.includes("down") || l.includes("bear")) return "arrowDown";
   return "circle";
+}
+
+function findPlotValueAt(points: PlotPoint[], tsSeconds: number): number | null {
+  let lo = 0, hi = points.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const t = points[mid].time;
+    if (t === tsSeconds) return points[mid].value;
+    if (t < tsSeconds) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return null;
 }
 
 function buildMarkers(res: IndicatorResult): SeriesMarker<Time>[] {

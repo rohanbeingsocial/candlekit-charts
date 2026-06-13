@@ -13,6 +13,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   ChartView,
+  CrosshairLegend,
   DrawingToolbar,
   IndicatorPicker,
   MeasurementOverlay,
@@ -379,6 +380,7 @@ function ChartPanelInner({
           {replayOn && <span style={S.pillReplay}>REPLAY</span>}
         </div>
         <MeasurementOverlay />
+        <CrosshairLegend style={{ top: 38, left: 44 }} />
       </ChartView>
 
       {/* Pane bar: replay toggle (+ sync-group badge). Replay attaches to the

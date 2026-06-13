@@ -11,6 +11,7 @@ export { ChartView, type ChartViewProps } from "./ChartView";
 export { DrawingToolbar, type DrawingToolbarProps } from "./DrawingToolbar";
 export { IndicatorPicker, type IndicatorPickerProps } from "./IndicatorPicker";
 export { MeasurementOverlay, type MeasurementOverlayProps } from "./MeasurementOverlay";
+export { CrosshairLegend, type CrosshairLegendProps } from "./CrosshairLegend";
 export { ReplayControls, type ReplayControlsProps } from "./ReplayControls";
 export { SplitPane, type SplitPaneProps } from "./SplitPane";
 export { useChartController } from "./hooks/useChartController";
