@@ -16,7 +16,8 @@ export type SyncFlag =
   | "interval"
   | "cursor"
   | "symbol"
-  | "date";
+  | "date"
+  | "pointMarker"; // mirror a "catch point" marker + center-on-timestamp
 
 export interface ChartGroup {
   id: ChartGroupId;
@@ -31,7 +32,17 @@ export type SyncEvent =
   | { kind: "interval"; interval: IntervalCode; sourcePanelId: ChartId }
   | { kind: "cursor"; ts: Timestamp; jump?: boolean; sourcePanelId: ChartId | null }
   | { kind: "symbol"; symbol: SymbolId; sourcePanelId: ChartId }
-  | { kind: "date"; date: string | null; sourcePanelId: ChartId };
+  | { kind: "date"; date: string | null; sourcePanelId: ChartId }
+  | {
+      /**
+       * A "catch point" marker. Receivers drop a marker at `ts` (epoch ms) and
+       * recenter on it while preserving their own bar spacing. `null` clears the
+       * marker across the group.
+       */
+      kind: "pointMarker";
+      ts: Timestamp | null;
+      sourcePanelId: ChartId | null;
+    };
 
 /** A chart's adapter to the time scale / crosshair, consumed by sync receivers. */
 export interface ChartViewport {

@@ -3,6 +3,7 @@ import type { ChartController } from "../chart/ChartController";
 import type { DrawingController } from "../drawing/DrawingController";
 import type { IndicatorController } from "../indicators/IndicatorController";
 import type { MeasurementController } from "../measurement/MeasurementController";
+import type { PointMarkerController } from "../measurement/PointMarkerController";
 
 /** Handles surfaced by {@link ChartView} to its descendants + `onReady`. */
 export interface ChartViewApi {
@@ -10,6 +11,7 @@ export interface ChartViewApi {
   drawing: DrawingController | null;
   indicators: IndicatorController | null;
   measurement: MeasurementController | null;
+  pointMarker: PointMarkerController | null;
 }
 
 export const ChartContext = createContext<ChartViewApi | null>(null);

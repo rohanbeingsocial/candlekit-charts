@@ -7,6 +7,7 @@ import type { ThemeInput } from "../core/theme";
 import { DrawingController, type DrawingControllerOptions } from "../drawing/DrawingController";
 import type { IndicatorController } from "../indicators/IndicatorController";
 import { MeasurementController, type MeasurementOptions } from "../measurement/MeasurementController";
+import { PointMarkerController, type PointMarkerOptions } from "../measurement/PointMarkerController";
 import { useChartController } from "./hooks/useChartController";
 import { ChartContext, type ChartViewApi } from "./context";
 
@@ -32,6 +33,8 @@ export interface ChartViewProps {
   indicators?: IndicatorController | null;
   /** Enable Shift-drag measurement. `true` for defaults, or pass options. */
   measurement?: boolean | MeasurementOptions;
+  /** Enable Ctrl-click point marker ("catch point"). `true` for defaults, or pass options. */
+  pointMarker?: boolean | PointMarkerOptions;
 
   /** Fired once the chart + plugins are live. */
   onReady?: (api: ChartViewApi) => void;
@@ -57,6 +60,7 @@ export function ChartView({
   drawing,
   indicators,
   measurement,
+  pointMarker,
   onReady,
   className,
   style,
@@ -92,6 +96,7 @@ export function ChartView({
   useEffect(() => {
     if (!controller) return;
     let measurementCtl: MeasurementController | null = null;
+    let pointMarkerCtl: PointMarkerController | null = null;
 
     if (drawingCtl) controller.use(drawingCtl);
     if (indicators) controller.use(indicators);
@@ -99,12 +104,17 @@ export function ChartView({
       measurementCtl = new MeasurementController(typeof measurement === "object" ? measurement : {});
       controller.use(measurementCtl);
     }
+    if (pointMarker) {
+      pointMarkerCtl = new PointMarkerController(typeof pointMarker === "object" ? pointMarker : {});
+      controller.use(pointMarkerCtl);
+    }
 
     const next: ChartViewApi = {
       controller,
       drawing: drawingCtl,
       indicators: indicators ?? null,
       measurement: measurementCtl,
+      pointMarker: pointMarkerCtl,
     };
     setApi(next);
     onReady?.(next);
@@ -113,9 +123,10 @@ export function ChartView({
       if (drawingCtl) controller.remove(drawingCtl.id);
       if (indicators) controller.remove(indicators.id);
       if (measurementCtl) controller.remove(measurementCtl.id);
+      if (pointMarkerCtl) controller.remove(pointMarkerCtl.id);
     };
     // onReady intentionally excluded from deps — callers pass inline fns.
-  }, [controller, drawingCtl, indicators, measurement]);
+  }, [controller, drawingCtl, indicators, measurement, pointMarker]);
 
   // Data.
   useEffect(() => {

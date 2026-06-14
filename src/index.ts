@@ -45,6 +45,8 @@ export * from "./measurement/types";
 export * from "./measurement/RulerPrimitive";
 export * from "./measurement/ChartCoordinateUtils";
 export * from "./measurement/MeasurementController";
+export * from "./measurement/PointMarkerPrimitive";
+export * from "./measurement/PointMarkerController";
 
 // ── Indicators (registry + controller + built-in catalog; pluggable) ────────────
 export * from "./indicators/types";

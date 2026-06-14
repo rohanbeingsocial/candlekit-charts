@@ -24,6 +24,8 @@ export interface ChartEventMap {
   drawingChange: { count: number };
   /** Replay cursor advanced. */
   replayCursor: { ts: number };
+  /** A point marker was caught (epoch ms) or cleared (`null`). */
+  pointMarker: number | null;
   [key: string]: unknown;
 }
 
