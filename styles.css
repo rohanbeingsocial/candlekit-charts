@@ -598,3 +598,172 @@
   color: var(--ck-down);
   font-size: 11px;
 }
+
+/* ── Lab: Sketch Search + Echoes ───────────────────────────────────────────── */
+.ck-lab-btn {
+  width: auto;
+  gap: 6px;
+  padding: 0 8px;
+}
+.ck-lab-btn-label {
+  font-size: 12px;
+}
+.ck-badge {
+  min-width: 16px;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--ck-accent-fg);
+  background: var(--ck-accent);
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ck-lab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 248px;
+  padding: 10px;
+  color: var(--ck-fg);
+  background: var(--ck-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--ck-border);
+  border-radius: var(--ck-radius);
+  font-size: 12px;
+}
+.ck-lab-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.ck-lab-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--ck-muted);
+}
+.ck-lab-field input {
+  width: 48px;
+  padding: 3px 5px;
+  font-size: 12px;
+  color: var(--ck-fg);
+  background: transparent;
+  border: 1px solid var(--ck-border);
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.ck-lab-run,
+.ck-lab-clear {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--ck-border);
+}
+.ck-lab-run {
+  color: var(--ck-accent-fg);
+  background: var(--ck-accent);
+  border-color: transparent;
+}
+.ck-lab-clear {
+  color: var(--ck-fg);
+  background: transparent;
+}
+.ck-lab-clear:hover {
+  background: color-mix(in srgb, var(--ck-muted) 14%, transparent);
+}
+
+.ck-lab-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+.ck-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.ck-stat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ck-muted);
+}
+.ck-stat-value {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ck-tone--up {
+  color: var(--ck-up);
+}
+.ck-tone--down {
+  color: var(--ck-down);
+}
+
+.ck-lab-proj {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--ck-border) 60%, transparent);
+}
+.ck-lab-proj-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ck-muted);
+}
+
+.ck-lab-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.ck-lab-match {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ck-lab-match-rank {
+  width: 20px;
+  font-size: 10px;
+  color: var(--ck-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ck-lab-match-dist {
+  font-size: 10px;
+  color: var(--ck-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ck-lab-match-end {
+  margin-left: auto;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.ck-lab-empty {
+  font-size: 11px;
+  color: var(--ck-muted);
+}
+
+.ck-spark {
+  display: block;
+  overflow: visible;
+}
+.ck-spark--up {
+  color: var(--ck-up);
+}
+.ck-spark--down {
+  color: var(--ck-down);
+}
+.ck-spark-zero {
+  stroke: var(--ck-muted);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 2;
+  opacity: 0.6;
+}

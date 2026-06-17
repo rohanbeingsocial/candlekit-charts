@@ -1,6 +1,6 @@
 # Examples
 
-Six standalone Vite apps that exercise `@getcandlekit/charts`. Each consumes the
+Seven standalone Vite apps that exercise `@getcandlekit/charts`. Each consumes the
 library straight from `../../src` via a Vite alias (see `shared/vite.shared.ts`),
 so **no build of the library is required** — just run an example.
 
@@ -12,6 +12,7 @@ so **no build of the library is required** — just run an example.
 | `indicators/` | built-in indicator catalog + `<IndicatorPicker>` | React |
 | `drawing/` | drawing tools + `<DrawingToolbar>` + measurement | React |
 | `replay/` | deterministic replay + `<ReplayControls>` | React |
+| `lab/` | **Sketch Search + Echoes** — draw a shape to find look-alikes; déjà-vu scan with bands + median projection (`<SketchSearchButton>` + `<EchoesPanel>`) | React |
 
 Every example needs only `lightweight-charts` (+ `react` for the React ones).
 Drawing and indicators are built into `@getcandlekit/charts` — no extra installs.
@@ -21,7 +22,7 @@ and the `lightweight-charts-indicators` catalog.
 ## Run one
 
 ```bash
-cd examples/react      # or vanilla | indicators | drawing | replay
+cd examples/react      # or vanilla | indicators | drawing | replay | lab
 npm install
 npm run dev            # Vite dev server → http://localhost:5173
 ```

@@ -8,6 +8,15 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Lab — Sketch Search + Echoes** (experimental pattern-similarity analytics).
+  Pure, dependency-free math (`zNormalize`, `findSimilar`, `buildEchoScan`,
+  `resampleStroke`) computed on z-normalized closes. **Echoes** ("market déjà
+  vu") finds historical look-alikes of the recent window, bands them, and
+  projects the median aftermath forward; **Sketch Search** matches a freehand
+  stroke against history. Ships as chart plugins (`EchoesController`,
+  `SketchSearchController`) with shared overlay primitives, plus React
+  `<EchoesPanel>` / `<SketchSearchButton>` and `sketch` / `echoes` props on
+  `<ChartView>`. New `examples/lab` demo (additive API).
 - **Per-plot indicator colors** — `ActiveIndicator` gains a `colors` map (overrides
   keyed by `PlotConfig.id`); new `IndicatorController.setColors(name, colors)`
   re-styles live series in place without recomputing. The React `<IndicatorPicker>`

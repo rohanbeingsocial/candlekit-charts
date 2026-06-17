@@ -34,7 +34,7 @@ const siteDir = resolve(repoRoot, "site");
 // owns drawing, indicators, measurement, replay). The rest are focused examples
 // that isolate one part of the API. All deploy so the landing can link them.
 // Order = build order.
-const EXAMPLES = ["workspace", "vanilla", "react", "indicators", "drawing", "replay"];
+const EXAMPLES = ["workspace", "vanilla", "react", "indicators", "drawing", "replay", "lab"];
 
 const SITE_BASE = (process.env.SITE_BASE || "/candlekit-charts/").replace(/\/?$/, "/");
 

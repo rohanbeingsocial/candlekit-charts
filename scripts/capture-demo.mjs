@@ -39,6 +39,8 @@ const SCENE_DEMO = {
   indicators: "workspace",
   measurement: "workspace",
   replay: "replay",
+  // Sketch + Echoes live only in the focused `lab` example (not the workspace).
+  lab: "lab",
 };
 const WIDTH = Number(env.WIDTH || 1180);
 const HEIGHT = Number(env.HEIGHT || 680);
@@ -171,6 +173,29 @@ const SCENES = {
     await sleep(900);
   },
 
+  // Lab: déjà-vu Echoes + freehand Sketch Search, against the focused `lab` demo.
+  async lab(page) {
+    await page.locator('button[aria-label="Sketch search"]').waitFor({ state: "visible", timeout: 20000 });
+    await sleep(700);
+
+    // 1) Echoes — scan for historical look-alikes of the recent window; bands +
+    //    a dashed median projection appear off the last bar.
+    await page.locator(".ck-lab-run").click();
+    await sleep(1600);
+
+    // 2) Sketch — arm, draw a freehand wave across the chart, release to search.
+    await page.locator('button[aria-label="Sketch search"]').click();
+    await sleep(300);
+    await page.mouse.move(320, 430);
+    await page.mouse.down();
+    for (const [x, y] of [[400, 360], [480, 410], [560, 300], [640, 360], [740, 250]]) {
+      await page.mouse.move(x, y, { steps: 8 });
+      await sleep(140);
+    }
+    await page.mouse.up();
+    await sleep(1500);
+  },
+
   // Scenes may be a plain fn (whole run is recorded) OR `{ prep, act }` where
   // `prep` runs BEFORE the frame recorder starts — use it for setup that would
   // otherwise show as a frozen intro. The replay scene needs this: waiting for
@@ -240,7 +265,7 @@ async function capture(browser, scene) {
   console.log(`✅ ${out} — ${frames.length} frames ${WIDTH}x${HEIGHT}`);
 }
 
-const scenes = SCENE === "all" ? ["workspace", "drawing", "indicators", "measurement", "replay"] : [SCENE];
+const scenes = SCENE === "all" ? ["workspace", "drawing", "indicators", "measurement", "replay", "lab"] : [SCENE];
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 try {
   for (const s of scenes) await capture(browser, s);

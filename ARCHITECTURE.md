@@ -29,6 +29,7 @@ pipeline, and where to extend. Pairs with [CODEBASE_MAP.md](./CODEBASE_MAP.md)
 │ drawing/ indicators/ measurement/  (ChartPlugins)            │
 │ replay/ sync/                       (standalone engines)      │
 │ feed/                               (broker-agnostic data)    │
+│ lab/                                (pattern-similarity)      │
 │ ml/                                 (overlay contracts)       │
 ├─────────────────────────────────────────────────────────────┤
 │ events/ plugins/ data-source/       (contracts + bus)         │  seams
@@ -94,12 +95,15 @@ charts a host wires as `SyncMember`s. It is intentionally decoupled from
 2. `setData` maps `Bar[]` → LWC points once (ms→s) and calls `series.setData`.
    `updateBar` calls `series.update` for the live bar only.
 3. Plugins paint via lightweight-charts **series primitives**
-   (`ISeriesPrimitive`): `DrawingPrimitive` and `RulerPrimitive` project data
-   anchors → pixels in `useBitmapCoordinateSpace` and draw to the overlay canvas.
-   Indicators add their own LWC series/panes via `IndicatorController`.
+   (`ISeriesPrimitive`): `DrawingPrimitive`, `RulerPrimitive`, and the lab's
+   `MatchHighlightPrimitive` / `SketchStrokePrimitive` project data anchors →
+   pixels in `useBitmapCoordinateSpace` and draw to the overlay canvas.
+   Indicators add their own LWC series/panes via `IndicatorController`;
+   `EchoesController` adds a transient line series for its forward projection.
 4. React overlays (`DrawingToolbar`, `IndicatorPicker`, `MeasurementOverlay`,
-   `ReplayControls`) are absolutely-positioned DOM over the canvas; they call the
-   controller/engine imperatively. They never render bars.
+   `ReplayControls`, `EchoesPanel`, `SketchSearchButton`) are absolutely-
+   positioned DOM over the canvas; they call the controller/engine imperatively.
+   They never render bars.
 
 **Layout & theme (kept deliberately simple).** Multi-chart layouts are just
 nested `<SplitPane>`s (a ~110-line resizable split, no docking/persistence) — a
@@ -148,6 +152,26 @@ typed-array friendly for Worker/WASM), `SignalProvider`, `MLPlugin`
 (`ChartPlugin` + async `run`), `PredictionOverlay`. Performance + replay
 contracts are explicit: heavy compute runs off the render thread, and every
 consumer receives cursor-bounded bars (no look-ahead) so live and replay agree.
+
+## Lab layer (`src/lab/`)
+
+Experimental pattern-similarity analytics. Split cleanly into pure math and
+chart-coupled wiring:
+
+- **Pure** (`similarity.ts`, `types.ts`) — `zNormalize`, `findSimilar`
+  (z-normalized euclidean k-NN over a sliding window, rolling-sum O(n·m)),
+  `buildEchoScan` (Echoes), `resampleStroke` (freehand → clean series). No DOM,
+  no chart; unit-tested in isolation and usable on any `number[]` / `Bar[]`.
+- **Plugins** (`EchoesController`, `SketchSearchController`) — `ChartPlugin`s that
+  read `ctx.getBars()`, run the math, and render: shared `MatchHighlightPrimitive`
+  (translucent window bands) + `SketchStrokePrimitive` (live freehand). Echoes
+  also projects the median aftermath as a transient dashed line series off the
+  last bar. Both expose `subscribe()` and emit on the bus (`echoScan` /
+  `sketchSearch`).
+
+Similarity is computed on **z-normalized** closes (shape, not level/scale), so
+look-alikes match across price regimes. The layer ships in the core entry; the
+React panel/toggle live in `src/react/`.
 
 ## Build & packaging
 

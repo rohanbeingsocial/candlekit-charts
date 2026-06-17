@@ -4,6 +4,8 @@ import type { DrawingController } from "../drawing/DrawingController";
 import type { IndicatorController } from "../indicators/IndicatorController";
 import type { MeasurementController } from "../measurement/MeasurementController";
 import type { PointMarkerController } from "../measurement/PointMarkerController";
+import type { SketchSearchController } from "../lab/SketchSearchController";
+import type { EchoesController } from "../lab/EchoesController";
 
 /** Handles surfaced by {@link ChartView} to its descendants + `onReady`. */
 export interface ChartViewApi {
@@ -12,6 +14,10 @@ export interface ChartViewApi {
   indicators: IndicatorController | null;
   measurement: MeasurementController | null;
   pointMarker: PointMarkerController | null;
+  /** Sketch Search plugin ("draw a shape, find look-alikes"). */
+  sketch: SketchSearchController | null;
+  /** Echoes plugin ("market déjà vu"). */
+  echoes: EchoesController | null;
 }
 
 export const ChartContext = createContext<ChartViewApi | null>(null);

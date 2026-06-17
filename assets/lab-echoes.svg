@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="860" height="380" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5b9cf6" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#5b9cf6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f5c85a" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#f5c85a" stop-opacity="0.20"/>
+    </linearGradient>
+  </defs>
+
+  <!-- backdrop -->
+  <rect x="0" y="0" width="860" height="380" rx="8" fill="#0e1117"/>
+  <!-- grid -->
+  <g stroke="#1b2330" stroke-width="1">
+    <line x1="40" y1="80"  x2="820" y2="80"/>
+    <line x1="40" y1="140" x2="820" y2="140"/>
+    <line x1="40" y1="200" x2="820" y2="200"/>
+    <line x1="40" y1="260" x2="820" y2="260"/>
+    <line x1="40" y1="320" x2="820" y2="320"/>
+  </g>
+
+  <!-- echo match bands (historical look-alikes of the recent window) -->
+  <g>
+    <rect x="120" y="40" width="110" height="300" fill="#5b9cf6" fill-opacity="0.12"/>
+    <rect x="120" y="40" width="1" height="300" fill="#5b9cf6" fill-opacity="0.7"/>
+    <rect x="230" y="40" width="1" height="300" fill="#5b9cf6" fill-opacity="0.7"/>
+    <text x="125" y="56" fill="#adc9f7" font-size="11">#1</text>
+
+    <rect x="420" y="40" width="110" height="300" fill="#5b9cf6" fill-opacity="0.09"/>
+    <rect x="420" y="40" width="1" height="300" fill="#5b9cf6" fill-opacity="0.6"/>
+    <rect x="530" y="40" width="1" height="300" fill="#5b9cf6" fill-opacity="0.6"/>
+    <text x="425" y="56" fill="#adc9f7" font-size="11">#2</text>
+  </g>
+
+  <!-- price (area + line) -->
+  <path fill="url(#area)" d="M40,210 L60,200 L80,215 L100,230 L120,210 L140,180 L160,160 L180,150 L200,170 L220,195 L240,205 L260,215 L280,225 L300,210 L320,230 L340,245 L360,235 L380,220 L400,210 L420,200 L440,180 L460,158 L480,150 L500,168 L520,192 L540,205 L560,200 L580,178 L600,158 L620,150 L640,165 L640,340 L40,340 Z"/>
+  <path fill="none" stroke="#7d8b9c" stroke-width="1.6" d="M40,210 L60,200 L80,215 L100,230 L120,210 L140,180 L160,160 L180,150 L200,170 L220,195 L240,205 L260,215 L280,225 L300,210 L320,230 L340,245 L360,235 L380,220 L400,210 L420,200 L440,180 L460,158 L480,150 L500,168 L520,192 L540,205 L560,200 L580,178 L600,158 L620,150 L640,165"/>
+
+  <!-- recent window (the query) -->
+  <rect x="556" y="40" width="86" height="300" fill="none" stroke="#e5e7eb" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+  <text x="560" y="334" fill="#cdd5df" font-size="10">now</text>
+
+  <!-- forward projection: median path + percentile cone off the last bar -->
+  <polygon points="640,165 820,96 820,150" fill="url(#cone)"/>
+  <path fill="none" stroke="#f5c85a" stroke-width="2" stroke-dasharray="5 4" d="M640,165 L700,150 L760,132 L820,118"/>
+  <circle cx="640" cy="165" r="3" fill="#f5c85a"/>
+  <text x="700" y="110" fill="#f5c85a" font-size="11">median projection</text>
+
+  <!-- sketch stroke (freehand query the user drew) -->
+  <path fill="none" stroke="#f5c85a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.95" d="M250,96 q26,-30 52,2 q26,32 52,-2 q26,-30 52,4 q22,26 40,-6"/>
+  <text x="250" y="84" fill="#f5c85a" font-size="11">your sketch →</text>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="40" y="354" width="14" height="10" fill="#5b9cf6" fill-opacity="0.4"/>
+    <text x="60" y="363" fill="#9aa6b2">Echoes — historical look-alikes</text>
+    <line x1="300" y1="359" x2="320" y2="359" stroke="#f5c85a" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="326" y="363" fill="#9aa6b2">median of what happened next</text>
+    <path d="M560,359 q8,-9 16,0" fill="none" stroke="#f5c85a" stroke-width="2"/>
+    <text x="582" y="363" fill="#9aa6b2">Sketch Search query</text>
+  </g>
+</svg>

@@ -32,6 +32,15 @@ export * from "./feed/MockFeed";
 // ── ML / AI overlay contracts ───────────────────────────────────────────────────
 export * from "./ml/types";
 
+// ── Lab (pattern-similarity analytics: Echoes + Sketch Search) ──────────────────
+// Pure math + chart-coupled plugins (primitives, sketch capture, déjà-vu scan).
+export * from "./lab/types";
+export * from "./lab/similarity";
+export * from "./lab/MatchHighlightPrimitive";
+export * from "./lab/SketchStrokePrimitive";
+export * from "./lab/SketchSearchController";
+export * from "./lab/EchoesController";
+
 // ── Drawing (original engine rendered on lightweight-charts primitives) ─────────
 export * from "./drawing/types";
 export * from "./drawing/geometry";
