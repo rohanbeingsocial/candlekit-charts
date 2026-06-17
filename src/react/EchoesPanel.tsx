@@ -13,6 +13,10 @@ export interface EchoesPanelProps {
 
 const fmtSigned = (n: number, dec = 2) => (n >= 0 ? "+" : "") + n.toFixed(dec);
 
+/** Distance → shape-similarity %, clamped to 0..100 (see findSimilar minScore). */
+const simPct = (distance: number, m: number) =>
+  Math.round(Math.max(0, 1 - (distance * distance) / (2 * Math.max(1, m))) * 100);
+
 /** Tiny inline SVG sparkline over a value series. Returns null if too short. */
 function Sparkline({
   values,
@@ -50,11 +54,11 @@ function Sparkline({
 }
 
 /**
- * Results panel for Echoes ("market déjà vu"): a control row (window / horizon /
- * run / clear), an aggregate outcome strip, the projected median path, and the
- * ranked historical echoes with their aftermath sparklines. Reads the enclosing
- * {@link ChartView}'s echoes controller — enable `echoes` on the chart for this
- * to appear.
+ * Results panel for Echoes ("market déjà vu"): a header, a control row (window /
+ * horizon / scan / clear), the aggregate outcome (median move + up-rate), the
+ * projected median path, and the ranked historical echoes with their aftermath
+ * sparklines and shape-similarity. Reads the enclosing {@link ChartView}'s echoes
+ * controller — enable `echoes` on the chart for this to appear.
  */
 export function EchoesPanel({
   defaultWindowLen = 30,
@@ -80,11 +84,19 @@ export function EchoesPanel({
   const clear = () => echoes.clear();
 
   const s = scan?.stats;
+  const up = s && s.medianEndPct >= 0;
   const upRate = s && s.count > 0 ? Math.round((s.upCount / s.count) * 100) : 0;
 
   return (
     <div className={className ?? "ck-lab-panel"} style={style}>
-      <div className="ck-lab-row">
+      <header className="ck-lab-head">
+        <div className="ck-lab-title">
+          Echoes <span className="ck-lab-tag">déjà vu</span>
+        </div>
+        <p className="ck-lab-sub">History that rhymes with right now</p>
+      </header>
+
+      <div className="ck-lab-controls">
         <label className="ck-lab-field">
           <span>Window</span>
           <input
@@ -106,17 +118,35 @@ export function EchoesPanel({
         <button type="button" className="ck-lab-run" onClick={run}>
           Scan
         </button>
-        <button type="button" className="ck-lab-clear" onClick={clear}>
-          Clear
-        </button>
+        {scan && (
+          <button type="button" className="ck-lab-clear" onClick={clear} title="Clear results">
+            Clear
+          </button>
+        )}
       </div>
+
+      {!scan && (
+        <p className="ck-lab-hint">
+          <b>Scan</b> to find the windows most like the last {windowLen} bars — and the median of what came next.
+        </p>
+      )}
 
       {scan && s && (
         <>
+          <div className="ck-lab-hero">
+            <div className="ck-lab-hero-main">
+              <span className={`ck-lab-hero-val ${up ? "ck-tone--up" : "ck-tone--down"}`}>
+                {fmtSigned(s.medianEndPct)}%
+              </span>
+              <span className="ck-lab-hero-cap">median, {s.horizon} bars out</span>
+            </div>
+            <div className={`ck-lab-bias ${up ? "ck-tone--up" : "ck-tone--down"}`}>
+              {upRate}% <small>up</small>
+            </div>
+          </div>
+
           <div className="ck-lab-stats">
             <Stat label="Echoes" value={String(s.count)} />
-            <Stat label="Up" value={`${upRate}%`} tone={upRate >= 50 ? "up" : "down"} />
-            <Stat label="Median" value={`${fmtSigned(s.medianEndPct)}%`} tone={s.medianEndPct >= 0 ? "up" : "down"} />
             <Stat label="Best" value={`${fmtSigned(s.bestEndPct)}%`} tone="up" />
             <Stat label="Worst" value={`${fmtSigned(s.worstEndPct)}%`} tone="down" />
           </div>
@@ -124,31 +154,38 @@ export function EchoesPanel({
           {scan.medianPathPct.length > 0 && (
             <div className="ck-lab-proj">
               <span className="ck-lab-proj-label">Projected median path</span>
-              <Sparkline values={scan.medianPathPct} width={180} height={32} />
+              <Sparkline values={scan.medianPathPct} width={232} height={40} />
             </div>
           )}
 
-          <div className="ck-lab-matches">
-            {scan.results.map((r, i) => {
-              const after = r.aftermathPct;
-              const end = after && after.length ? after[after.length - 1] : null;
-              return (
-                <div className="ck-lab-match" key={`${r.match.startIndex}-${i}`}>
-                  <span className="ck-lab-match-rank">#{i + 1}</span>
-                  <Sparkline values={after ?? []} />
-                  <span className="ck-lab-match-dist" title="z-normalized distance (lower = closer)">
-                    d {r.match.distance.toFixed(2)}
-                  </span>
-                  {end != null && (
-                    <span className={`ck-lab-match-end ck-tone--${end >= 0 ? "up" : "down"}`}>
-                      {fmtSigned(end)}%
+          {scan.results.length > 0 ? (
+            <div className="ck-lab-matches">
+              <div className="ck-lab-matches-head">
+                <span>Closest matches</span>
+                <span>after {s.horizon}b</span>
+              </div>
+              {scan.results.map((r, i) => {
+                const after = r.aftermathPct;
+                const end = after && after.length ? after[after.length - 1] : null;
+                return (
+                  <div className="ck-lab-match" key={`${r.match.startIndex}-${i}`}>
+                    <span className="ck-lab-match-rank">{i + 1}</span>
+                    <Sparkline values={after ?? []} width={88} height={22} />
+                    <span className="ck-lab-match-sim" title="shape similarity">
+                      {simPct(r.match.distance, scan.windowLen)}%
                     </span>
-                  )}
-                </div>
-              );
-            })}
-            {scan.results.length === 0 && <div className="ck-lab-empty">No echoes found.</div>}
-          </div>
+                    {end != null && (
+                      <span className={`ck-lab-match-end ${end >= 0 ? "ck-tone--up" : "ck-tone--down"}`}>
+                        {fmtSigned(end, 1)}%
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="ck-lab-empty">No windows cleared the similarity bar.</div>
+          )}
         </>
       )}
     </div>

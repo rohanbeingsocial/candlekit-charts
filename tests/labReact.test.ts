@@ -102,12 +102,14 @@ describe("EchoesPanel", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  it("shows the control row but no stats before a scan", () => {
+  it("shows controls + hint but no stats before a scan", () => {
     const echoes = new FakeEchoes();
     render(h(EchoesPanel), api({ echoes: echoes as never }));
-    expect(container.textContent).toContain("Scan");
-    expect(container.textContent).toContain("Clear");
-    expect(container.textContent).not.toContain("Echoes");
+    expect(container.querySelector(".ck-lab-run")).not.toBeNull(); // Scan present
+    expect(container.querySelector(".ck-lab-clear")).toBeNull(); // Clear hidden pre-scan
+    expect(container.querySelector(".ck-lab-hint")).not.toBeNull(); // empty-state hint
+    expect(container.querySelector(".ck-lab-hero")).toBeNull(); // no outcome yet
+    expect(container.querySelector(".ck-lab-stats")).toBeNull();
     expect(container.querySelector("polyline")).toBeNull();
   });
 
@@ -123,9 +125,12 @@ describe("EchoesPanel", () => {
     expect(text).toContain("+20.00%"); // best + first echo end
     expect(text).toContain("-8.00%"); // worst + second echo end
     expect(text).toContain("Projected median path");
-    expect(text).toContain("#1");
-    expect(text).toContain("#2");
-    expect(text).toContain("d 1.50"); // distance of 2nd echo
+
+    // ranked match rows: chips 1..2, shape-similarity % (100% exact, 63% for d=1.5 @ window 3)
+    const ranks = [...container.querySelectorAll(".ck-lab-match-rank")].map((e) => e.textContent);
+    expect(ranks).toEqual(["1", "2"]);
+    const sims = [...container.querySelectorAll(".ck-lab-match-sim")].map((e) => e.textContent);
+    expect(sims).toEqual(["100%", "63%"]);
 
     // 1 projection + 2 aftermath sparklines.
     expect(container.querySelectorAll("polyline").length).toBe(3);
@@ -155,9 +160,11 @@ describe("EchoesPanel", () => {
     render(h(EchoesPanel), api({ echoes: echoes as never }));
     act(() => echoes.emit(SCAN));
     const btn = container.querySelector(".ck-lab-clear") as HTMLButtonElement;
+    expect(container.querySelector(".ck-lab-hero")).not.toBeNull();
     act(() => btn.click());
     expect(echoes.clear).toHaveBeenCalledTimes(1);
-    expect(container.textContent).not.toContain("Echoes"); // stats gone after clear
+    expect(container.querySelector(".ck-lab-hero")).toBeNull(); // outcome gone after clear
+    expect(container.querySelector(".ck-lab-hint")).not.toBeNull(); // back to empty-state hint
   });
 });
 
