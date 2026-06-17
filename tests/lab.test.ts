@@ -84,6 +84,18 @@ describe("findSimilar", () => {
     expect(matches[0].distance).toBeCloseTo(0, 9);
   });
 
+  it("rejects matches below the minScore similarity gate", () => {
+    // window 0 = exact (score 1); window 5 = reversed (correlation -1, score -1).
+    const hay = [1, 2, 3, 4, 5, 5, 4, 3, 2, 1];
+    expect(findSimilar(hay, [1, 2, 3, 4, 5], { k: 5 }).length).toBe(2); // no gate → both
+    const gated = findSimilar(hay, [1, 2, 3, 4, 5], { k: 5, minScore: 0.5 });
+    expect(gated.length).toBe(1); // the reversed window is filtered out
+    expect(gated[0].startIndex).toBe(0);
+    // A threshold above the best achievable score rejects everything.
+    const approx = [1, 2, 3, 1, 9, 1, 2, 3, 9, 1]; // no window resembles a clean ramp
+    expect(findSimilar(approx, [1, 2, 3, 4, 5], { k: 5, minScore: 0.95 })).toEqual([]);
+  });
+
   it("returns [] for degenerate args", () => {
     expect(findSimilar([1, 2, 3], [1], { k: 5 })).toEqual([]); // query < 2
     expect(findSimilar([1, 2, 3], [1, 2], { k: 0 })).toEqual([]); // k < 1

@@ -66,6 +66,13 @@ export interface FindSimilarOptions {
    * room left for an aftermath. Default `0`.
    */
   excludeTail?: number;
+  /**
+   * Minimum shape-similarity score in `[-1, 1]` — the correlation between the
+   * z-normalized query and window (`1 - distance² / (2·m)`). Windows below it are
+   * rejected, so a query that resembles nothing returns nothing. Default: no gate
+   * (any of the `k` nearest are returned regardless of how far they are).
+   */
+  minScore?: number;
 }
 
 /**
@@ -189,12 +196,18 @@ export function findSimilar(
   });
 
   // Greedy pick, best distance first, enforcing minGap between accepted starts.
+  // `maxDistance` translates the optional minScore gate into a distance cutoff:
+  // score = 1 - d²/(2m) ≥ minScore  ⇔  d ≤ sqrt(2m·(1 - minScore)). Distances are
+  // sorted ascending, so once one exceeds the cutoff every later one does too.
+  const maxDistance =
+    opts.minScore === undefined ? Infinity : Math.sqrt(Math.max(0, 2 * m * (1 - opts.minScore)));
   const picked: SimilarityMatch[] = [];
   const takenStarts: number[] = [];
   for (let i = 0; i < windowCount && picked.length < k; i++) {
     const s = order[i];
     const d = distances[s];
     if (!Number.isFinite(d)) break; // Infinity sorts last; nothing usable left
+    if (d > maxDistance) break; // below the similarity gate — and so is everything after
     let ok = true;
     for (let t = 0; t < takenStarts.length; t++) {
       if (Math.abs(s - takenStarts[t]) < minGap) {

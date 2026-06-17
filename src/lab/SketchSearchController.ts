@@ -37,6 +37,19 @@ export interface SketchSearchOptions {
   queryLength?: number;
   /** Max matches to return. Default 10. */
   k?: number;
+  /**
+   * Minimum shape-similarity (correlation, `[-1, 1]`) a window must reach to be
+   * shown. Raise it for stricter matching; a sketch that resembles nothing then
+   * returns no bands. Default `0.7`.
+   */
+  minScore?: number;
+  /**
+   * Reject strokes that backtrack horizontally — a circle/scribble goes right
+   * *then* left, which is not a left-to-right price shape. Value is the minimum
+   * ratio of net horizontal span to total horizontal travel, in `[0, 1]`: a
+   * clean left-to-right drag ≈ 1, a closed loop ≈ 0.5. Default `0.7`.
+   */
+  minHorizontalProgress?: number;
   /** Stroke + highlight colors. */
   strokeColor?: string;
   highlightColors?: Partial<MatchHighlightColors>;
@@ -182,6 +195,26 @@ export class SketchSearchController implements ChartPlugin {
       return;
     }
 
+    // Reject loops / scribbles: a left-to-right price shape makes net horizontal
+    // progress, whereas a circle goes right then back (ratio ≈ 0.5). Measured on
+    // the raw stroke, before resampleStroke collapses the backtracking.
+    const minProgress = this.opts.minHorizontalProgress ?? 0.7;
+    let travelX = 0;
+    let minX = Infinity;
+    let maxX = -Infinity;
+    for (let i = 0; i < this.points.length; i++) {
+      const x = this.points[i].x;
+      if (i > 0) travelX += Math.abs(x - this.points[i - 1].x);
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+    }
+    const progress = travelX > 0 ? (maxX - minX) / travelX : 0;
+    if (progress < minProgress) {
+      this.stroke.clear();
+      this.emit(null);
+      return;
+    }
+
     // Query length: requested, but clamped so at least one window fits history.
     const requested = Math.max(2, Math.floor(this.opts.queryLength ?? 48));
     const n = Math.min(requested, bars.length - 1);
@@ -204,7 +237,8 @@ export class SketchSearchController implements ChartPlugin {
     for (let i = 0; i < bars.length; i++) closes[i] = bars[i].close;
 
     const k = Math.max(1, Math.floor(this.opts.k ?? 10));
-    const raw = findSimilar(closes, query, { k, minGap: n });
+    const minScore = this.opts.minScore ?? 0.7;
+    const raw = findSimilar(closes, query, { k, minGap: n, minScore });
 
     const matches: SketchMatch[] = raw.map((m) => ({
       startIndex: m.startIndex,

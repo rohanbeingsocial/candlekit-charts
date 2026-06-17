@@ -160,7 +160,7 @@ describe("SketchSearchController", () => {
   it("captures a stroke and returns ranked matches mapped to bar times", () => {
     const bars = mk(Array.from({ length: 50 }, (_, i) => 100 + Math.sin(i / 3) * 10));
     const { ctx } = makeSketchCtx(bars);
-    const c = new SketchSearchController({ queryLength: 48, k: 10 });
+    const c = new SketchSearchController({ queryLength: 48, k: 10, minScore: 0 }); // gate off: this asserts mapping, not strictness
     let res: { query: number[]; matches: { startIndex: number; endIndex: number; startTime: number; endTime: number }[] } | null = null;
     c.subscribe((r) => (res = r as typeof res));
     c.init(ctx);
@@ -179,6 +179,41 @@ describe("SketchSearchController", () => {
     expect(m.startIndex).toBeLessThan(m.endIndex);
     expect(m.endTime).toBeGreaterThan(m.startTime);
     expect(m.startTime).toBe(bars[m.startIndex].ts);
+  });
+
+  it("rejects a loopy / circular stroke (backtracks horizontally)", () => {
+    const bars = mk(Array.from({ length: 50 }, (_, i) => 100 + Math.sin(i / 3) * 10));
+    const { ctx } = makeSketchCtx(bars);
+    const c = new SketchSearchController({ minScore: 0 });
+    let res: unknown = "unset";
+    c.subscribe((r) => (res = r));
+    c.init(ctx);
+    c.setActive(true);
+    // right, then back left → a closed loop, net span / travel ≈ 0.5 < 0.7.
+    down(10, 30);
+    move(40, 20);
+    move(70, 30);
+    move(40, 40);
+    move(10, 30);
+    up();
+    expect(res).toBeNull();
+  });
+
+  it("returns no matches when nothing clears the similarity gate", () => {
+    const bars = mk(Array.from({ length: 60 }, (_, i) => 100 + Math.sin(i / 3) * 10));
+    const { ctx } = makeSketchCtx(bars);
+    const c = new SketchSearchController({ queryLength: 40, minScore: 0.999 }); // near-impossible bar
+    let res: { matches: unknown[] } | null = null;
+    c.subscribe((r) => (res = r as typeof res));
+    c.init(ctx);
+    c.setActive(true);
+    down(10, 30);
+    move(40, 12);
+    move(70, 28);
+    move(100, 8);
+    up();
+    expect(res).not.toBeNull(); // a query was formed (valid stroke)
+    expect(res!.matches.length).toBe(0); // but the gate rejected every window
   });
 
   it("clamps the query length to the available history", () => {

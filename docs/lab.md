@@ -71,6 +71,7 @@ findSimilar(closes, closes.slice(-30), {     // slide a 30-bar query over `close
   k: 5,                                       // up to 5 matches, best first
   minGap: 30,                                 // non-overlap (default = query length)
   excludeTail: 30,                            // ignore windows ending in the last 30 bars
+  minScore: 0.7,                              // optional gate: drop windows below this correlation
 });                                           // → [{ startIndex, endIndex, distance }]
 
 buildEchoScan(bars, /*windowLen*/ 30, /*horizon*/ 30, /*k*/ 8); // → EchoScan | null
@@ -101,7 +102,7 @@ With `autoRerun: true` the scan recomputes on every data change after the first
 
 | Member | Description |
 |---|---|
-| `new SketchSearchController(opts?)` | `opts`: `queryLength` (48, clamped to history), `k` (10), `strokeColor`, `highlightColors`, `onResult`. |
+| `new SketchSearchController(opts?)` | `opts`: `queryLength` (48, clamped to history), `k` (10), `minScore` (0.7), `minHorizontalProgress` (0.7), `strokeColor`, `highlightColors`, `onResult`. |
 | `setActive(active)` | Arm/disarm capture. Disarming clears the stroke + matches. |
 | `isActive()` | Current arm state. |
 | `clear()` | Wipe stroke + matches. |
@@ -128,6 +129,11 @@ Both subscribe to their controller and re-render on results. Style via the
 
 - **Shape, not magnitude.** z-normalization discards level and scale; two windows
   with the same path but different volatility match closely.
+- **Sketch strictness.** Sketch Search gates results two ways: `minScore` (default
+  0.7) drops windows that don't correlate with the drawn shape, so a shape that
+  resembles nothing returns nothing; and `minHorizontalProgress` (default 0.7)
+  rejects loops/scribbles that backtrack horizontally (a circle isn't a
+  left-to-right price shape). Raise `minScore` for fewer, tighter matches.
 - **Not a prediction.** The projection is the empirical median of what followed
   similar pasts — it assumes the future keeps drawing from the same distribution.
   Regime changes and news are invisible to it.
