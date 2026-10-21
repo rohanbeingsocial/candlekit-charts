@@ -58,7 +58,7 @@ export class DrawingController implements ChartPlugin {
     this.chart = ctx.chart;
     this.series = ctx.series;
     this.el = ctx.chart.chartElement();
-    this.primitive = new DrawingPrimitive(this.engine);
+    this.primitive = new DrawingPrimitive(this.engine, ctx.getBars);
     this.series.attachPrimitive(this.primitive);
 
     if (this.storageKey) loadDrawings(this.engine, this.storageKey, this.kv);
@@ -107,11 +107,33 @@ export class DrawingController implements ChartPlugin {
     this.primitive = null;
   }
 
+  onData(): void {
+    this.primitive?.redraw();
+  }
+
+  onBar(): void {
+    this.primitive?.redraw();
+  }
+
+  /**
+   * Report whether a local chart coordinate belongs to a drawing gesture.
+   * Hosts that implement their own chart panning can use this before starting
+   * a pan, so an anchor/body drag remains exclusively owned by the drawing
+   * controller.
+   */
+  handlesPointerAt(x: number, y: number): boolean {
+    if (this.engine.isLocked()) return false;
+    if (this.engine.getActiveTool()) return true;
+    return this.hitTest(x, y) !== null;
+  }
+
   // ── pointer / keyboard ───────────────────────────────────────────────────────
 
   private onDown(e: MouseEvent): void {
     if (this.engine.isLocked()) return;
-    const dp = this.unproject(e.offsetX, e.offsetY);
+    const point = this.localPoint(e);
+    if (!point) return;
+    const dp = this.unproject(point.x, point.y);
     const tool = this.engine.getActiveTool();
 
     if (tool) {
@@ -125,7 +147,7 @@ export class DrawingController implements ChartPlugin {
           id: this.engine.newDrawingId(),
           tool,
           points: [dp],
-          style: this.engine.getDefaultStyle(),
+          style: this.engine.getDefaultStyle(tool),
         });
         this.suppressPan(false);
       } else if (!this.engine.getDraft()) {
@@ -147,7 +169,7 @@ export class DrawingController implements ChartPlugin {
     }
 
     // Idle: hit-test for selection / drag.
-    const hit = this.hitTest(e.offsetX, e.offsetY);
+    const hit = this.hitTest(point.x, point.y);
     if (hit && dp) {
       e.preventDefault();
       e.stopPropagation();
@@ -160,7 +182,9 @@ export class DrawingController implements ChartPlugin {
   }
 
   private onMove(e: MouseEvent): void {
-    const dp = this.unproject(e.offsetX, e.offsetY);
+    const point = this.localPoint(e);
+    if (!point) return;
+    const dp = this.unproject(point.x, point.y);
     if (!dp) return;
 
     // Placement preview.
@@ -207,6 +231,27 @@ export class DrawingController implements ChartPlugin {
   }
 
   // ── geometry / projection ──────────────────────────────────────────────────────
+
+  /**
+   * Convert a browser event to coordinates relative to the chart element.
+   *
+   * `offsetX`/`offsetY` are relative to the event target. Lightweight Charts
+   * renders several nested canvas elements, so the target can change between
+   * the grid, series, and overlay canvases. Passing those target-relative
+   * values to the chart coordinate APIs produces a position offset that varies
+   * with the canvas receiving the event. Client coordinates normalized against
+   * the chart element are stable across all of those canvases and use the same
+   * CSS-pixel coordinate system as Lightweight Charts.
+   */
+  private localPoint(e: MouseEvent): { x: number; y: number } | null {
+    const element = this.el;
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }
 
   private suppressPan(on: boolean): void {
     this.chart?.applyOptions({ handleScroll: { pressedMouseMove: !on } });
@@ -258,6 +303,9 @@ export class DrawingController implements ChartPlugin {
     if (!a) return false;
     const b = d.points[1] ? this.project(d.points[1]) : null;
     const c = d.points[2] ? this.project(d.points[2]) : null;
+    const allPoints = d.points
+      .map((point) => this.project(point))
+      .filter((point): point is Pt => !!point);
     const t = this.tol;
     switch (d.tool) {
       case "HorizontalLine":
@@ -297,6 +345,82 @@ export class DrawingController implements ChartPlugin {
         return !!b && FIB_LEVELS.some((lvl) => Math.abs(p.y - (a.y + (b.y - a.y) * lvl)) <= t);
       case "FibExtension":
         return !!b && !!c && FIB_EXT_LEVELS.some((lvl) => Math.abs(p.y - (c.y + (b.y - a.y) * lvl)) <= t);
+      case "InfoLine":
+      case "TrendAngle":
+        return !!b && distToSegment(p, a, b) <= t;
+      case "FibChannel":
+      case "RegressionChannel":
+      case "DisjointChannel":
+      case "Pitchfork":
+      case "SchiffPitchfork":
+      case "ModifiedSchiffPitchfork":
+      case "InsidePitchfork":
+        return !!b && (distToSegment(p, a, b) <= t || (!!c && distToSegment(p, b, c) <= t));
+      case "FlatTopBottom":
+        return !!b && (Math.abs(p.y - a.y) <= t || Math.abs(p.y - b.y) <= t || Math.abs(p.x - a.x) <= t || Math.abs(p.x - b.x) <= t);
+      case "FibTimeZone":
+      case "TrendFibTime":
+      case "CyclicLines":
+      case "TimeCycles":
+        return Math.abs(p.x - a.x) <= t || (!!b && Math.abs(p.x - b.x) <= t);
+      case "FibFan":
+      case "FibSpeedResistanceFan":
+      case "GannFan":
+        return !!b && distToRay(p, a, b) <= t;
+      case "FibExtensionTwoPoint":
+        return !!b && (Math.abs(p.y - a.y) <= t || Math.abs(p.y - b.y) <= t);
+      case "FibCircles":
+      case "FibSpeedResistanceArcs":
+      case "FibSpiral":
+      case "Ellipse":
+        return !!b && distToEllipse(p, a, b) <= t;
+      case "FibWedge":
+      case "RotatedRectangle":
+        return !!b && (!!c && (distToSegment(p, a, b) <= t || distToSegment(p, b, c) <= t || distToSegment(p, c, a) <= t));
+      case "GannBox":
+      case "GannSquare":
+        return !!b && (distToRectEdges(p, a, b) <= t || pointInRect(p, a, b));
+      case "Path":
+      case "Polyline":
+      case "Brush":
+      case "Highlighter":
+      case "XABCDPattern":
+      case "ABCDPattern":
+      case "HeadShoulders":
+      case "ElliottImpulse":
+      case "ElliottCorrection":
+      case "Gartley":
+      case "Bat":
+      case "Butterfly":
+      case "Crab":
+      case "Shark":
+      case "Cypher": {
+        return allPoints.slice(1).some((point, index) => distToSegment(p, allPoints[index]!, point) <= t);
+      }
+      case "Arc":
+      case "Curve":
+      case "DoubleCurve":
+      case "SineLine":
+        return !!b && !!c && (distToSegment(p, a, b) <= t || distToSegment(p, b, c) <= t);
+      case "LongPosition":
+      case "ShortPosition":
+      case "Measure":
+      case "Forecast":
+      case "Callout":
+      case "Note":
+      case "Balloon":
+      case "Comment":
+        return !!b && (distToRectEdges(p, a, b) <= t || pointInRect(p, a, b) || distToSegment(p, a, b) <= t);
+      case "Text":
+      case "PriceLabel":
+      case "FlagMark":
+      case "IconStamp":
+      case "ArrowUp":
+      case "ArrowDown":
+      case "ArrowLeft":
+      case "ArrowRight":
+      case "AnchoredVWAP":
+        return Math.hypot(p.x - a.x, p.y - a.y) <= this.tol * 2 || Math.abs(p.y - a.y) <= t || Math.abs(p.x - a.x) <= t;
       default:
         return !!b && distToSegment(p, a, b) <= t;
     }

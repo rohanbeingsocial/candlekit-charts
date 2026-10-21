@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { DRAWING_TOOL_ICONS } from "../drawing/icons";
 import type { DrawingToolId } from "../drawing/types";
 import { useChartApi } from "./context";
 
@@ -9,9 +10,8 @@ export interface DrawingToolbarProps {
   style?: CSSProperties;
 }
 
-// ── Inline line-art icons (no icon dependency) ───────────────────────────────
-// 24×24 stroke icons, rendered at 15px to match the host trading-dashboard
-// drawing toolbar (lucide line weight). currentColor follows the button state.
+// CandleKit owns the drawing glyph path data. This renderer only turns that
+// framework-neutral definition into an SVG element.
 function Svg({ children }: { children: ReactNode }) {
   return (
     <svg
@@ -30,82 +30,24 @@ function Svg({ children }: { children: ReactNode }) {
   );
 }
 
-/** Default glyph for each built-in tool id. Custom tools fall back to `label`. */
-const TOOL_ICONS: Record<string, ReactNode> = {
-  TrendLine: <Svg><polyline points="3 17 9 11 13 15 21 6" /></Svg>,
-  Ray: (
-    <Svg>
-      <line x1="4" y1="20" x2="20" y2="4" />
-      <polyline points="11 4 20 4 20 13" />
-    </Svg>
-  ),
-  ExtendedLine: (
-    <Svg>
-      <line x1="3" y1="19" x2="21" y2="5" />
-      <circle cx="8.2" cy="14.7" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="15.8" cy="9.3" r="1.4" fill="currentColor" stroke="none" />
-    </Svg>
-  ),
-  HorizontalLine: <Svg><line x1="3" y1="12" x2="21" y2="12" /></Svg>,
-  HorizontalRay: (
-    <Svg>
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <polyline points="15 7 21 12 15 17" />
-    </Svg>
-  ),
-  VerticalLine: <Svg><line x1="12" y1="3" x2="12" y2="21" /></Svg>,
-  CrossLine: (
-    <Svg>
-      <line x1="12" y1="3" x2="12" y2="21" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-    </Svg>
-  ),
-  Arrow: (
-    <Svg>
-      <line x1="4" y1="20" x2="18" y2="6" />
-      <polyline points="11 5 19 5 19 13" />
-    </Svg>
-  ),
-  Rectangle: <Svg><rect x="3" y="5" width="18" height="14" rx="1.5" /></Svg>,
-  Circle: <Svg><circle cx="12" cy="12" r="9" /></Svg>,
-  Triangle: <Svg><path d="M12 4 L21 20 H3 Z" /></Svg>,
-  ParallelChannel: (
-    <Svg>
-      <line x1="3" y1="15" x2="21" y2="7" />
-      <line x1="3" y1="20" x2="21" y2="12" />
-    </Svg>
-  ),
-  PriceRange: (
-    <Svg>
-      <line x1="12" y1="3" x2="12" y2="21" />
-      <polyline points="8 7 12 3 16 7" />
-      <polyline points="8 17 12 21 16 17" />
-    </Svg>
-  ),
-  DateRange: (
-    <Svg>
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <polyline points="7 8 3 12 7 16" />
-      <polyline points="17 8 21 12 17 16" />
-    </Svg>
-  ),
-  FibRetracement: (
-    <Svg>
-      <line x1="3" y1="5" x2="21" y2="5" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-      <line x1="3" y1="14" x2="21" y2="14" />
-      <line x1="3" y1="19" x2="21" y2="19" />
-    </Svg>
-  ),
-  FibExtension: (
-    <Svg>
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-      <line x1="3" y1="6" x2="3" y2="18" />
-    </Svg>
-  ),
-};
+function ToolIcon({ id }: { id: DrawingToolId }): ReactNode {
+  const icon = DRAWING_TOOL_ICONS[id];
+  return icon ? (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={icon.path} />
+    </svg>
+  ) : null;
+}
 
 const ICON_DELETE = (
   <Svg>
@@ -160,8 +102,8 @@ const GROUP_BREAK_AFTER = new Set<DrawingToolId>(["Arrow", "ParallelChannel"]);
 
 /**
  * Toolbar wired to the enclosing {@link ChartView}'s drawing plugin. Renders
- * nothing if drawing is not enabled. Each built-in tool ships an inline SVG
- * glyph (no icon dependency); custom tools fall back to their `label` text.
+ * nothing if drawing is not enabled. Each built-in tool gets its glyph from
+ * CandleKit's shared icon registry; callers may still provide custom icons.
  * Style it via CSS class `ck-toolbar` / `ck-toolbar-btn` (see styles.css).
  */
 export function DrawingToolbar({ tools = DEFAULT_TOOLS, className, style }: DrawingToolbarProps) {
@@ -200,7 +142,7 @@ export function DrawingToolbar({ tools = DEFAULT_TOOLS, className, style }: Draw
             data-active={active === t.id || undefined}
             onClick={() => start(t.id)}
           >
-            {t.icon ?? TOOL_ICONS[t.id] ?? t.label}
+            {t.icon ?? (DRAWING_TOOL_ICONS[t.id] ? <ToolIcon id={t.id} /> : t.label)}
           </button>
           {GROUP_BREAK_AFTER.has(t.id) && <span className="ck-toolbar-sep" aria-hidden="true" />}
         </span>

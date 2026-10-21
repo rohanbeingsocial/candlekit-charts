@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { DrawingEngine } from "../src/drawing/DrawingEngine";
-import { TOOL_POINTS } from "../src/drawing/types";
+import { DRAWING_TOOL_GROUPS, DRAWING_TOOL_ICONS } from "../src/drawing/icons";
+import { DEFAULT_TOOL_STYLES, FIB_LEVELS, TOOL_POINTS } from "../src/drawing/types";
 
 const p = (time: number, price: number) => ({ time, price });
 
@@ -13,6 +14,11 @@ describe("TOOL_POINTS", () => {
     expect(TOOL_POINTS.Triangle).toBe(3);
     expect(TOOL_POINTS.ParallelChannel).toBe(3);
     expect(TOOL_POINTS.FibExtension).toBe(3);
+    expect(TOOL_POINTS.FibChannel).toBe(3);
+    expect(TOOL_POINTS.Pitchfork).toBe(3);
+    expect(TOOL_POINTS.RotatedRectangle).toBe(3);
+    expect(TOOL_POINTS.XABCDPattern).toBe(5);
+    expect(TOOL_POINTS.Text).toBe(1);
   });
 });
 
@@ -42,5 +48,64 @@ describe("DrawingEngine N-point placement", () => {
     expect(all).toHaveLength(1);
     expect(all[0].points).toHaveLength(3);
     expect(all[0].tool).toBe("ParallelChannel");
+  });
+
+  it("supports the new one-point annotation tools without changing the model", () => {
+    const e = new DrawingEngine();
+    e.startTool("Text");
+    e.beginDraft("Text", p(1, 10));
+    e.commit({
+      id: e.newDrawingId(),
+      tool: "Text",
+      points: [p(1, 10)],
+      style: e.getDefaultStyle(),
+      text: { value: "Note" },
+    });
+
+    expect(e.getById(e.getSelectedId()!)?.text?.value).toBe("Note");
+    expect(e.export()).toContain('"value":"Note"');
+  });
+});
+
+describe("drawing style defaults", () => {
+  it("uses the OpenAlgo-style color ladder for Fibonacci retracements", () => {
+    const e = new DrawingEngine();
+    const style = e.getDefaultStyle("FibRetracement");
+
+    expect(style.color).toBe("#787b86");
+    expect(style.width).toBe(1);
+    expect(style.levels?.map((level) => level.ratio)).toEqual(FIB_LEVELS);
+    expect(style.levels?.map((level) => level.color)).toEqual([
+      "#787b86",
+      "#f23645",
+      "#ff9800",
+      "#4caf50",
+      "#089981",
+      "#00bcd4",
+      "#787b86",
+    ]);
+  });
+
+  it("does not share mutable level objects between new drawings", () => {
+    const e = new DrawingEngine();
+    const first = e.getDefaultStyle("FibRetracement");
+    const second = e.getDefaultStyle("FibRetracement");
+
+    first.levels![0]!.color = "#ffffff";
+    expect(second.levels![0]!.color).toBe("#787b86");
+    expect(DEFAULT_TOOL_STYLES.FibRetracement?.levels?.[0]?.color).toBe("#787b86");
+  });
+});
+
+describe("drawing toolbar icon registry", () => {
+  it("provides a CandleKit icon for every grouped tool", () => {
+    for (const group of DRAWING_TOOL_GROUPS) {
+      expect(DRAWING_TOOL_ICONS[group.icon]?.path).toBeTruthy();
+      for (const section of group.sections) {
+        for (const tool of section.tools) {
+          expect(DRAWING_TOOL_ICONS[tool.id]?.path, `${group.id}/${tool.id}`).toBeTruthy();
+        }
+      }
+    }
   });
 });

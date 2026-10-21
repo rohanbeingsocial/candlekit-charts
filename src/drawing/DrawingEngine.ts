@@ -9,7 +9,15 @@
  * positionally correct across pan/zoom and reloads.
  */
 
-import { DEFAULT_STYLE, TOOL_POINTS, type Drawing, type DrawingStyle, type DrawingToolId, type DrawingPoint } from "./types";
+import {
+  DEFAULT_STYLE,
+  DEFAULT_TOOL_STYLES,
+  TOOL_POINTS,
+  type Drawing,
+  type DrawingStyle,
+  type DrawingToolId,
+  type DrawingPoint,
+} from "./types";
 
 let counter = 0;
 const newId = () => `dw_${Date.now().toString(36)}_${(counter++).toString(36)}`;
@@ -51,7 +59,7 @@ export class DrawingEngine {
   // ── Draft (in-progress placement) ──────────────────────────────────────────────
 
   beginDraft(tool: DrawingToolId, p: DrawingPoint): void {
-    this.draft = { id: newId(), tool, points: [p, p], style: { ...this.style } };
+    this.draft = { id: newId(), tool, points: [p, p], style: this.getDefaultStyle(tool) };
     this.emit();
   }
 
@@ -123,8 +131,13 @@ export class DrawingEngine {
     this.style = { ...this.style, ...patch };
   }
 
-  getDefaultStyle(): DrawingStyle {
-    return { ...this.style };
+  getDefaultStyle(tool?: DrawingToolId): DrawingStyle {
+    const toolStyle = tool ? DEFAULT_TOOL_STYLES[tool] : undefined;
+    return {
+      ...this.style,
+      ...toolStyle,
+      levels: (toolStyle?.levels ?? this.style.levels)?.map((level) => ({ ...level })),
+    };
   }
 
   // ── Selection ──────────────────────────────────────────────────────────────────
