@@ -20,8 +20,8 @@ export interface ChartEventMap {
   rangeChange: { from: number; to: number } | null;
   /** Crosshair moved. `null` when it leaves the pane. */
   crosshairMove: { ts: number; price: number } | null;
-  /** A drawing was created / edited / removed. */
-  drawingChange: { count: number };
+  /** A drawing was created / edited / removed or selected. */
+  drawingChange: { count: number; selectedId: string | null; selectionRevision: number };
   /** Replay cursor advanced. */
   replayCursor: { ts: number };
   /** A point marker was caught (epoch ms) or cleared (`null`). */

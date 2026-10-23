@@ -92,6 +92,38 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ck-accent) 35%, transparent);
 }
 
+/* ── Grouped drawing-tool controls ─────────────────────────────────────────── */
+/* Framework adapters can use this contract when a group has a primary tool
+ * button and a separate submenu trigger. Keeping both controls in one flex row
+ * prevents the caret from being positioned relative to the toolbar/sidebar. */
+.ck-drawing-tool-group {
+  position: relative;
+  display: block;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+.ck-drawing-tool-button {
+  /* Keep the primary control at the same size as the standalone toolbar
+   * button. The caret is layered over its right edge and therefore never
+   * consumes space in the button's layout. */
+  width: 2.5rem !important;
+  min-width: 2.5rem;
+  height: 100% !important;
+}
+.ck-drawing-tool-caret {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: inline-flex;
+  width: 0.75rem;
+  min-width: 0.75rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ── Indicator picker (dropdown) ───────────────────────────────────────────── */
 .ck-ind {
   position: absolute;
