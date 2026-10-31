@@ -121,6 +121,28 @@ export class ChartController {
     for (const p of this.plugins.values()) p.onData?.(this.bars);
   }
 
+  /**
+   * Remove bars from the end without refreshing registered plugins.
+   *
+   * Replay uses this operation when moving its visible cursor backward. The
+   * price and volume series still receive the shortened prefix, while the
+   * host can update indicator visuals separately through its replay-cutoff
+   * mechanism. Avoiding plugin `onData` callbacks keeps a one-bar replay step
+   * from recalculating every indicator and rebuilding every pane.
+   */
+  truncateData(length: number): void {
+    if (this.destroyed) return;
+
+    const nextLength = Math.max(0, Math.min(Math.floor(length), this.bars.length));
+    if (nextLength === this.bars.length) return;
+
+    this.bars = this.bars.slice(0, nextLength);
+    this.applySeriesData();
+    this.applyVolumeData();
+    this.hadData = this.bars.length > 0;
+    this.bus.emit("data", { bars: this.bars });
+  }
+
   /** Append or update the most recent bar (live tick). */
   updateBar(bar: Bar): void {
     if (this.destroyed) return;

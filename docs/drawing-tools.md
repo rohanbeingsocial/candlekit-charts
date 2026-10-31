@@ -36,6 +36,11 @@ chart.use(drawing);
 drawing.engine.startTool("TrendLine");
 ```
 
+For interaction troubleshooting, pass `onDiagnostic` to receive pointer,
+selection, movement, resize, and coordinate-conversion events. The callback is
+optional and has no console or network side effects unless the host chooses to
+persist the entries.
+
 ## Interacting
 
 - **Place:** with a tool active, click once (horizontal/vertical line) or twice
@@ -63,13 +68,18 @@ e.import(json);                    // restore
 const off = e.onChange(() => {});  // fires after any create/move/style/delete
 ```
 
-## Persistence
+## Persistence and whitespace anchors
 
 Pass `storageKey` and edits autosave to `localStorage`. For another backend,
 pass `kv: KVStore` (`{ get, set }`). Anchors are stored in **data space**
 (lightweight-charts time + price), so saved drawings stay positionally correct
-across reloads, pan, and zoom. If you shift timestamps with `applyFixedOffset`,
-keep the same offset and persisted drawings remain correct.
+across reloads, pan, and zoom. When an anchor is placed between loaded candles,
+the controller also stores its continuous logical bar index. This lets the
+primitive render and hit-test the object even though `coordinateToTime()` has
+no candle to return at that x-coordinate. No placeholder bars or drawing
+series are added, so drawings do not participate in price or time-scale
+autoscaling. If you shift timestamps with `applyFixedOffset`, keep the same
+offset and persisted drawings remain correct.
 
 ## Custom tools
 

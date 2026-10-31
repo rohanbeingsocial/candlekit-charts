@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Drawing drag stability** — body movement now translates anchors through
+  logical chart coordinates instead of adding raw timestamps, so drawings stay
+  visible across market gaps and preserve their geometry after pan/scale
+  changes. `DrawingController` also exposes an optional `onDiagnostic` sink for
+  pointer and coordinate-conversion troubleshooting.
+- **Whitespace drawing anchors** — drawings can now be placed, rendered, and
+  hit-tested between or just beyond loaded candles using continuous logical
+  coordinates. The implementation does not add placeholder bars or a series,
+  so drawing objects remain independent of chart autoscaling.
+- **Replay tail truncation** — `ChartController.truncateData(length)` updates
+  the price and volume series without invoking indicator/plugin `onData`
+  callbacks, allowing hosts to move the replay cursor backward without a full
+  indicator refresh.
+
 ## [0.2.1] — 2026-10-20
 
 ### Fixed

@@ -47,10 +47,12 @@ export * from "./lab/EchoesController";
 
 // ── Drawing (original engine rendered on lightweight-charts primitives) ─────────
 export * from "./drawing/types";
+export * from "./drawing/icons";
 export * from "./drawing/geometry";
 export * from "./drawing/DrawingEngine";
 export * from "./drawing/DrawingPrimitive";
 export * from "./drawing/DrawingController";
+export * from "./drawing/coordinateMapping";
 export * from "./drawing/persistence";
 
 // ── Measurement ─────────────────────────────────────────────────────────────────

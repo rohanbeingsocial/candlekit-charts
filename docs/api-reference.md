@@ -49,6 +49,7 @@ new ChartController(container: HTMLElement, options?: ChartControllerOptions)
 | Method | Purpose |
 | --- | --- |
 | `setData(bars)` | Replace the full data set. |
+| `truncateData(length)` | Remove bars from the end without refreshing registered plugins; intended for replay-prefix updates. |
 | `updateBar(bar)` | Append or update the last bar (live tick). |
 | `setSeriesType(type)` | Swap candlestick/ohlc/line/area. |
 | `setTheme(input)` | Re-theme. |
@@ -79,7 +80,7 @@ interface PluginContext { chart; series; bus; theme; getBars(): readonly Bar[]; 
 
 ## Drawing
 
-- `DrawingController(opts?)` — `ChartPlugin`. `opts`: `{ engine?, storageKey?, kv?, hitTolerance? }`.
+- `DrawingController(opts?)` — `ChartPlugin`. `opts`: `{ engine?, storageKey?, kv?, hitTolerance?, onDiagnostic? }`.
   Exposes `.engine`.
 - `DrawingEngine` — model + state + events: `startTool(id)`, `stopTool()`,
   `getActiveTool()`, `getDrawings()`, `getById()`, `setPoints()`, `setStyle()`,
@@ -88,6 +89,11 @@ interface PluginContext { chart; series; bus; theme; getBars(): readonly Bar[]; 
   `import()`, `onChange(cb)`.
 - `DrawingPrimitive` — the `ISeriesPrimitive` that renders the model.
 - `Drawing`, `DrawingPoint`, `DrawingStyle`, `DrawingToolId`, `TOOL_POINTS`, `FIB_LEVELS`, `DEFAULT_STYLE`.
+- `DrawingPoint` contains `time` (epoch seconds) and `price`, plus an optional
+  `logical` continuous bar index. CandleKit uses that optional index when a
+  drawing anchor is in a whitespace region where no candle has an exact time.
+  `logicalForDrawingTime`, `drawingTimeForLogical`, and `drawingXForPoint` are
+  exported for integrations that need the same mapping for overlays or menus.
 - geometry: `distToSegment`, `distToLine`, `distToRay`, `distToRectEdges`, `distToEllipse`, `pointInRect`.
 - `saveDrawings/loadDrawings`, `localStorageKV`, `KVStore`.
 
