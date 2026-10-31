@@ -149,6 +149,7 @@ const el = document.getElementById("chart")!;
 const chart = new ChartController(el, { theme: "dark", seriesType: "candlestick" });
 
 chart.setData(toBars(myRows)); // myRows: { ts, open, high, low, close, volume }[]
+chart.truncateData(500);       // replay: keep only the first 500 bars
 ```
 
 ### React

@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Replay tail truncation** — `ChartController.truncateData(length)` updates
+  the price and volume series without invoking indicator/plugin `onData`
+  callbacks, allowing hosts to move the replay cursor backward without a full
+  indicator refresh.
+
 ## [0.2.1] — 2026-10-20
 
 ### Fixed

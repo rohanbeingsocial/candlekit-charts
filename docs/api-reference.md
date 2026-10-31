@@ -49,6 +49,7 @@ new ChartController(container: HTMLElement, options?: ChartControllerOptions)
 | Method | Purpose |
 | --- | --- |
 | `setData(bars)` | Replace the full data set. |
+| `truncateData(length)` | Remove bars from the end without refreshing registered plugins; intended for replay-prefix updates. |
 | `updateBar(bar)` | Append or update the last bar (live tick). |
 | `setSeriesType(type)` | Swap candlestick/ohlc/line/area. |
 | `setTheme(input)` | Re-theme. |
